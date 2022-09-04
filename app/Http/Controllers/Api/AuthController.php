@@ -17,10 +17,10 @@ class AuthController extends Controller
     {
         $valid = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
-            'username' => 'required|unique:users,username',
-            'phone' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
+            // 'username' => 'required|unique:users,username',
+            'phone' => 'nullable',
+            'first_name' => 'nullable',
+            'last_name' => 'nullable',
             'password' => 'required',
         ]);
         if ($valid->fails()) {
@@ -62,12 +62,17 @@ class AuthController extends Controller
             'password' => $request->password,
         ])) {
             $user = auth()->user();
-            if ($user->is_active == true) {
+            if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
+                if ($user->is_active == true) {
+                    $token = $user->createToken('token')->accessToken;
+                    return response()->json(['token' => $token, 'user' => $user], 200);
+                } else {
+                    auth()->logout();
+                    return response()->json(['message' => 'Admin Approval required'], 500);
+                }
+            } else {
                 $token = $user->createToken('token')->accessToken;
                 return response()->json(['token' => $token, 'user' => $user], 200);
-            } else {
-                auth()->logout();
-                return response()->json(['message' => 'Admin Approval required'], 500);
             }
         } else {
             return response()->json(['error' => 'Invalid Credentials'], 500);
