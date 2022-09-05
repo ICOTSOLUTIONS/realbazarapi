@@ -16,8 +16,9 @@ class AuthController extends Controller
     public function signup(Request $request)
     {
         $valid = Validator::make($request->all(), [
+            'role' => 'required',
             'email' => 'required|email|unique:users,email',
-            // 'username' => 'required|unique:users,username',
+            'name' => 'required',
             'phone' => 'nullable',
             'first_name' => 'nullable',
             'last_name' => 'nullable',
@@ -29,8 +30,10 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
             $user = new User();
-            $user->role_id = 2;
-            $user->username =  $request->username;
+            if($request->role == 'user') $user->role_id = 2; 
+            if($request->role == 'holeseller') $user->role_id = 3; 
+            if($request->role == 'retailer') $user->role_id = 4; 
+            $user->username =  $request->name;
             $user->first_name =  $request->first_name;
             $user->last_name =  $request->last_name;
             $user->email = $request->email;
@@ -137,7 +140,7 @@ class AuthController extends Controller
         if (!empty($user)) {
             $valid = Validator::make($request->all(), [
                 'email' => 'required|email|unique:users,email,' . auth()->user()->id,
-                'username' => 'required|unique:users,username,' . auth()->user()->id,
+                // 'username' => 'required|unique:users,username,' . auth()->user()->id,
                 'phone' => 'required',
                 'first_name' => 'required',
                 'last_name' => 'required',
