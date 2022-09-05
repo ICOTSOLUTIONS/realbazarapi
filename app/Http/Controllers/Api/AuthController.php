@@ -109,7 +109,7 @@ class AuthController extends Controller
     public function reset(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'email' => 'required',
+            'email' => 'required|email|exists:users,email',
             'token' => 'required',
             'password' => 'required',
             'c_password' => 'required|same:password',
