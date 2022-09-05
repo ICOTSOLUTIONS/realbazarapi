@@ -53,7 +53,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required',
         ]);
 
