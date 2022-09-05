@@ -24,5 +24,14 @@ class UserSeeder extends Seeder
         $admin->password = Hash::make(12345678);
         $admin->is_active = true;
         $admin->save();
+
+        $admin = new User();
+        $admin->role_id = 3;
+        $admin->username = 'wholeseller';
+        $admin->first_name = 'wholeseller';
+        $admin->email = 'wholeseller@gmail.com';
+        $admin->password = Hash::make(12345678);
+        $admin->is_active = true;
+        $admin->save();
     }
 }
