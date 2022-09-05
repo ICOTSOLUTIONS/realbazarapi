@@ -140,10 +140,10 @@ class AuthController extends Controller
         if (!empty($user)) {
             $valid = Validator::make($request->all(), [
                 'email' => 'required|email|unique:users,email,' . auth()->user()->id,
-                // 'username' => 'required|unique:users,username,' . auth()->user()->id,
-                'phone' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
+                'name' => 'required',
+                'phone' => 'nullable',
+                'first_name' => 'nullable',
+                'last_name' => 'nullable',
             ]);
             if ($valid->fails()) {
                 return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
