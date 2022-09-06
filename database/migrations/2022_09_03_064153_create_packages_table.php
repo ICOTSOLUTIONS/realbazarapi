@@ -15,6 +15,11 @@ return new class extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->string('date')->nullable();
+            $table->string('expiry_date')->nullable();
+            $table->string('amount')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

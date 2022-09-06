@@ -23,6 +23,10 @@ Route::middleware('auth:api')->group(function () {
         //auth
         Route::get('profile', [Api\AuthController::class, 'edit_profile']);
         Route::post('profile/update', [Api\AuthController::class, 'update_profile']);
+        //category
+        Route::post('add/category', [Api\CategoryController::class, 'add']);
+        Route::post('update/category', [Api\CategoryController::class, 'update']);
+        Route::post('delete/category', [Api\CategoryController::class, 'delete']);
         //product
         Route::post('add/product', [Api\ProductController::class, 'add']);
         Route::post('update/product', [Api\ProductController::class, 'update']);
@@ -33,6 +37,10 @@ Route::middleware('auth:api')->group(function () {
         Route::post('show/product', [Api\ProductController::class, 'showProduct']);
         //order
         Route::post('order', [App\Http\Controllers\OrderController::class, 'order']);
+        //package
+        Route::post('add/package', [Api\PackageController::class, 'add']);
+        Route::post('update/package', [Api\PackageController::class, 'update']);
+        Route::post('delete/package', [Api\PackageController::class, 'delete']);
 });
 //product
 Route::get('search/{name}', [Api\ProductController::class, 'search']);
