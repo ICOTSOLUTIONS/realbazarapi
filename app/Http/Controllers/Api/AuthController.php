@@ -15,29 +15,36 @@ class AuthController extends Controller
 {
     public function signup(Request $request)
     {
-        $valid = Validator::make($request->all(), [
+        $rules = [
             'role' => 'required',
-            'email' => 'required|email|unique:users,email',
             'name' => 'required',
-            'phone' => 'nullable',
             'first_name' => 'nullable',
             'last_name' => 'nullable',
             'password' => 'required',
-        ]);
+        ];
+        if (is_numeric($request->get('emailphone'))) {
+            $rules['emailphone'] = 'required|digits:11|unique:users,phone';
+        } else {
+            $rules['emailphone'] = 'required|email|unique:users,email';
+        }
+        $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         try {
             DB::beginTransaction();
             $user = new User();
-            if($request->role == 'user') $user->role_id = 3;
-            if($request->role == 'holeseller') $user->role_id = 4;
-            if($request->role == 'retailer') $user->role_id = 5;
+            if ($request->role == 'user') $user->role_id = 3;
+            if ($request->role == 'holeseller') $user->role_id = 4;
+            if ($request->role == 'retailer') $user->role_id = 5;
             $user->username =  $request->name;
             $user->first_name =  $request->first_name;
             $user->last_name =  $request->last_name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
+            if (is_numeric($request->get('emailphone'))) {
+                $user->phone = $request->emailphone;
+            } else {
+                $user->email = $request->emailphone;
+            }
             $user->password = Hash::make($request->password);
             if ($user->save()) {
                 DB::commit();
@@ -52,16 +59,38 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $valid = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
+        $rules = [
             'password' => 'required',
-        ]);
+        ];
+        if (is_numeric($request->get('emailphone'))) {
+            $rules['emailphone'] = 'required|digits:11|exists:users,phone';
+        } else {
+            $rules['emailphone'] = 'required|email|exists:users,email';
+        }
+        $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         if (auth()->attempt([
-            'email' => $request->email,
+            'email' => $request->emailphone,
+            'password' => $request->password,
+        ])) {
+            $user = auth()->user();
+            if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
+                if ($user->is_active == true) {
+                    $token = $user->createToken('token')->accessToken;
+                    return response()->json(['token' => $token, 'user' => $user], 200);
+                } else {
+                    auth()->logout();
+                    return response()->json(['message' => 'Admin Approval required'], 500);
+                }
+            } else {
+                $token = $user->createToken('token')->accessToken;
+                return response()->json(['token' => $token, 'user' => $user], 200);
+            }
+        } elseif (auth()->attempt([
+            'phone' => $request->emailphone,
             'password' => $request->password,
         ])) {
             $user = auth()->user();
@@ -84,46 +113,65 @@ class AuthController extends Controller
 
     public function forgot(Request $request)
     {
-        $valid = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
-        ]);
+        $rules = [];
+        if (is_numeric($request->get('emailphone'))) {
+            $rules['emailphone'] = 'required|digits:11|exists:users,phone';
+        } else {
+            $rules['emailphone'] = 'required|email|exists:users,email';
+        }
+        $valid = Validator::make($request->all(), $rules);
+
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $user = User::where('email', $request->email)->first();
-        if (!empty($user)) {
-            $user->token = rand(1, 10000);
-            $user->save();
-            $email = $request->email;
-            $token = $user->token;
-            Mail::send('admin.mail.appForgotPassword',  compact('email', 'token'), function ($message) use ($user) {
-                $message->to($user->email);
-                $message->subject('Reset Password');
-            });
-            return response()->json(['message' => "Reset Email send to {$email}", 'token' => $token, 'user' => $user,], 200);
+        if (is_numeric($request->get('emailphone'))) {
+            $user = User::where('phone', $request->emailphone)->first();
+
         } else {
-            return response()->json(['message' => "User not found"], 500);
+            $user = User::where('email', $request->emailphone)->first();
+            if (!empty($user)) {
+                $user->token = rand(1, 10000);
+                $user->save();
+                $email = $request->emailphone;
+                $token = $user->token;
+                Mail::send('admin.mail.appForgotPassword',  compact('email', 'token'), function ($message) use ($email) {
+                    $message->to($email);
+                    $message->subject('Reset Password');
+                });
+                return response()->json(['message' => "Reset Email send to {$email}", 'token' => $token, 'user' => $user,], 200);
+            } else {
+                return response()->json(['message' => "User not found"], 500);
+            }
         }
     }
 
     public function reset(Request $request)
     {
-        $valid = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
+        $rules = [
             'token' => 'required',
             'password' => 'required',
             'c_password' => 'required|same:password',
-        ]);
+        ];
+        if (is_numeric($request->get('emailphone'))) {
+            $rules['emailphone'] = 'required|digits:11|exists:users,phone';
+        } else {
+            $rules['emailphone'] = 'required|email|exists:users,email';
+        }
+        $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $user = User::where('email', $request->email)->where('token', $request->token)->first();
-        if (empty($user)) return response()->json(['message' => "User not found"], 500);
-        if (Hash::check($request->password, $user->password)) return response()->json(['message', 'Please use different from current password.'], 500);
-        $user->password = Hash::make($request->password);
-        $user->token = null;
-        $user->save();
-        return response()->json(['message' => "Password reset succesfully", 'user' => $user,], 200);
+        if (is_numeric($request->get('emailphone'))) {
+            $user = User::where('phone', $request->emailphone)->where('token', $request->token)->first();
+        } else {
+            $user = User::where('email', $request->emailphone)->where('token', $request->token)->first();
+            if (empty($user)) return response()->json(['message' => "User not found"], 500);
+            if (Hash::check($request->password, $user->password)) return response()->json(['message', 'Please use different from current password.'], 500);
+            $user->password = Hash::make($request->password);
+            $user->token = null;
+            $user->save();
+            return response()->json(['message' => "Password reset succesfully", 'user' => $user,], 200);
+        }
     }
 
 
@@ -138,23 +186,30 @@ class AuthController extends Controller
     {
         $user = User::where('id', auth()->user()->id)->first();
         if (!empty($user)) {
-            $valid = Validator::make($request->all(), [
-                'email' => 'required|email|unique:users,email,' . auth()->user()->id,
+            $rules = [
                 'name' => 'required',
-                'phone' => 'nullable',
                 'first_name' => 'nullable',
                 'last_name' => 'nullable',
-            ]);
+            ];
+            if (is_numeric($request->get('emailphone'))) {
+                $rules['emailphone'] = 'required|digits:11|unique:users,phone,' . auth()->user()->id;
+            } else {
+                $rules['emailphone'] = 'required|email|unique:users,email,' . auth()->user()->id;
+            }
+            $valid = Validator::make($request->all(), $rules);
             if ($valid->fails()) {
                 return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
             }
             try {
                 DB::beginTransaction();
-                $user->email = $request->email;
+                if (is_numeric($request->get('emailphone'))) {
+                    $user->phone = $request->emailphone;
+                } else {
+                    $user->email = $request->emailphone;
+                }
                 $user->username = $request->username;
                 $user->first_name = $request->fname;
                 $user->last_name = $request->lname;
-                $user->phone = $request->phone;
                 if (!empty($request->image)) {
                     $image = $request->image;
                     $filename = "Image-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
