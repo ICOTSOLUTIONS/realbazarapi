@@ -22,16 +22,16 @@ class CategoryController extends Controller
     public function add(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'category' => 'required|unique:categories,name',
+            'name' => 'required|unique:categories,name',
         ]);
 
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $category = new Category();
-        $category->name = $request->category;
+        $category->name = $request->name;
         $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
-        if($category->save()) return response()->json(['Successfull' => 'New Category Added Successfully!'], 200);
+        if($category->save()) return response()->json(['Successfull' => 'New Category Added Successfully!','category'=>$category??[]], 200);
         else return response()->json(['Failed' => 'Category not Added!'], 500);
     }
 
@@ -47,7 +47,7 @@ class CategoryController extends Controller
         $category = Category::where('id',$request->id)->first();
         $category->name = $request->name;
         $category->url = strtolower(preg_replace('/\s*/', '', $request->name));
-        if($category->save()) return response()->json(['Successfull' => 'New Category Updated Successfully!'], 200);
+        if($category->save()) return response()->json(['Successfull' => 'New Category Updated Successfully!','category'=>$category??[]], 200);
         else return response()->json(['Failed' => 'Category not Updated!'], 500);
     }
 
