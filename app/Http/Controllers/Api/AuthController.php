@@ -30,9 +30,9 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
             $user = new User();
-            if($request->role == 'user') $user->role_id = 2; 
-            if($request->role == 'holeseller') $user->role_id = 3; 
-            if($request->role == 'retailer') $user->role_id = 4; 
+            if($request->role == 'user') $user->role_id = 3;
+            if($request->role == 'holeseller') $user->role_id = 4;
+            if($request->role == 'retailer') $user->role_id = 5;
             $user->username =  $request->name;
             $user->first_name =  $request->first_name;
             $user->last_name =  $request->last_name;
