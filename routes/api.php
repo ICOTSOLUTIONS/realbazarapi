@@ -27,6 +27,10 @@ Route::middleware('auth:api')->group(function () {
         Route::post('add/category', [Api\CategoryController::class, 'add']);
         Route::post('update/category', [Api\CategoryController::class, 'update']);
         Route::post('delete/category', [Api\CategoryController::class, 'delete']);
+        //subcategory
+        Route::post('add/subcategory', [Api\SubCategoryController::class, 'add']);
+        Route::post('update/subcategory', [Api\SubCategoryController::class, 'update']);
+        Route::post('delete/subcategory', [Api\SubCategoryController::class, 'delete']);
         //product
         Route::post('add/product', [Api\ProductController::class, 'add']);
         Route::post('update/product', [Api\ProductController::class, 'update']);
@@ -47,4 +51,5 @@ Route::get('search/{name}', [Api\ProductController::class, 'search']);
 Route::get('products', [Api\ProductController::class, 'show']);
 //category
 Route::get('category', [Api\CategoryController::class, 'show']);
+Route::get('subcategory', [Api\SubCategoryController::class, 'show']);
 Route::post('search/category', [Api\CategoryController::class, 'searchCategory']);
