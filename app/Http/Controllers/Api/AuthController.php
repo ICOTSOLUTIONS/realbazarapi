@@ -70,7 +70,7 @@ class AuthController extends Controller
         $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
-            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
         }
         if (auth()->attempt([
             'email' => $request->emailphone,
