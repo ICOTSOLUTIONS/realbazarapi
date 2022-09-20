@@ -13,6 +13,7 @@ use App\Models\SubCategory;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -44,79 +45,89 @@ class ProductController extends Controller
     public function add(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'product_name' => 'required',
+            'title' => 'required',
             'price' => 'required',
             'discount' => 'required',
-            'size' => 'required',
-            'brand' => 'required',
-            'product_status' => 'required',
-            'product_selected_qty' => 'nullable',
-            'product_details' => 'required',
+            // 'size' => 'required',
+            // 'brand' => 'required',
+            // 'product_status' => 'required',
+            // 'product_selected_qty' => 'nullable',
+            'product_desc' => 'required',
             'product_image' => 'required|array',
-            'category' => 'required',
-            'featured' => 'required',
-            'sub_category' => 'required',
+            // 'category' => 'required',
+            // 'featured' => 'required',
+            'tags' => 'required',
+            'sub_category_id' => 'required',
         ]);
 
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        if (auth()->user()->role_id == 3 || auth()->user()->role_id == 4) {
-            $new_product = new Product();
-            $new_product->user_id = auth()->user()->id;
-            if ($request->category && $request->sub_category) {
-                $category = Category::where('name', $request->category)->first();
-                if (!is_object($category)) {
-                    $category = new Category();
-                    $category->name = $request->category;
-                    $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
-                    $category->save();
+        try {
+            DB::beginTransaction();
+            if (auth()->user()->role_id == 3 || auth()->user()->role_id == 4) {
+                $new_product = new Product();
+                $new_product->user_id = auth()->user()->id;
+                // if ($request->category && $request->sub_category) {
+                //     $category = Category::where('id', $request->category)->first();
+                //     if (!is_object($category)) {
+                //         $category = new Category();
+                //         $category->name = $request->category;
+                //         $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
+                //         $category->save();
 
-                    $subcategory = new SubCategory();
-                    $subcategory->category_id = $category->id;
-                    $subcategory->name = $request->sub_category;
-                    $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                    $subcategory->save();
-                } else {
-                    $subcategory = SubCategory::whereHas('categories', function ($query) use ($category) {
-                        $query->where('id', $category->id);
-                    })->where('name', $request->sub_category)->first();
-                    if (!is_object($subcategory)) {
-                        $subcategory = new SubCategory();
-                        $subcategory->category_id = $category->id;
-                        $subcategory->name = $request->sub_category;
-                        $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                        $subcategory->save();
+                //         $subcategory = new SubCategory();
+                //         $subcategory->category_id = $category->id;
+                //         $subcategory->name = $request->sub_category;
+                //         $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
+                //         $subcategory->save();
+                //     } else {
+                //         $subcategory = SubCategory::whereHas('categories', function ($query) use ($category) {
+                //             $query->where('id', $category->id);
+                //         })->where('name', $request->sub_category)->first();
+                //         if (!is_object($subcategory)) {
+                //             $subcategory = new SubCategory();
+                //             $subcategory->category_id = $category->id;
+                //             $subcategory->name = $request->sub_category;
+                //             $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
+                //             $subcategory->save();
+                //         }
+                //     }
+                // }
+                $new_product->sub_category_id = $request->sub_category_id;
+                $new_product->title = $request->title;
+                $new_product->price = $request->price;
+                $new_product->discount_price = $request->discount;
+                $new_product->tags = $request->tags;
+                $new_product->desc = $request->product_desc;
+                // $new_product->size = $request->size;
+                // $new_product->brand = $request->brand;
+                // $new_product->type = $request->product_status;
+                // $new_product->featured = $request->featured;
+                // if ($request->featured == "Featured") {
+                //     $new_product->status = "pending";
+                // }
+
+                $new_product->save();
+                if (!empty($request->product_image)) {
+                    foreach ($request->product_image as $image) {
+                        $product_image = new ProductImage();
+                        $product_image->product_id = $new_product->id;
+                        $filename = "Product-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                        $image->storeAs('product', $filename, "public");
+                        $product_image->image = "product/" . $filename;
+                        $product_image->save();
                     }
                 }
-                $new_product->sub_category_id = $subcategory->id;
+                DB::commit();
+                return response()->json(['Successfull' => 'Product Added Successfully!'], 200);
+            } else {
+                DB::rollBack();
+                return response()->json(['UnSuccessfull' => 'Authenticated User Required!'], 500);
             }
-            $new_product->name = $request->product_name;
-            $new_product->price = $request->price;
-            $new_product->discount_price = $request->discount;
-            $new_product->size = $request->size;
-            $new_product->brand = $request->brand;
-            $new_product->type = $request->product_status;
-            $new_product->details = $request->product_details;
-            $new_product->featured = $request->featured;
-            if ($request->featured == "Featured") {
-                $new_product->status = "pending";
-            }
-
-            $new_product->save();
-            if (!empty($request->product_image)) {
-                foreach ($request->product_image as $image) {
-                    $product_image = new ProductImage();
-                    $product_image->product_id = $new_product->id;
-                    $filename = "Image-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
-                    $image->storeAs('image', $filename, "public");
-                    $product_image->image = "image/" . $filename;
-                    $product_image->save();
-                }
-            }
-            return response()->json(['Successfull' => 'New Product Added Successfully!'], 200);
-        } else {
-            return response()->json(['UnSuccessfull' => 'New Product not Added!'], 500);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['UnSuccessfull' => 'Product not Added!'], 500);
         }
     }
 
