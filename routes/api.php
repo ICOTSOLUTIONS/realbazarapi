@@ -38,18 +38,21 @@ Route::middleware('auth:api')->group(function () {
         Route::get('image/{id}', [Api\ProductController::class, 'image']);
         Route::post('delete/image', [Api\ProductController::class, 'deleteImage']);
         Route::post('add/image', [Api\ProductController::class, 'addImage']);
-        Route::post('show/product', [Api\ProductController::class, 'showProduct']);
-        Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
+        Route::get('history/products', [Api\ProductController::class, 'historyProduct']);
+        Route::post('add/history/products', [Api\ProductController::class, 'addHistoryProduct']);
         //order
         Route::post('order', [App\Http\Controllers\OrderController::class, 'order']);
         //package
         Route::post('add/package', [Api\PackageController::class, 'add']);
         Route::post('update/package', [Api\PackageController::class, 'update']);
         Route::post('delete/package', [Api\PackageController::class, 'delete']);
-});
-//product
-Route::get('search/{name}', [Api\ProductController::class, 'search']);
-Route::get('products', [Api\ProductController::class, 'show']);
+    });
+    //product
+    Route::get('sellers', [Api\AuthController::class, 'showSeller']);
+    Route::get('search/{name}', [Api\ProductController::class, 'search']);
+    Route::get('products', [Api\ProductController::class, 'show']);
+    Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
+    Route::post('show/product', [Api\ProductController::class, 'showProduct']);
 //category
 Route::get('category', [Api\CategoryController::class, 'show']);
 Route::get('subcategory', [Api\SubCategoryController::class, 'show']);

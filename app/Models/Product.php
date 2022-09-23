@@ -17,7 +17,7 @@ class Product extends Model
     //         set: fn ($value) => json_encode($value)
     //     );
     // }
-    
+
     // public function size(): Attribute
     // {
     //     return Attribute::make(
@@ -41,5 +41,9 @@ class Product extends Model
     public function orders()
     {
         return $this->hasMany(OrderProduct::class,'product_id','id');
+    }
+    public function history()
+    {
+        return $this->hasMany(UserProductHistory::class,'product_id','id');
     }
 }

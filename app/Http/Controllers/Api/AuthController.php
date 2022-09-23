@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+    public function showSeller()
+    {
+        $users = User::where('role_id', 4)->orWhere('role_id', 5)->get();
+        if (count($users)) return response()->json(['users' => $users ?? []], 200);
+        return response()->json(['message' => 'not found'], 500);
+    }
     public function signup(Request $request)
     {
         $rules = [
@@ -29,7 +36,7 @@ class AuthController extends Controller
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         try {
             DB::beginTransaction();
@@ -70,7 +77,7 @@ class AuthController extends Controller
         $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         if (auth()->attempt([
             'email' => $request->emailphone,
@@ -122,11 +129,10 @@ class AuthController extends Controller
         $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         if (is_numeric($request->get('emailphone'))) {
             $user = User::where('phone', $request->emailphone)->first();
-
         } else {
             $user = User::where('email', $request->emailphone)->first();
             if (!empty($user)) {
@@ -159,7 +165,7 @@ class AuthController extends Controller
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         if (is_numeric($request->get('emailphone'))) {
             $user = User::where('phone', $request->emailphone)->where('token', $request->token)->first();
@@ -198,7 +204,7 @@ class AuthController extends Controller
             }
             $valid = Validator::make($request->all(), $rules);
             if ($valid->fails()) {
-                return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+                return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
             }
             try {
                 DB::beginTransaction();

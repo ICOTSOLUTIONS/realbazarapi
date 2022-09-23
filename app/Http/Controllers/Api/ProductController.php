@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\SubCategory;
 use App\Models\User;
+use App\Models\UserProductHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,8 +27,15 @@ class ProductController extends Controller
 
     public function vendorProduct(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+        }
         $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories')->where('user_id', $request->id)->get();
-        return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
+        if (count($all_product)) return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
+        return response()->json(['Message' => 'Product not found'], 500);
     }
 
     public function vendorFeaturedProduct()
@@ -38,8 +46,16 @@ class ProductController extends Controller
 
     public function showProduct(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+        }
         $all_product = Product::where('id', $request->id)->has('user')->with('user', 'images', 'subCategories.categories')->get();
-        return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
+        if (count($all_product)) return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
+        return response()->json(['Message' => 'Product not found'], 500);
     }
 
     public function add(Request $request)
@@ -61,7 +77,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         try {
             DB::beginTransaction();
@@ -134,7 +150,7 @@ class ProductController extends Controller
     public function search($name)
     {
         if (!empty($name)) {
-            $product = Product::where('name', 'LIKE', '%' . $name . '%')->orWhere('tags', 'LIKE', '%' . $name . '%')->get();
+            $product = Product::where('title', 'LIKE', '%' . $name . '%')->orWhere('tags', 'LIKE', '%' . $name . '%')->get();
             if (count($product)) {
                 return response()->json(['Products' => ProductsResource::collection($product)], 200);
             } else {
@@ -161,7 +177,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $product = Product::where('id', $request->id)->first();
         if (auth()->user()->role_id == 3) {
@@ -256,6 +272,34 @@ class ProductController extends Controller
         }
     }
 
+    public function historyProduct()
+    {
+        $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories')->whereHas('history', function ($query) {
+            $query->where('user_id', auth()->user()->id);
+        })->get();
+        if (count($historyProduct)) return response()->json(['Products' => ProductsResource::collection($historyProduct)], 200);
+        return response()->json(['Message' => 'Product not found'], 500);
+    }
+
+    public function addHistoryProduct(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            // 'user_id' => 'required',
+            'product_id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        $history = UserProductHistory::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
+        if (!empty($history)) return response()->json(['message' => 'users product exist in history'], 200);
+        $product = new UserProductHistory();
+        $product->user_id = auth()->user()->id;
+        $product->product_id = $request->product_id;
+        if ($product->save()) return response()->json(['message' => 'users product added in history'], 200);
+        return response()->json(['message' => 'users product not added in history'], 500);
+    }
     public function seller_totalsales_count()
     {
         $seller_totalsales_count = Order::where('seller_id', auth()->user()->id)->groupBy('seller_id')
@@ -306,7 +350,6 @@ class ProductController extends Controller
     public function admin_totalsales_count()
     {
         $seller_totalsales_count = Payment::selectRaw('sum(total) AS total')->get();
-
 
         $seller_todaysales_count = Payment::whereDate('created_at', Carbon::today())
             ->selectRaw('sum(total) AS total')->get();
