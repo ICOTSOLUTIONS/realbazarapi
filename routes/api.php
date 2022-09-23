@@ -39,6 +39,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('delete/image', [Api\ProductController::class, 'deleteImage']);
         Route::post('add/image', [Api\ProductController::class, 'addImage']);
         Route::post('show/product', [Api\ProductController::class, 'showProduct']);
+        Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
         //order
         Route::post('order', [App\Http\Controllers\OrderController::class, 'order']);
         //package

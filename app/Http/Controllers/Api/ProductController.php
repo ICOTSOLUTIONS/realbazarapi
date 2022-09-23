@@ -24,9 +24,9 @@ class ProductController extends Controller
         return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
     }
 
-    public function vendorProduct()
+    public function vendorProduct(Request $request)
     {
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories')->where('user_id', auth()->user()->id)->get();
+        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories')->where('user_id', $request->id)->get();
         return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
     }
 
@@ -134,7 +134,7 @@ class ProductController extends Controller
     public function search($name)
     {
         if (!empty($name)) {
-            $product = Product::where('name', 'LIKE', '%' . $name . '%')->get();
+            $product = Product::where('name', 'LIKE', '%' . $name . '%')->orWhere('tags', 'LIKE', '%' . $name . '%')->get();
             if (count($product)) {
                 return response()->json(['Products' => ProductsResource::collection($product)], 200);
             } else {

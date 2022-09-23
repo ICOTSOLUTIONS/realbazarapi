@@ -64,6 +64,14 @@ class CategoryController extends Controller
 
     public function searchCategory(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'category_id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        
         if (!empty($request->category_id)) {
             if (!empty($request->category_id && $request->subcategory_id)) {
                 $product = Product::whereHas('subCategories', function ($query) use ($request) {
