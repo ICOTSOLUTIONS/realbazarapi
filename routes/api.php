@@ -41,7 +41,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('history/products', [Api\ProductController::class, 'historyProduct']);
         Route::post('add/history/products', [Api\ProductController::class, 'addHistoryProduct']);
         //order
-        Route::post('order', [App\Http\Controllers\OrderController::class, 'order']);
+        Route::post('order', [Api\OrderController::class, 'order']);
         //package
         Route::post('add/package', [Api\PackageController::class, 'add']);
         Route::post('update/package', [Api\PackageController::class, 'update']);
