@@ -7,7 +7,10 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductsResource;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\SubCategory;
+use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -22,42 +25,77 @@ class CategoryController extends Controller
     public function add(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name',
+            'category' => 'required|unique:categories,name',
+            'sub_category' => 'required',
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
-        $category = new Category();
-        $category->name = $request->name;
-        $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
-        if($category->save()) return response()->json(['Successfull' => 'New Category Added Successfully!','category'=>$category??[]], 200);
-        else return response()->json(['Failed' => 'Category not Added!'], 500);
+        try {
+            DB::beginTransaction();
+            if ($request->category && $request->sub_category) {
+                $category = new Category();
+                $category->name = $request->category;
+                $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
+                if (!empty($request->category_image)) {
+                    $image = $request->category_image;
+                    $filename = "Category-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                    $image->storeAs('category', $filename, "public");
+                    $category->image = "category/" . $filename;
+                }
+                if (!$category->save()) throw new Error("New Category not Added!");
+                $subcategory = new SubCategory();
+                $subcategory->category_id = $category->id;
+                $subcategory->name = $request->sub_category;
+                $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
+                if (!empty($request->subcategory_image)) {
+                    $image = $request->subcategory_image;
+                    $filename = "SubCategory-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                    $image->storeAs('subcategory', $filename, "public");
+                    $subcategory->image = "subcategory/" . $filename;
+                }
+                if (!$subcategory->save()) throw new Error("New Category not Added!");
+                DB::commit();
+                $categories = Category::has('subCategory')->with('subCategory')->where('id', $category->id)->get();
+                return response()->json(['Category' => CategoryResource::collection($categories)], 200);
+            } else throw new Error("Category and SubCtegory Required!");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
+            return response()->json(['Failed' => 'Category not Added!'], 500);
+        }
     }
 
     public function update(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name,'.$request->id,
+            'name' => 'required|unique:categories,name,' . $request->id,
         ]);
 
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $category = Category::where('id',$request->id)->first();
+        $category = Category::where('id', $request->id)->first();
         $category->name = $request->name;
         $category->url = strtolower(preg_replace('/\s*/', '', $request->name));
-        if($category->save()) return response()->json(['Successfull' => 'New Category Updated Successfully!','category'=>$category??[]], 200);
+        if (!empty($request->category_image)) {
+            $image = $request->category_image;
+            $filename = "Category-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+            $image->storeAs('category', $filename, "public");
+            $category->image = "category/" . $filename;
+        }
+        if ($category->save()) return response()->json(['Successfull' => 'New Category Updated Successfully!', 'category' => $category ?? []], 200);
         else return response()->json(['Failed' => 'Category not Updated!'], 500);
     }
 
     public function delete(Request $request)
     {
-        $category = Category::where('id',$request->id)->first();
-        if(!empty($category)){
-            if($category->delete()) return response()->json(['message' => 'Category Deleted'], 200);
+        $category = Category::where('id', $request->id)->first();
+        if (!empty($category)) {
+            if ($category->delete()) return response()->json(['message' => 'Category Deleted'], 200);
             else return response()->json(['message' => 'Category not deleted'], 500);
-        }else{
+        } else {
             return response()->json(['message' => 'Category not found'], 500);
         }
     }
@@ -71,7 +109,7 @@ class CategoryController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        
+
         if (!empty($request->category_id)) {
             if (!empty($request->category_id && $request->subcategory_id)) {
                 $product = Product::whereHas('subCategories', function ($query) use ($request) {

@@ -30,19 +30,24 @@ class SubCategoryController extends Controller
     {
         $valid = Validator::make($request->all(), [
             'category_id' => 'required',
-            'subcategory' => 'required|unique:categories,name',
+            'sub_category' => 'required',
         ]);
-
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $category = Category::where('id', $request->category_id)->first();
-        $subcategory = new SubCategory();
-        $subcategory->category_id = $category->id;
-        $subcategory->name = $request->subcategory;
-        $subcategory->url = strtolower(preg_replace('/\s*/', '', $category->name . '/' . $request->subcategory));
-        if ($subcategory->save()) return response()->json(['Successfull' => 'New Sub Category Added Successfully!', 'subcategory' => $subcategory ?? []], 200);
-        else return response()->json(['Failed' => 'Category not Added!'], 500);
+        $subcategory = SubCategory::whereHas('categories',function ($query) use($category) {
+            $query->where('id',$category->id);
+           })->where('name', $request->sub_category)->first();
+        if(!is_object($subcategory)){
+            $subcategory = new SubCategory();
+            $subcategory->category_id = $category->id;
+            $subcategory->name = $request->sub_category;
+            $subcategory->url = strtolower(preg_replace('/\s*/', '', $category->name.'/'.$request->sub_category));
+            if (!$subcategory->save()) return response()->json(['Failed' => 'Sub Category not Added!'], 500);
+            $subcategories = SubCategory::has('categories')->with('categories')->where('id',$subcategory->id)->get();
+            return response()->json(['Successfull' => 'New Sub Category Added Successfully!', 'SubCategory' => SubCategoryResource::collection($subcategories)], 200);
+        } else return response()->json(['Failed' => 'Sub Category already exist!'], 500);
     }
 
     public function update(Request $request)
