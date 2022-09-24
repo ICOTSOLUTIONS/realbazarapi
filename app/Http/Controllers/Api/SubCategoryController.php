@@ -18,6 +18,14 @@ class SubCategoryController extends Controller
         return response()->json(['Message' => 'SubCategory not found'], 500);
     }
 
+    public function fetchSubCategory($id)
+    {
+        if(empty($id)) return response()->json(['status' => false, 'message' => 'Id not found'],500);
+        $subcategory = SubCategory::has('categories')->with('categories')->where('category_id',$id)->get();
+        if (count($subcategory)) return response()->json(['SubCategory' => SubCategoryResource::collection($subcategory)], 200);
+        return response()->json(['Message' => 'SubCategory not found'], 500);
+    }
+
     public function add(Request $request)
     {
         $valid = Validator::make($request->all(), [
