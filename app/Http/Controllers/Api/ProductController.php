@@ -53,7 +53,8 @@ class ProductController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
-        $all_product = Product::where('id', $request->id)->has('user')->with('user', 'images', 'subCategories.categories')->get();
+        $id = explode(',', $request->id);
+        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories')->get();
         if (count($all_product)) return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['Message' => 'Product not found'], 500);
     }
