@@ -36,9 +36,9 @@ class UserSeeder extends Seeder
 
         $admin = new User();
         $admin->role_id = 4;
-        $admin->username = 'holeseller';
-        $admin->first_name = 'holeseller';
-        $admin->email = 'holeseller@gmail.com';
+        $admin->username = 'wholesaler';
+        $admin->first_name = 'wholesaler';
+        $admin->email = 'wholesaler@gmail.com';
         $admin->password = Hash::make(12345678);
         $admin->is_active = true;
         $admin->save();
