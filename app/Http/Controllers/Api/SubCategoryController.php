@@ -31,6 +31,7 @@ class SubCategoryController extends Controller
         $valid = Validator::make($request->all(), [
             'category_id' => 'required',
             'sub_category' => 'required',
+            'subcategory_image' => 'required',
         ]);
         if ($valid->fails()) {
             return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
@@ -44,6 +45,12 @@ class SubCategoryController extends Controller
             $subcategory->category_id = $category->id;
             $subcategory->name = $request->sub_category;
             $subcategory->url = strtolower(preg_replace('/\s*/', '', $category->name.'/'.$request->sub_category));
+            if (!empty($request->subcategory_image)) {
+                $image = $request->subcategory_image;
+                $filename = "SubCategory-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                $image->storeAs('subcategory', $filename, "public");
+                $subcategory->image = "subcategory/" . $filename;
+            }
             if (!$subcategory->save()) return response()->json(['Failed' => 'Sub Category not Added!'], 500);
             $subcategories = SubCategory::has('categories')->with('categories')->where('id',$subcategory->id)->get();
             return response()->json(['Successfull' => 'New Sub Category Added Successfully!', 'SubCategory' => SubCategoryResource::collection($subcategories)], 200);
@@ -67,6 +74,12 @@ class SubCategoryController extends Controller
         $subcategory->category_id = $category->id;
         $subcategory->name = $request->subcategory;
         $subcategory->url = strtolower(preg_replace('/\s*/', '', $category->name . '/' . $request->subcategory));
+        if (!empty($request->subcategory_image)) {
+            $image = $request->subcategory_image;
+            $filename = "SubCategory-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+            $image->storeAs('subcategory', $filename, "public");
+            $subcategory->image = "subcategory/" . $filename;
+        }
         if ($subcategory->save()) return response()->json(['Successfull' => 'Sub Category Updated Successfully!', 'subcategory' => $subcategory ?? []], 200);
         else return response()->json(['Failed' => 'Category not Updated!'], 500);
     }
