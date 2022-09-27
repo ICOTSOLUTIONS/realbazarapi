@@ -27,6 +27,8 @@ class CategoryController extends Controller
         $valid = Validator::make($request->all(), [
             'category' => 'required|unique:categories,name',
             'sub_category' => 'required',
+            'category_image' => 'required',
+            'subcategory_image' => 'required',
         ]);
 
         if ($valid->fails()) {
