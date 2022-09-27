@@ -151,7 +151,12 @@ class ProductController extends Controller
     public function search($name)
     {
         if (!empty($name)) {
-            $product = Product::where('title', 'LIKE', '%' . $name . '%')->orWhere('tags', 'LIKE', '%' . $name . '%')->get();
+            $names = explode(',', $name);
+            $product = Product::where(function ($query) use ($names) {
+                foreach ($names as $tag) {
+                    $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
+                }
+            })->get();
             if (count($product)) {
                 return response()->json(['Products' => ProductsResource::collection($product)], 200);
             } else {
