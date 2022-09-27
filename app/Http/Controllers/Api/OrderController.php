@@ -8,6 +8,7 @@ use App\Models\OrderProduct;
 use App\Models\Payment;
 use App\Models\Product;
 use Carbon\Carbon;
+use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Stripe;
@@ -49,9 +50,7 @@ class OrderController extends Controller
                             $order_product->discount = $product_price->discount_price * $product['product_selected_qty'];
                             $order_product->save();
                         }
-                    } else {
-                        return response()->json(['Fail' => ' Order Product Request Failed!'], 500);
-                    }
+                    } else throw new Error("Order Request Failed!");
                 }
                 // if (!empty($request->total)) {
                 //     $payment = new Payment();
@@ -73,14 +72,12 @@ class OrderController extends Controller
                 //     $payment->orders()->sync($order_ids);
                 // }
                 DB::commit();
+                return response()->json(['Successfull' => 'New Order Placed!'], 200);
             } catch (\Throwable $th) {
                 DB::rollBack();
                 // throw $th;
                 return response()->json(['Fail' => 'Order Request Failed!', 'req' => $request->all()], 500);
             }
-            return response()->json(['Successfull' => 'New Order Placed!'], 200);
-        } else {
-            return response()->json(['Fail' => 'Order Request Failed!', 'req' => $request->all()], 500);
-        }
+        } else return response()->json(['Fail' => 'Order Request Failed!', 'req' => $request->all()], 500);
     }
 }
