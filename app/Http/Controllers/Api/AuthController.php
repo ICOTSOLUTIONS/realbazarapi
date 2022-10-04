@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\FollowUserShop;
 use App\Models\User;
 use Error;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class AuthController extends Controller
 
     public function showSeller()
     {
-        $users = User::where('role_id', 4)->orWhere('role_id', 5)->get();
+        $users = User::with('role')->where('role_id', 4)->orWhere('role_id', 5)->get();
         if (count($users)) return response()->json(['users' => $users ?? []], 200);
         return response()->json(['message' => 'not found'], 500);
     }
@@ -232,5 +233,27 @@ class AuthController extends Controller
                 return response()->json(['message' => "User not Update"], 500);
             }
         } else return response()->json(['message', 'User not found'], 500);
+    }
+
+    public function shopFollow(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'shop_id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+        }
+
+        $followExist = FollowUserShop::where('user_id',auth()->user()->id)->where('shop_id',$request->shop_id)->first();
+        if(is_object($followExist)){
+            if($followExist->delete()) return response()->json(['message' => "Unfollow Successfully"], 200);
+            return response()->json(['message' => "Unfollow not Successfull"], 500);
+        }
+        $follow = new FollowUserShop();
+        $follow->user_id = auth()->user()->id;
+        $follow->shop_id = $request->shop_id;
+        if($follow->save()) return response()->json(['message' => "Follow Successfully"], 200);
+        return response()->json(['message' => "Follow not Successfull"], 500);
     }
 }

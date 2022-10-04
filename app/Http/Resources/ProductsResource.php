@@ -28,9 +28,12 @@ class ProductsResource extends JsonResource
             // 'product_name' => $this->name,
             // 'size' => $this->size,
             'image' => $this->images,
-            'user' => $this->user,
+            'shop' => $this->user,
             'category' => $this->subCategories->categories,
             'sub_category' => $this->subCategories,
+            'followers' => $this->user->follow,
+            'likes' => $this->likes,
+            'reviews' => $this->reviews,
             // 'featured' => $this->featured,
         ];
     }

@@ -5,16 +5,19 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductsResource;
 use App\Models\Category;
+use App\Models\LikeProduct;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductReview;
 use App\Models\SubCategory;
 use App\Models\User;
 use App\Models\UserProductHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -440,5 +443,48 @@ class ProductController extends Controller
         }
         $product->save();
         return response()->json(["status" => 'success', 'feature_products' => $product], 200);
+    }
+
+    public function likeProduct(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'product_id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+        }
+
+        $likeExist = LikeProduct::where('user_id',auth()->user()->id)->where('product_id',$request->product_id)->first();
+        if(is_object($likeExist)){
+            if($likeExist->delete()) return response()->json(['message' => "UnLike Successfully"], 200);
+            return response()->json(['message' => "UnLike not Successfull"], 500);
+        }
+        $like = new LikeProduct();
+        $like->user_id = auth()->user()->id;
+        $like->product_id = $request->product_id;
+        if($like->save()) return response()->json(['message' => "Like Successfully"], 200);
+        return response()->json(['message' => "Like not Successfull"], 500);
+    }
+
+    public function reviewProduct(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'product_id' => 'required',
+            'stars' => 'required',
+            'comments' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+        }
+
+        $review = new ProductReview();
+        $review->user_id = auth()->user()->id;
+        $review->product_id = $request->product_id;
+        $review->stars = $request->stars;
+        $review->comments = $request->comments;
+        if($review->save()) return response()->json(['message' => "Review Successfully"], 200);
+        return response()->json(['message' => "Review not Successfull"], 500);
     }
 }

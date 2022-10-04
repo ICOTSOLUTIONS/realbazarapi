@@ -28,7 +28,7 @@ class Product extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class,'id','user_id');
+        return $this->belongsTo(User::class,'user_id','id');
     }
     public function images()
     {
@@ -45,5 +45,13 @@ class Product extends Model
     public function history()
     {
         return $this->hasMany(UserProductHistory::class,'product_id','id');
+    }
+    public function likes()
+    {
+        return $this->hasMany(LikeProduct::class,'product_id','id');
+    }
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class,'product_id','id');
     }
 }

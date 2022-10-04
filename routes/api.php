@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function () {
         //auth
         Route::get('profile', [Api\AuthController::class, 'edit_profile']);
         Route::post('profile/update', [Api\AuthController::class, 'update_profile']);
+        Route::post('shop/followers', [Api\AuthController::class, 'shopFollow']);
         //category
         Route::post('add/category', [Api\CategoryController::class, 'add']);
         Route::post('update/category', [Api\CategoryController::class, 'update']);
@@ -40,6 +41,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('add/image', [Api\ProductController::class, 'addImage']);
         Route::get('history/products', [Api\ProductController::class, 'historyProduct']);
         Route::post('add/history/products', [Api\ProductController::class, 'addHistoryProduct']);
+        Route::post('like/products', [Api\ProductController::class, 'likeProduct']);
+        Route::post('review/products', [Api\ProductController::class, 'reviewProduct']);
+
         //order
         Route::post('order', [Api\OrderController::class, 'order']);
         //package
