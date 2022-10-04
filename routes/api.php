@@ -62,3 +62,4 @@ Route::get('category', [Api\CategoryController::class, 'show']);
 Route::get('subcategory', [Api\SubCategoryController::class, 'show']);
 Route::get('show/subcategory/{id}', [Api\SubCategoryController::class, 'fetchSubCategory']);
 Route::post('search/category', [Api\CategoryController::class, 'searchCategory']);
+Route::post('subscribe', [Api\SettingController::class, 'subscribe']);
