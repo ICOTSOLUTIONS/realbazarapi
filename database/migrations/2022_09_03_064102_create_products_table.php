@@ -20,13 +20,13 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('price')->nullable();
             $table->string('discount_price')->nullable();
-            // $table->string('color')->nullable();
+            $table->string('color')->nullable();
             // $table->string('size')->nullable();
             $table->mediumText('desc')->nullable();
             // $table->string('brand')->nullable();
             // $table->string('selected_qty')->nullable();
             // $table->string('type')->nullable();
-            // $table->string('stock')->nullable();
+            $table->string('variations')->nullable();
             $table->boolean('status')->default(true);
             $table->string('tags')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
