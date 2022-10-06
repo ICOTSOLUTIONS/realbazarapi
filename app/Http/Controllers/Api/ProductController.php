@@ -173,64 +173,70 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'product_name' => 'required',
+            'title' => 'required',
             'price' => 'required',
-            'discount' => 'required',
-            'size' => 'required',
-            'brand' => 'required',
-            'product_status' => 'required',
-            'product_details' => 'required',
-            'featured' => 'required',
-            'category' => 'required',
-            'sub_category' => 'required',
+            'discount' => 'nullable',
+            // 'size' => 'required',
+            // 'brand' => 'required',
+            // 'product_status' => 'required',
+            // 'product_selected_qty' => 'nullable',
+            'product_desc' => 'required',
+            'product_image' => 'required|array',
+            // 'category' => 'required',
+            // 'featured' => 'required',
+            'tags' => 'required',
+            'sub_category_id' => 'required',
         ]);
 
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $product = Product::where('id', $request->id)->first();
-        if (auth()->user()->role_id == 3) {
-            $product->user_id = auth()->user()->id;
-            if ($request->category && $request->sub_category) {
-                $category = Category::where('name', $request->category)->first();
-                if (!is_object($category)) {
-                    $category = new Category();
-                    $category->name = $request->category;
-                    $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
-                    $category->save();
+        $user = auth()->user();
+        if ($user->role_id == 4 || $user->role_id == 5) {
+            $product->user_id = $user->id;
+            // if ($request->category && $request->sub_category) {
+            //     $category = Category::where('name', $request->category)->first();
+            //     if (!is_object($category)) {
+            //         $category = new Category();
+            //         $category->name = $request->category;
+            //         $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
+            //         $category->save();
 
-                    $subcategory = new SubCategory();
-                    $subcategory->category_id = $category->id;
-                    $subcategory->name = $request->sub_category;
-                    $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                    $subcategory->save();
-                } else {
-                    $subcategory = SubCategory::whereHas('categories', function ($query) use ($request, $category) {
-                        $query->where('id', $category->id);
-                    })->where('name', $request->sub_category)->first();
-                    if (!is_object($subcategory)) {
-                        $subcategory = new SubCategory();
-                        $subcategory->category_id = $category->id;
-                        $subcategory->name = $request->sub_category;
-                        $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                        $subcategory->save();
-                    }
-                }
-                $product->sub_category_id = $subcategory->id;
-            }
-            $product->name = $request->product_name;
+            //         $subcategory = new SubCategory();
+            //         $subcategory->category_id = $category->id;
+            //         $subcategory->name = $request->sub_category;
+            //         $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
+            //         $subcategory->save();
+            //     } else {
+            //         $subcategory = SubCategory::whereHas('categories', function ($query) use ($request, $category) {
+            //             $query->where('id', $category->id);
+            //         })->where('name', $request->sub_category)->first();
+            //         if (!is_object($subcategory)) {
+            //             $subcategory = new SubCategory();
+            //             $subcategory->category_id = $category->id;
+            //             $subcategory->name = $request->sub_category;
+            //             $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
+            //             $subcategory->save();
+            //         }
+            //     }
+            // }
+            $product->sub_category_id = $request->sub_category_id->id;
+            $product->title = $request->title;
             $product->price = $request->price;
             $product->discount_price = $request->discount;
-            $product->size = $request->size;
-            $product->brand = $request->brand;
-            $product->type = $request->product_status;
-            $product->featured = $request->featured;
-            if ($request->featured == "Featured") {
-                $product->status = "pending";
-            } else {
-                $product->status = null;
-            }
-            $product->details = $request->product_details;
+            $product->tags = $request->tags;
+            $product->desc = $request->product_desc;
+            // $product->size = $request->size;
+            // $product->brand = $request->brand;
+            // $product->type = $request->product_status;
+            // $product->featured = $request->featured;
+            // if ($request->featured == "Featured") {
+            // $product->status = "pending";
+            // } else {
+            // $product->status = null;
+            // }
+            // $product->details = $request->product_details;
             $product->save();
             return response()->json(['Message' => 'Product Updated Successfully!'], 200);
         } else {
@@ -267,7 +273,7 @@ class ProductController extends Controller
         if (!empty($product)) {
             if ($product->delete()) return response()->json(['Message' => 'Successfully Image deleted'], 200);
         } else {
-            return response()->json(["status" => false, 'Message'=>'Unsuccessfull Image deleted'],500);
+            return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted'], 500);
         }
     }
 
@@ -277,7 +283,7 @@ class ProductController extends Controller
         if (!empty($product)) {
             if ($product->delete()) return response()->json(['Message' => 'Successfully deleted Product'], 200);
         } else {
-            return response()->json(["status" => false, 'Message'=>'Product not deleted'],500);
+            return response()->json(["status" => false, 'Message' => 'Product not deleted'], 500);
         }
     }
 
@@ -452,18 +458,18 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
 
-        $likeExist = LikeProduct::where('user_id',auth()->user()->id)->where('product_id',$request->product_id)->first();
-        if(is_object($likeExist)){
-            if($likeExist->delete()) return response()->json(['Message' => "UnLike Successfully"], 200);
+        $likeExist = LikeProduct::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
+        if (is_object($likeExist)) {
+            if ($likeExist->delete()) return response()->json(['Message' => "UnLike Successfully"], 200);
             return response()->json(['Message' => "UnLike not Successfull"], 500);
         }
         $like = new LikeProduct();
         $like->user_id = auth()->user()->id;
         $like->product_id = $request->product_id;
-        if($like->save()) return response()->json(['Message' => "Like Successfully"], 200);
+        if ($like->save()) return response()->json(['Message' => "Like Successfully"], 200);
         return response()->json(['Message' => "Like not Successfull"], 500);
     }
 
@@ -476,7 +482,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
 
         $review = new ProductReview();
@@ -484,7 +490,7 @@ class ProductController extends Controller
         $review->product_id = $request->product_id;
         $review->stars = $request->stars;
         $review->comments = $request->comments;
-        if($review->save()) return response()->json(['Message' => "Review Successfully"], 200);
+        if ($review->save()) return response()->json(['Message' => "Review Successfully"], 200);
         return response()->json(['Message' => "Review not Successfull"], 500);
     }
 }
