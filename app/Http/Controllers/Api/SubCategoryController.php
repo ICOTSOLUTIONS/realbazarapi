@@ -70,7 +70,7 @@ class SubCategoryController extends Controller
         }
         $category = Category::where('id', $request->category_id)->first();
         $subcategory = SubCategory::where('id',$request->id)->first();
-        if(empty($sub_category)) return response()->json(['Successfull' => 'Sub Category not found'], 500);
+        if(empty($subcategory)) return response()->json(['Successfull' => 'Sub Category not found'], 500);
         $subcategory->category_id = $category->id;
         $subcategory->name = $request->subcategory;
         $subcategory->url = strtolower(preg_replace('/\s*/', '', $category->name . '/' . $request->subcategory));
