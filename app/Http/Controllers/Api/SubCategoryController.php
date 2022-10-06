@@ -20,7 +20,7 @@ class SubCategoryController extends Controller
 
     public function fetchSubCategory($id)
     {
-        if(empty($id)) return response()->json(['status' => false, 'message' => 'Id not found'],500);
+        if(empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found'],500);
         $subcategory = SubCategory::has('categories')->with('categories')->where('category_id',$id)->get();
         if (count($subcategory)) return response()->json(['SubCategory' => SubCategoryResource::collection($subcategory)], 200);
         return response()->json(['Message' => 'SubCategory not found'], 500);
@@ -34,7 +34,7 @@ class SubCategoryController extends Controller
             'subcategory_image' => 'required',
         ]);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
         }
         $category = Category::where('id', $request->category_id)->first();
         $subcategory = SubCategory::whereHas('categories',function ($query) use($category) {
@@ -51,10 +51,10 @@ class SubCategoryController extends Controller
                 $image->storeAs('subcategory', $filename, "public");
                 $subcategory->image = "subcategory/" . $filename;
             }
-            if (!$subcategory->save()) return response()->json(['Failed' => 'Sub Category not Added!'], 500);
+            if (!$subcategory->save()) return response()->json(['Message' => 'Sub Category not Added!'], 500);
             $subcategories = SubCategory::has('categories')->with('categories')->where('id',$subcategory->id)->get();
-            return response()->json(['Successfull' => 'New Sub Category Added Successfully!', 'SubCategory' => SubCategoryResource::collection($subcategories)], 200);
-        } else return response()->json(['Failed' => 'Sub Category already exist!'], 500);
+            return response()->json(['Message' => 'New Sub Category Added Successfully!', 'SubCategory' => SubCategoryResource::collection($subcategories)], 200);
+        } else return response()->json(['Message' => 'Sub Category already exist!'], 500);
     }
 
     public function update(Request $request)
@@ -66,11 +66,11 @@ class SubCategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
         }
         $category = Category::where('id', $request->category_id)->first();
         $subcategory = SubCategory::where('id',$request->id)->first();
-        if(empty($subcategory)) return response()->json(['failed' => 'Sub Category not found'], 500);
+        if(empty($subcategory)) return response()->json(['Message' => 'Sub Category not found'], 500);
         $subcategory->category_id = $category->id;
         $subcategory->name = $request->subcategory;
         $subcategory->url = strtolower(preg_replace('/\s*/', '', $category->name . '/' . $request->subcategory));
@@ -80,18 +80,18 @@ class SubCategoryController extends Controller
             $image->storeAs('subcategory', $filename, "public");
             $subcategory->image = "subcategory/" . $filename;
         }
-        if ($subcategory->save()) return response()->json(['Successfull' => 'Sub Category Updated Successfully!', 'subcategory' => $subcategory ?? []], 200);
-        else return response()->json(['Failed' => 'Category not Updated!'], 500);
+        if ($subcategory->save()) return response()->json(['Message' => 'Sub Category Updated Successfully!', 'subcategory' => $subcategory ?? []], 200);
+        else return response()->json(['Message' => 'Sub Category not Updated!'], 500);
     }
 
     public function delete(Request $request)
     {
         $sub_category = SubCategory::where('id', $request->id)->first();
         if (!empty($sub_category)) {
-            if ($sub_category->delete()) return response()->json(['message' => 'Sub Category Deleted'], 200);
-            else return response()->json(['message' => 'Sub Category not deleted'], 500);
+            if ($sub_category->delete()) return response()->json(['Message' => 'Sub Category Deleted'], 200);
+            else return response()->json(['Message' => 'Sub Category not deleted'], 500);
         } else {
-            return response()->json(['message' => 'Sub Category not found'], 500);
+            return response()->json(['Message' => 'Sub Category not found'], 500);
         }
     }
 

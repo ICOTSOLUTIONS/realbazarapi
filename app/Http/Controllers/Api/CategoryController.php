@@ -32,7 +32,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         try {
             DB::beginTransaction();
@@ -65,7 +65,7 @@ class CategoryController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             dd($th);
-            return response()->json(['Failed' => 'Category not Added!'], 500);
+            return response()->json(['Message' => 'Category not Added!'], 500);
         }
     }
 
@@ -76,7 +76,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $category = Category::where('id', $request->id)->first();
         $category->name = $request->name;
@@ -87,18 +87,18 @@ class CategoryController extends Controller
             $image->storeAs('category', $filename, "public");
             $category->image = "category/" . $filename;
         }
-        if ($category->save()) return response()->json(['Successfull' => 'New Category Updated Successfully!', 'category' => $category ?? []], 200);
-        else return response()->json(['Failed' => 'Category not Updated!'], 500);
+        if ($category->save()) return response()->json(['Message' => 'New Category Updated Successfully!', 'category' => $category ?? []], 200);
+        else return response()->json(['Message' => 'Category not Updated!'], 500);
     }
 
     public function delete(Request $request)
     {
         $category = Category::where('id', $request->id)->first();
         if (!empty($category)) {
-            if ($category->delete()) return response()->json(['message' => 'Category Deleted'], 200);
-            else return response()->json(['message' => 'Category not deleted'], 500);
+            if ($category->delete()) return response()->json(['Message' => 'Category Deleted'], 200);
+            else return response()->json(['Message' => 'Category not deleted'], 500);
         } else {
-            return response()->json(['message' => 'Category not found'], 500);
+            return response()->json(['Message' => 'Category not found'], 500);
         }
     }
 
@@ -109,7 +109,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => 'fails', 'message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
         if (!empty($request->category_id)) {
@@ -121,7 +121,7 @@ class CategoryController extends Controller
                 if (count($product)) {
                     return response()->json(['Product' => ProductsResource::collection($product)], 200);
                 } else {
-                    return response()->json(['fail' => 'product not found'], 500);
+                    return response()->json(['Message' => 'product not found'], 500);
                 }
             } else {
                 $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -130,11 +130,11 @@ class CategoryController extends Controller
                 if (count($product)) {
                     return response()->json(['Product' => ProductsResource::collection($product)], 200);
                 } else {
-                    return response()->json(['fail' => 'product not found'], 500);
+                    return response()->json(['Message' => 'product not found'], 500);
                 }
             }
         } else {
-            return response()->json(['fail' => 'Parameter is null'], 500);
+            return response()->json(['Message' => 'Parameter is null'], 500);
         }
     }
 }

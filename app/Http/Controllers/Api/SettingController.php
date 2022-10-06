@@ -17,7 +17,7 @@ class SettingController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
         }
         $email = $request->email;
         $content = $request->content;
@@ -25,6 +25,6 @@ class SettingController extends Controller
             $message->to($email);
             $message->subject('Subscribe');
         });
-        return response()->json(['message' => "Email send to {$email}"], 200);
+        return response()->json(['Message' => "Email send to {$email}"], 200);
     }
 }

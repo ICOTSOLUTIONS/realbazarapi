@@ -19,7 +19,7 @@ class AuthController extends Controller
     {
         $users = User::with('role')->where('role_id', 4)->orWhere('role_id', 5)->get();
         if (count($users)) return response()->json(['users' => $users ?? []], 200);
-        return response()->json(['message' => 'not found'], 500);
+        return response()->json(['Message' => 'not found'], 500);
     }
     public function signup(Request $request)
     {
@@ -37,7 +37,7 @@ class AuthController extends Controller
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         try {
             DB::beginTransaction();
@@ -57,11 +57,11 @@ class AuthController extends Controller
             if ($user->save()) {
                 DB::commit();
                 $client = User::with('role')->where('id', $user->id)->first();
-                return response()->json(['message' => "User Successfully Added", 'user' => $client,], 200);
+                return response()->json(['Message' => "User Successfully Added", 'user' => $client,], 200);
             } else throw new Error("User Not Added!");
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json(['message' => "User not Added"], 500);
+            return response()->json(['Message' => "User not Added"], 500);
         }
     }
 
@@ -78,7 +78,7 @@ class AuthController extends Controller
         $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         if (auth()->attempt([
             'email' => $request->emailphone,
@@ -91,7 +91,7 @@ class AuthController extends Controller
                     return response()->json(['token' => $token, 'user' => $user], 200);
                 } else {
                     auth()->logout();
-                    return response()->json(['message' => 'Admin Approval required'], 500);
+                    return response()->json(['Message' => 'Admin Approval required'], 500);
                 }
             } else {
                 $token = $user->createToken('token')->accessToken;
@@ -108,14 +108,14 @@ class AuthController extends Controller
                     return response()->json(['token' => $token, 'user' => $user], 200);
                 } else {
                     auth()->logout();
-                    return response()->json(['message' => 'Admin Approval required'], 500);
+                    return response()->json(['Message' => 'Admin Approval required'], 500);
                 }
             } else {
                 $token = $user->createToken('token')->accessToken;
                 return response()->json(['token' => $token, 'user' => $user], 200);
             }
         } else {
-            return response()->json(['error' => 'Invalid Credentials'], 500);
+            return response()->json(['Message' => 'Invalid Credentials'], 500);
         }
     }
 
@@ -130,7 +130,7 @@ class AuthController extends Controller
         $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         if (is_numeric($request->get('emailphone'))) {
             $user = User::where('phone', $request->emailphone)->first();
@@ -145,9 +145,9 @@ class AuthController extends Controller
                     $message->to($email);
                     $message->subject('Reset Password');
                 });
-                return response()->json(['message' => "Reset Email send to {$email}", 'token' => $token, 'user' => $user,], 200);
+                return response()->json(['Message' => "Reset Email send to {$email}", 'token' => $token, 'user' => $user,], 200);
             } else {
-                return response()->json(['message' => "User not found"], 500);
+                return response()->json(['Message' => "User not found"], 500);
             }
         }
     }
@@ -166,18 +166,18 @@ class AuthController extends Controller
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         if (is_numeric($request->get('emailphone'))) {
             $user = User::where('phone', $request->emailphone)->where('token', $request->token)->first();
         } else {
             $user = User::where('email', $request->emailphone)->where('token', $request->token)->first();
-            if (empty($user)) return response()->json(['message' => "User not found"], 500);
-            if (Hash::check($request->password, $user->password)) return response()->json(['message', 'Please use different from current password.'], 500);
+            if (empty($user)) return response()->json(['Message' => "User not found"], 500);
+            if (Hash::check($request->password, $user->password)) return response()->json(['Message', 'Please use different from current password.'], 500);
             $user->password = Hash::make($request->password);
             $user->token = null;
             $user->save();
-            return response()->json(['message' => "Password reset succesfully", 'user' => $user,], 200);
+            return response()->json(['Message' => "Password reset succesfully", 'user' => $user,], 200);
         }
     }
 
@@ -186,7 +186,7 @@ class AuthController extends Controller
     {
         $user = User::with('role')->where('id', auth()->user()->id)->first();
         if (!empty($user)) return response()->json(['user', $user ?? []], 200);
-        else return response()->json(['message', 'user not found'], 500);
+        else return response()->json(['Message', 'user not found'], 500);
     }
 
     public function update_profile(Request $request)
@@ -205,7 +205,7 @@ class AuthController extends Controller
             }
             $valid = Validator::make($request->all(), $rules);
             if ($valid->fails()) {
-                return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+                return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
             }
             try {
                 DB::beginTransaction();
@@ -226,13 +226,13 @@ class AuthController extends Controller
                 if ($user->save()) {
                     DB::commit();
                     $user = User::with('role')->where('id', $user->id)->get();
-                    return response()->json(['message' => "User Successfully Updated", 'user' => $user,], 200);
+                    return response()->json(['Message' => "User Successfully Updated", 'user' => $user,], 200);
                 } else throw new Error("User Not Updated");
             } catch (\Throwable $th) {
                 DB::rollBack();
-                return response()->json(['message' => "User not Update"], 500);
+                return response()->json(['Message' => "User not Update"], 500);
             }
-        } else return response()->json(['message', 'User not found'], 500);
+        } else return response()->json(['Message', 'User not found'], 500);
     }
 
     public function shopFollow(Request $request)
@@ -242,18 +242,18 @@ class AuthController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'message' => 'Validation errors', 'errors' => $valid->errors()],500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
         }
 
         $followExist = FollowUserShop::where('user_id',auth()->user()->id)->where('shop_id',$request->shop_id)->first();
         if(is_object($followExist)){
-            if($followExist->delete()) return response()->json(['message' => "Unfollow Successfully"], 200);
-            return response()->json(['message' => "Unfollow not Successfull"], 500);
+            if($followExist->delete()) return response()->json(['Message' => "Unfollow Successfully"], 200);
+            return response()->json(['Message' => "Unfollow not Successfull"], 500);
         }
         $follow = new FollowUserShop();
         $follow->user_id = auth()->user()->id;
         $follow->shop_id = $request->shop_id;
-        if($follow->save()) return response()->json(['message' => "Follow Successfully"], 200);
-        return response()->json(['message' => "Follow not Successfull"], 500);
+        if($follow->save()) return response()->json(['Message' => "Follow Successfully"], 200);
+        return response()->json(['Message' => "Follow not Successfull"], 500);
     }
 }
