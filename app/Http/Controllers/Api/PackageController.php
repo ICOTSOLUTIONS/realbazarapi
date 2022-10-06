@@ -20,13 +20,13 @@ class PackageController extends Controller
     {
         $valid = Validator::make($request->all(), [
             'name' => 'required|unique:packages,name',
-            'date' => 'required|date',
-            'expiry_date' => 'required|date',
+            'date' => 'required',
+            'expiry_date' => 'required',
             'amount' => 'required|numeric',
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
         }
         $package = new Package();
         $package->name = $request->name;
@@ -40,26 +40,34 @@ class PackageController extends Controller
     public function update(Request $request)
     {
         $valid = Validator::make($request->all(), [
+            'id' => 'required',
             'name' => 'required|unique:packages,name,'.$request->id,
-            'date' => 'required|date',
-            'expiry_date' => 'required|date',
+            'date' => 'required',
+            'expiry_date' => 'required',
             'amount' => 'required|numeric',
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
         }
         $package = Package::where('id',$request->id)->first();
         $package->name = $request->name;
         $package->date = $request->date;
         $package->expiry_date = $request->expiry_date;
         $package->amount = $request->amount;
-        if($package->save()) return response()->json(['Message' => 'New Package Updated Successfully!'], 200);
+        if($package->save()) return response()->json(['Message' => 'Package Updated Successfully!'], 200);
         else return response()->json(['Message' => 'Package not Updated!'], 500);
     }
 
     public function delete(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()],500);
+        }
         $package = Package::where('id',$request->id)->first();
         if(!empty($package)){
             if($package->delete()) return response()->json(['Message' => 'Package Deleted'], 200);

@@ -47,6 +47,7 @@ Route::middleware('auth:api')->group(function () {
         //order
         Route::post('order', [Api\OrderController::class, 'order']);
         //package
+        Route::get('/package', [Api\PackageController::class, 'show']);
         Route::post('add/package', [Api\PackageController::class, 'add']);
         Route::post('update/package', [Api\PackageController::class, 'update']);
         Route::post('delete/package', [Api\PackageController::class, 'delete']);
