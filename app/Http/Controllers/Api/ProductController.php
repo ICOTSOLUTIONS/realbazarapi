@@ -85,9 +85,10 @@ class ProductController extends Controller
         }
         try {
             DB::beginTransaction();
-            if (auth()->user()->role_id == 4 || auth()->user()->role_id == 5) {
+            $user = auth()->user();
+            if ($user->role_id == 4 || $user->role_id == 5) {
                 $new_product = new Product();
-                $new_product->user_id = auth()->user()->id;
+                $new_product->user_id = $user->id;
                 // if ($request->category && $request->sub_category) {
                 //     $category = Category::where('id', $request->category)->first();
                 //     if (!is_object($category)) {
