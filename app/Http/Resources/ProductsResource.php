@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ProductReview;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductsResource extends JsonResource
@@ -33,7 +34,7 @@ class ProductsResource extends JsonResource
             'sub_category' => $this->subCategories,
             'followers' => $this->user->follow,
             'likes' => $this->likes,
-            'reviews' => $this->reviews,
+            'reviews' => ProductReview::with('users')->where('product_id',$this->id)->get(),
             // 'featured' => $this->featured,
         ];
     }
