@@ -34,8 +34,8 @@ class ProductsResource extends JsonResource
             'sub_category' => $this->subCategories,
             'followers' => $this->user->follow,
             'likes' => $this->likes,
-            'reviews' => ProductReview::with('users')->where('product_id',$this->id)->get(),
-            // 'featured' => $this->featured,
+            // 'reviews' => ProductReview::with('users')->where('product_id',$this->id)->get(),
+            'reviews' => $this->reviews,
         ];
     }
 }

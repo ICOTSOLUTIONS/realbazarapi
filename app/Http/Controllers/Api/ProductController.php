@@ -24,7 +24,7 @@ class ProductController extends Controller
 {
     public function show()
     {
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories')->get();
+        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->get();
         return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
     }
 
@@ -36,7 +36,7 @@ class ProductController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories')->where('user_id', $request->id)->get();
+        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->where('user_id', $request->id)->get();
         if (count($all_product)) return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['Message' => 'Product not found'], 500);
     }
@@ -57,7 +57,7 @@ class ProductController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
         }
         $id = explode(',', $request->id);
-        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories')->get();
+        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->get();
         if (count($all_product)) return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['Message' => 'Product not found'], 500);
     }
@@ -290,7 +290,7 @@ class ProductController extends Controller
 
     public function historyProduct()
     {
-        $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories')->whereHas('history', function ($query) {
+        $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->whereHas('history', function ($query) {
             $query->where('user_id', auth()->user()->id);
         })->get();
         if (count($historyProduct)) return response()->json(['Products' => ProductsResource::collection($historyProduct)], 200);
