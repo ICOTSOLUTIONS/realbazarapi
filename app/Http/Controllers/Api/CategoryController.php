@@ -18,8 +18,8 @@ class CategoryController extends Controller
     public function show()
     {
         $category = Category::has('subCategory')->with('subCategory')->get();
-        if (count($category)) return response()->json(['Category' => CategoryResource::collection($category)], 200);
-        return response()->json(['Message' => 'Category not found'], 500);
+        if (count($category)) return response()->json(['status' => true, 'Category' => CategoryResource::collection($category)], 200);
+        return response()->json(['status' => false, 'Message' => 'Category not found']);
     }
 
     public function add(Request $request)
@@ -32,7 +32,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
         try {
             DB::beginTransaction();
@@ -60,12 +60,11 @@ class CategoryController extends Controller
                 if (!$subcategory->save()) throw new Error("New Category not Added!");
                 DB::commit();
                 $categories = Category::has('subCategory')->with('subCategory')->where('id', $category->id)->get();
-                return response()->json(['Category' => CategoryResource::collection($categories)], 200);
+                return response()->json(['status' => true, 'Category' => CategoryResource::collection($categories)], 200);
             } else throw new Error("Category and SubCtegory Required!");
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th);
-            return response()->json(['Message' => 'Category not Added!'], 500);
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
         }
     }
 
@@ -76,7 +75,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
         $category = Category::where('id', $request->id)->first();
         $category->name = $request->name;
@@ -87,18 +86,18 @@ class CategoryController extends Controller
             $image->storeAs('category', $filename, "public");
             $category->image = "category/" . $filename;
         }
-        if ($category->save()) return response()->json(['Message' => 'New Category Updated Successfully!', 'category' => $category ?? []], 200);
-        else return response()->json(['Message' => 'Category not Updated!'], 500);
+        if ($category->save()) return response()->json(['status' => true, 'Message' => 'New Category Updated Successfully!', 'category' => $category ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Category not Updated!']);
     }
 
     public function delete(Request $request)
     {
         $category = Category::where('id', $request->id)->first();
         if (!empty($category)) {
-            if ($category->delete()) return response()->json(['Message' => 'Category Deleted'], 200);
-            else return response()->json(['Message' => 'Category not deleted'], 500);
+            if ($category->delete()) return response()->json(['status' => true, 'Message' => 'Category Deleted'], 200);
+            else return response()->json(['status' => false, 'Message' => 'Category not deleted']);
         } else {
-            return response()->json(['Message' => 'Category not found'], 500);
+            return response()->json(['status' => false, 'Message' => 'Category not found']);
         }
     }
 
@@ -109,7 +108,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
 
         if (!empty($request->category_id)) {
@@ -119,22 +118,22 @@ class CategoryController extends Controller
                     $query->whereRelation('categories', 'id', $request->category_id);
                 })->get();
                 if (count($product)) {
-                    return response()->json(['Product' => ProductsResource::collection($product)], 200);
+                    return response()->json(['status' => true, 'Product' => ProductsResource::collection($product)], 200);
                 } else {
-                    return response()->json(['Message' => 'product not found'], 500);
+                    return response()->json(['status' => false, 'Message' => 'Product not found']);
                 }
             } else {
                 $product = Product::whereHas('subCategories', function ($query) use ($request) {
                     $query->whereRelation('categories', 'id', $request->category_id);
                 })->get();
                 if (count($product)) {
-                    return response()->json(['Product' => ProductsResource::collection($product)], 200);
+                    return response()->json(['status' => true, 'Product' => ProductsResource::collection($product)], 200);
                 } else {
-                    return response()->json(['Message' => 'product not found'], 500);
+                    return response()->json(['status' => false,  'Message' => 'Product not found']);
                 }
             }
         } else {
-            return response()->json(['Message' => 'Parameter is null'], 500);
+            return response()->json(['status' => false, 'Message' => 'Parameter is null']);
         }
     }
 }

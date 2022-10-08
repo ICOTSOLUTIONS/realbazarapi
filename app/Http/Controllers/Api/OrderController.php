@@ -72,12 +72,12 @@ class OrderController extends Controller
                 //     $payment->orders()->sync($order_ids);
                 // }
                 DB::commit();
-                return response()->json(['Message' => 'New Order Placed!'], 200);
+                return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
             } catch (\Throwable $th) {
                 DB::rollBack();
                 // throw $th;
-                return response()->json(['Message' => 'Order Request Failed!', 'request' => $request->all()], 500);
+                return response()->json(['status' => false, 'Message' => $th->getMessage(), 'request' => $request->all()]);
             }
-        } else return response()->json(['Message' => 'Order Request Failed!', 'request' => $request->all()], 500);
+        } else return response()->json(['status' => false, 'Message' => 'Order Request Failed!', 'request' => $request->all()]);
     }
 }

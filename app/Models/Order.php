@@ -11,23 +11,21 @@ class Order extends Model
 
     public function user_orders()
     {
-        return $this->hasMany(OrderProduct::class,'order_id','id');
+        return $this->hasMany(OrderProduct::class, 'order_id', 'id');
     }
 
     public function user_payments()
     {
-        return $this->hasMany(OrderPayment::class,'order_id','id');
+        return $this->hasMany(OrderPayment::class, 'order_id', 'id');
     }
 
     public function users()
     {
-        return $this->belongsTo(User::class,'user_id','id');
-
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function seller()
     {
-        return $this->belongsTo(User::class,'seller_id','id');
-
+        return $this->belongsTo(User::class, 'seller_id', 'id');
     }
 }

@@ -44,16 +44,16 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class,'role_id','id');
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
     public function products()
     {
-        return $this->hasMany(Product::class,'user_id','id');
+        return $this->hasMany(Product::class, 'user_id', 'id');
     }
 
     public function follow()
     {
-        return $this->hasMany(FollowUserShop::class,'shop_id','id');
+        return $this->hasMany(FollowUserShop::class, 'shop_id', 'id');
     }
 }

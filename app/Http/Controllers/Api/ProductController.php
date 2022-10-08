@@ -24,8 +24,8 @@ class ProductController extends Controller
 {
     public function show()
     {
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->get();
-        return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
+        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->get();
+        return response()->json(['status' => true, 'Products' => ProductsResource::collection($all_product)], 200);
     }
 
     public function vendorProduct(Request $request)
@@ -34,17 +34,17 @@ class ProductController extends Controller
             'id' => 'required',
         ]);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->where('user_id', $request->id)->get();
-        if (count($all_product)) return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
-        return response()->json(['Message' => 'Product not found'], 500);
+        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('user_id', $request->id)->get();
+        if (count($all_product)) return response()->json(['status' => true, 'Products' => ProductsResource::collection($all_product)], 200);
+        return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
     public function vendorFeaturedProduct()
     {
         $product = Product::with('user')->where('featured', 'Featured')->where('status', 'active')->get();
-        return response()->json(['Message' => true, 'products' => $product ?? []], 200);
+        return response()->json(['status' => true, 'products' => $product ?? []], 200);
     }
 
     public function showProduct(Request $request)
@@ -54,12 +54,12 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
         $id = explode(',', $request->id);
-        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->get();
-        if (count($all_product)) return response()->json(['Products' => ProductsResource::collection($all_product)], 200);
-        return response()->json(['Message' => 'Product not found'], 500);
+        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->get();
+        if (count($all_product)) return response()->json(['status' => true, 'Products' => ProductsResource::collection($all_product)], 200);
+        return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
     public function add(Request $request)
@@ -81,7 +81,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
         try {
             DB::beginTransaction();
@@ -141,14 +141,14 @@ class ProductController extends Controller
                     }
                 }
                 DB::commit();
-                return response()->json(['Message' => 'Product Added Successfully!'], 200);
+                return response()->json(['status' => true, 'Message' => 'Product Added Successfully!'], 200);
             } else {
                 DB::rollBack();
-                return response()->json(['Message' => 'Authenticated User Required!'], 500);
+                return response()->json(['status' => false, 'Message' => 'Authenticated User Required!']);
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json(['Message' => 'Product not Added!'], 500);
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
         }
     }
 
@@ -162,12 +162,12 @@ class ProductController extends Controller
                 }
             })->get();
             if (count($product)) {
-                return response()->json(['Products' => ProductsResource::collection($product)], 200);
+                return response()->json(['status' => true, 'Products' => ProductsResource::collection($product)], 200);
             } else {
-                return response()->json(['Message' => 'Product not found'], 500);
+                return response()->json(['status' => false, 'Message' => 'Product not found']);
             }
         } else {
-            return response()->json(['Message' => 'Parameter is null'], 500);
+            return response()->json(['status' => false, 'Message' => 'Parameter is null']);
         }
     }
 
@@ -190,7 +190,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
         $product = Product::where('id', $request->id)->first();
         $user = auth()->user();
@@ -239,16 +239,16 @@ class ProductController extends Controller
             // }
             // $product->details = $request->product_details;
             $product->save();
-            return response()->json(['Message' => 'Product Updated Successfully!'], 200);
+            return response()->json(['status' => true, 'Message' => 'Product Updated Successfully!'], 200);
         } else {
-            return response()->json(['Message' => 'Product not Updated!'], 500);
+            return response()->json(['status' => false, 'Message' => 'Product not Updated!']);
         }
     }
 
     public function image($id)
     {
         $all_image = ProductImage::where('product_id', $id)->get();
-        return response()->json(['Images' => $all_image], 200);
+        return response()->json(['status' => true, 'Images' => $all_image], 200);
     }
 
     public function addImage(Request $request)
@@ -262,9 +262,9 @@ class ProductController extends Controller
                 $product_image->image = "image/" . $filename;
                 $product_image->save();
             }
-            return response()->json(['Message' => 'Product Image Added Successfully!'], 200);
+            return response()->json(['status' => true, 'Message' => 'Product Image Added Successfully!'], 200);
         } else {
-            return response()->json(['Message' => 'Product Image not Added!'], 500);
+            return response()->json(['status' => false, 'Message' => 'Product Image not Added!']);
         }
     }
 
@@ -272,9 +272,9 @@ class ProductController extends Controller
     {
         $product = ProductImage::where('id', $request->id)->first();
         if (!empty($product)) {
-            if ($product->delete()) return response()->json(['Message' => 'Successfully Image deleted'], 200);
+            if ($product->delete()) return response()->json(['status' => true, 'Message' => 'Successfully Image deleted'], 200);
         } else {
-            return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted'], 500);
+            return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted']);
         }
     }
 
@@ -282,19 +282,19 @@ class ProductController extends Controller
     {
         $product = Product::where('id', $request->id)->first();
         if (!empty($product)) {
-            if ($product->delete()) return response()->json(['Message' => 'Successfully deleted Product'], 200);
+            if ($product->delete()) return response()->json(['status' => true, 'Message' => 'Successfully deleted Product'], 200);
         } else {
-            return response()->json(["status" => false, 'Message' => 'Product not deleted'], 500);
+            return response()->json(["status" => false, 'Message' => 'Product not deleted']);
         }
     }
 
     public function historyProduct()
     {
-        $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories','reviews.users')->whereHas('history', function ($query) {
+        $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('history', function ($query) {
             $query->where('user_id', auth()->user()->id);
         })->get();
-        if (count($historyProduct)) return response()->json(['Products' => ProductsResource::collection($historyProduct)], 200);
-        return response()->json(['Message' => 'Product not found'], 500);
+        if (count($historyProduct)) return response()->json(['status' => true, 'Products' => ProductsResource::collection($historyProduct)], 200);
+        return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
     public function addHistoryProduct(Request $request)
@@ -305,16 +305,16 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
 
         $history = UserProductHistory::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
-        if (!empty($history)) return response()->json(['Message' => 'users product exist in history'], 200);
+        if (!empty($history)) return response()->json(['status' => true, 'Message' => 'users product exist in history'], 200);
         $product = new UserProductHistory();
         $product->user_id = auth()->user()->id;
         $product->product_id = $request->product_id;
-        if ($product->save()) return response()->json(['Message' => 'users product added in history'], 200);
-        return response()->json(['Message' => 'users product not added in history'], 500);
+        if ($product->save()) return response()->json(['status' => true, 'Message' => 'users product added in history'], 200);
+        return response()->json(['status' => false, 'Message' => 'users product not added in history']);
     }
     public function seller_totalsales_count()
     {
@@ -459,19 +459,19 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
 
         $likeExist = LikeProduct::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
         if (is_object($likeExist)) {
-            if ($likeExist->delete()) return response()->json(['Message' => "UnLike Successfully"], 200);
-            return response()->json(['Message' => "UnLike not Successfull"], 500);
+            if ($likeExist->delete()) return response()->json(['status' => true, 'Message' => "UnLike Successfully"], 200);
+            return response()->json(['status' => false, 'Message' => "UnLike not Successfull"]);
         }
         $like = new LikeProduct();
         $like->user_id = auth()->user()->id;
         $like->product_id = $request->product_id;
-        if ($like->save()) return response()->json(['Message' => "Like Successfully"], 200);
-        return response()->json(['Message' => "Like not Successfull"], 500);
+        if ($like->save()) return response()->json(['status' => true, 'Message' => "Like Successfully"], 200);
+        return response()->json(['status' => false, 'Message' => "Like not Successfull"]);
     }
 
     public function reviewProduct(Request $request)
@@ -483,7 +483,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 500);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
 
         $review = new ProductReview();
@@ -491,7 +491,7 @@ class ProductController extends Controller
         $review->product_id = $request->product_id;
         $review->stars = $request->stars;
         $review->comments = $request->comments;
-        if ($review->save()) return response()->json(['Message' => "Review Successfully"], 200);
-        return response()->json(['Message' => "Review not Successfull"], 500);
+        if ($review->save()) return response()->json(['status' => true, 'Message' => "Review Successfully"], 200);
+        return response()->json(['status' => false, 'Message' => "Review not Successfull"]);
     }
 }

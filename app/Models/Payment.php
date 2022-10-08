@@ -10,6 +10,6 @@ class Payment extends Model
     use HasFactory;
     public function orders()
     {
-        return $this->belongsToMany(Order::class,'order_payments');
+        return $this->belongsToMany(Order::class, 'order_payments');
     }
 }

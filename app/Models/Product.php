@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category' ,'status'];
+    protected $fillable = ['category', 'status'];
     // public function color(): Attribute
     // {
     //     return Attribute::make(
@@ -28,30 +28,30 @@ class Product extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
     public function images()
     {
-        return $this->hasMany(ProductImage::class,'product_id','id');
+        return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
     public function subCategories()
     {
-        return $this->belongsTo(SubCategory::class,'sub_category_id','id');
+        return $this->belongsTo(SubCategory::class, 'sub_category_id', 'id');
     }
     public function orders()
     {
-        return $this->hasMany(OrderProduct::class,'product_id','id');
+        return $this->hasMany(OrderProduct::class, 'product_id', 'id');
     }
     public function history()
     {
-        return $this->hasMany(UserProductHistory::class,'product_id','id');
+        return $this->hasMany(UserProductHistory::class, 'product_id', 'id');
     }
     public function likes()
     {
-        return $this->hasMany(LikeProduct::class,'product_id','id');
+        return $this->hasMany(LikeProduct::class, 'product_id', 'id');
     }
     public function reviews()
     {
-        return $this->hasMany(ProductReview::class,'product_id','id');
+        return $this->hasMany(ProductReview::class, 'product_id', 'id');
     }
 }
