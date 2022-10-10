@@ -34,7 +34,7 @@ class SubCategoryController extends Controller
             'subcategory_image' => 'required',
         ]);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
         $category = Category::where('id', $request->category_id)->first();
         $subcategory = SubCategory::whereHas('categories', function ($query) use ($category) {
@@ -66,7 +66,7 @@ class SubCategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
         }
         $category = Category::where('id', $request->category_id)->first();
         $subcategory = SubCategory::where('id', $request->id)->first();
