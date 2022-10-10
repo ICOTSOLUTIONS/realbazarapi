@@ -12,7 +12,7 @@ class PackageController extends Controller
     public function show()
     {
         $package = Package::all();
-        if (count($package)) return response()->json(['status' => true, 'Package' => $package ?? []], 200);
+        if (count($package)) return response()->json(['status' => true, 'Message' => 'Package found', 'Package' => $package ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'Package not found']);
     }
 

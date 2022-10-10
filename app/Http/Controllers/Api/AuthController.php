@@ -88,14 +88,14 @@ class AuthController extends Controller
             if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
                 if ($user->is_active == true) {
                     $token = $user->createToken('token')->accessToken;
-                    return response()->json(['status' => true, 'token' => $token, 'user' => $user], 200);
+                    return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
                 } else {
                     auth()->logout();
                     return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
                 }
             } else {
                 $token = $user->createToken('token')->accessToken;
-                return response()->json(['status' => true, 'token' => $token, 'user' => $user], 200);
+                return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             }
         } elseif (auth()->attempt([
             'phone' => $request->emailphone,
@@ -105,14 +105,14 @@ class AuthController extends Controller
             if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
                 if ($user->is_active == true) {
                     $token = $user->createToken('token')->accessToken;
-                    return response()->json(['status' => true, 'token' => $token, 'user' => $user], 200);
+                    return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
                 } else {
                     auth()->logout();
                     return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
                 }
             } else {
                 $token = $user->createToken('token')->accessToken;
-                return response()->json(['status' => true, 'token' => $token, 'user' => $user], 200);
+                return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             }
         } else {
             return response()->json(['status' => false, 'Message' => 'Invalid Credentials']);
@@ -177,7 +177,7 @@ class AuthController extends Controller
             $user->password = Hash::make($request->password);
             $user->token = null;
             $user->save();
-            return response()->json(['status' => true, 'Message' => "Password reset succesfully", 'user' => $user,], 200);
+            return response()->json(['status' => true, 'Message' => "Password Reset Successfully", 'user' => $user,], 200);
         }
     }
 
@@ -185,8 +185,8 @@ class AuthController extends Controller
     public function edit_profile()
     {
         $user = User::with('role')->where('id', auth()->user()->id)->first();
-        if (!empty($user)) return response()->json(['status' => true, 'user', $user ?? []], 200);
-        else return response()->json(['status' => false, 'Message', 'user not found']);
+        if (!empty($user)) return response()->json(['status' => true, 'Message', 'User found', 'user', $user ?? []], 200);
+        else return response()->json(['status' => false, 'Message', 'User not found']);
     }
 
     public function update_profile(Request $request)

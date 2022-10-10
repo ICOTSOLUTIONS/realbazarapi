@@ -18,7 +18,7 @@ class CategoryController extends Controller
     public function show()
     {
         $category = Category::has('subCategory')->with('subCategory')->get();
-        if (count($category)) return response()->json(['status' => true, 'Category' => CategoryResource::collection($category)], 200);
+        if (count($category)) return response()->json(['status' => true, 'Message', 'Category found', 'Category' => CategoryResource::collection($category)], 200);
         return response()->json(['status' => false, 'Message' => 'Category not found']);
     }
 
@@ -60,7 +60,7 @@ class CategoryController extends Controller
                 if (!$subcategory->save()) throw new Error("New Category not Added!");
                 DB::commit();
                 $categories = Category::has('subCategory')->with('subCategory')->where('id', $category->id)->get();
-                return response()->json(['status' => true, 'Category' => CategoryResource::collection($categories)], 200);
+                return response()->json(['status' => true, 'Message' => 'New Category Added Successfully!', 'Category' => CategoryResource::collection($categories)], 200);
             } else throw new Error("Category and SubCtegory Required!");
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -118,7 +118,7 @@ class CategoryController extends Controller
                     $query->whereRelation('categories', 'id', $request->category_id);
                 })->get();
                 if (count($product)) {
-                    return response()->json(['status' => true, 'Product' => ProductsResource::collection($product)], 200);
+                    return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product)], 200);
                 } else {
                     return response()->json(['status' => false, 'Message' => 'Product not found']);
                 }
@@ -127,7 +127,7 @@ class CategoryController extends Controller
                     $query->whereRelation('categories', 'id', $request->category_id);
                 })->get();
                 if (count($product)) {
-                    return response()->json(['status' => true, 'Product' => ProductsResource::collection($product)], 200);
+                    return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product)], 200);
                 } else {
                     return response()->json(['status' => false,  'Message' => 'Product not found']);
                 }

@@ -25,7 +25,7 @@ class ProductController extends Controller
     public function show()
     {
         $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->get();
-        return response()->json(['status' => true, 'Products' => ProductsResource::collection($all_product)], 200);
+        return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
     }
 
     public function vendorProduct(Request $request)
@@ -37,14 +37,14 @@ class ProductController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('user_id', $request->id)->get();
-        if (count($all_product)) return response()->json(['status' => true, 'Products' => ProductsResource::collection($all_product)], 200);
+        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
     public function vendorFeaturedProduct()
     {
         $product = Product::with('user')->where('featured', 'Featured')->where('status', 'active')->get();
-        return response()->json(['status' => true, 'products' => $product ?? []], 200);
+        return response()->json(['status' => true, 'Message' => 'Product found', 'products' => $product ?? []], 200);
     }
 
     public function showProduct(Request $request)
@@ -58,7 +58,7 @@ class ProductController extends Controller
         }
         $id = explode(',', $request->id);
         $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->get();
-        if (count($all_product)) return response()->json(['status' => true, 'Products' => ProductsResource::collection($all_product)], 200);
+        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
@@ -162,7 +162,7 @@ class ProductController extends Controller
                 }
             })->get();
             if (count($product)) {
-                return response()->json(['status' => true, 'Products' => ProductsResource::collection($product)], 200);
+                return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
             } else {
                 return response()->json(['status' => false, 'Message' => 'Product not found']);
             }
@@ -248,7 +248,7 @@ class ProductController extends Controller
     public function image($id)
     {
         $all_image = ProductImage::where('product_id', $id)->get();
-        return response()->json(['status' => true, 'Images' => $all_image], 200);
+        return response()->json(['status' => true, 'Message' => 'Product Image found', 'Images' => $all_image], 200);
     }
 
     public function addImage(Request $request)
@@ -293,7 +293,7 @@ class ProductController extends Controller
         $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('history', function ($query) {
             $query->where('user_id', auth()->user()->id);
         })->get();
-        if (count($historyProduct)) return response()->json(['status' => true, 'Products' => ProductsResource::collection($historyProduct)], 200);
+        if (count($historyProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($historyProduct)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
@@ -309,12 +309,12 @@ class ProductController extends Controller
         }
 
         $history = UserProductHistory::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
-        if (!empty($history)) return response()->json(['status' => true, 'Message' => 'users product exist in history'], 200);
+        if (!empty($history)) return response()->json(['status' => true, 'Message' => 'Users product exist in history'], 200);
         $product = new UserProductHistory();
         $product->user_id = auth()->user()->id;
         $product->product_id = $request->product_id;
-        if ($product->save()) return response()->json(['status' => true, 'Message' => 'users product added in history'], 200);
-        return response()->json(['status' => false, 'Message' => 'users product not added in history']);
+        if ($product->save()) return response()->json(['status' => true, 'Message' => 'Users product added in history'], 200);
+        return response()->json(['status' => false, 'Message' => 'Users product not added in history']);
     }
     public function seller_totalsales_count()
     {

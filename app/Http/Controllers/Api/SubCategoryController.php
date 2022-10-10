@@ -14,7 +14,7 @@ class SubCategoryController extends Controller
     public function show()
     {
         $subcategory = SubCategory::has('categories')->with('categories')->get();
-        if (count($subcategory)) return response()->json(['status' => true, 'SubCategory' => SubCategoryResource::collection($subcategory)], 200);
+        if (count($subcategory)) return response()->json(['status' => true, 'Message' => 'SubCategory found', 'SubCategory' => SubCategoryResource::collection($subcategory)], 200);
         return response()->json(['status' => false, 'Message' => 'SubCategory not found']);
     }
 
@@ -22,7 +22,7 @@ class SubCategoryController extends Controller
     {
         if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
         $subcategory = SubCategory::has('categories')->with('categories')->where('category_id', $id)->get();
-        if (count($subcategory)) return response()->json(['status' => true, 'SubCategory' => SubCategoryResource::collection($subcategory)], 200);
+        if (count($subcategory)) return response()->json(['status' => true, 'Message' => 'SubCategory found', 'SubCategory' => SubCategoryResource::collection($subcategory)], 200);
         return response()->json(['status' => false, 'Message' => 'SubCategory not found']);
     }
 
