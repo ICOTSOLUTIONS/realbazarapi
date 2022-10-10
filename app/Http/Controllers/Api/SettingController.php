@@ -17,7 +17,7 @@ class SettingController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $email = $request->email;
         $content = $request->content;

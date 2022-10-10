@@ -34,7 +34,7 @@ class ProductController extends Controller
             'id' => 'required',
         ]);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('user_id', $request->id)->get();
         if (count($all_product)) return response()->json(['status' => true, 'Products' => ProductsResource::collection($all_product)], 200);
@@ -54,7 +54,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $id = explode(',', $request->id);
         $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->get();
@@ -81,7 +81,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         try {
             DB::beginTransaction();
@@ -190,7 +190,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $product = Product::where('id', $request->id)->first();
         $user = auth()->user();
@@ -305,7 +305,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
         $history = UserProductHistory::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
@@ -459,7 +459,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
         $likeExist = LikeProduct::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
@@ -483,7 +483,7 @@ class ProductController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
         $review = new ProductReview();

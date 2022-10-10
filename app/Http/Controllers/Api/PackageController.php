@@ -26,7 +26,7 @@ class PackageController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $package = new Package();
         $package->name = $request->name;
@@ -48,7 +48,7 @@ class PackageController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $package = Package::where('id', $request->id)->first();
         $package->name = $request->name;
@@ -66,7 +66,7 @@ class PackageController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $package = Package::where('id', $request->id)->first();
         if (!empty($package)) {

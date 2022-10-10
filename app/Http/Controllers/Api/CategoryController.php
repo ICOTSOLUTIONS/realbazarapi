@@ -32,7 +32,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         try {
             DB::beginTransaction();
@@ -75,7 +75,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $category = Category::where('id', $request->id)->first();
         $category->name = $request->name;
@@ -108,7 +108,7 @@ class CategoryController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
         if (!empty($request->category_id)) {
