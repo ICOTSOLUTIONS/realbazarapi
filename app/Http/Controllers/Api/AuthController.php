@@ -37,7 +37,7 @@ class AuthController extends Controller
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         try {
             DB::beginTransaction();
@@ -78,7 +78,7 @@ class AuthController extends Controller
         $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         if (auth()->attempt([
             'email' => $request->emailphone,
@@ -130,7 +130,7 @@ class AuthController extends Controller
         $valid = Validator::make($request->all(), $rules);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         if (is_numeric($request->get('emailphone'))) {
             $user = User::where('phone', $request->emailphone)->first();
@@ -166,7 +166,7 @@ class AuthController extends Controller
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         if (is_numeric($request->get('emailphone'))) {
             $user = User::where('phone', $request->emailphone)->where('token', $request->token)->first();
@@ -205,7 +205,7 @@ class AuthController extends Controller
             }
             $valid = Validator::make($request->all(), $rules);
             if ($valid->fails()) {
-                return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+                return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
             }
             try {
                 DB::beginTransaction();
@@ -242,7 +242,7 @@ class AuthController extends Controller
         ]);
 
         if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()], 422);
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
         $followExist = FollowUserShop::where('user_id', auth()->user()->id)->where('shop_id', $request->shop_id)->first();
