@@ -51,6 +51,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('add/package', [Api\PackageController::class, 'add']);
     Route::post('update/package', [Api\PackageController::class, 'update']);
     Route::post('delete/package', [Api\PackageController::class, 'delete']);
+
+    //chat
+    Route::post('/message', [Api\ChatController::class, 'message']);
+    Route::post('/chats', [Api\ChatController::class, 'chat']);
 });
 //product
 Route::get('sellers', [Api\AuthController::class, 'showSeller']);
