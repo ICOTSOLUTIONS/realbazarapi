@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(FollowUserShop::class, 'shop_id', 'id');
     }
+
+    public function userPackagePayment()
+    {
+        return $this->hasMany(PackagePayment::class, 'user_id', 'id');
+    }
 }

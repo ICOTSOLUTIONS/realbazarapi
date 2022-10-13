@@ -52,6 +52,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('update/package', [Api\PackageController::class, 'update']);
     Route::post('delete/package', [Api\PackageController::class, 'delete']);
     Route::post('buy/package', [Api\PackageController::class, 'payment']);
+    Route::get('subscription/expired', [Api\PackageController::class, 'packageExpiredPeriod']);
 
     //chat
     Route::get('/allMessages', [Api\ChatController::class, 'allMessages']);

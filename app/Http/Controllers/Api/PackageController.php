@@ -89,9 +89,9 @@ class PackageController extends Controller
     {
         try {
             DB::beginTransaction();
-            $package = Package::where('id', $request->id)->first();
+            $package = Package::where('id', $request->package_id)->first();
             $exist_user = PackagePayment::where('user_id', auth()->user()->id)
-                ->where('package_id', $request->id)->first();
+                ->where('package_id', $request->package_id)->first();
             if (!empty($exist_user)) {
                 $date = Carbon::now();
                 if ($exist_user->end_date > $date) throw new Error('Your Package expiry date is ' . $exist_user->end_date);
@@ -102,7 +102,7 @@ class PackageController extends Controller
                         if ($package->period == 'month') $end_date = Carbon::now()->addMonths($package->time);
                         if ($package->period == 'week') $end_date = Carbon::now()->addDays($package->time * 7);
                         $exist_user->user_id = auth()->user()->id;
-                        $exist_user->package_id = $request->id;
+                        $exist_user->package_id = $request->package_id;
                         $exist_user->start_date = $date;
                         $exist_user->end_date = $end_date;
                         if (!$exist_user->save()) throw new Error('Package not Buy');
@@ -115,11 +115,11 @@ class PackageController extends Controller
                 if (!empty($response)) {
                     $date = Carbon::now();
                     $paymentPackage = new PackagePayment();
-                    if ($package->period == 'year') $end_date = Carbon::now()->addYear($package->time);
-                    if ($package->period == 'month') $end_date = Carbon::now()->addMonths($package->time);
-                    if ($package->period == 'week') $end_date = Carbon::now()->addDays($package->time * 7);
+                    if ($package->period == 'year' || $package->period == 'Year' ) $end_date = Carbon::now()->addYear($package->time);
+                    if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
+                    if ($package->period == 'week' || $package->period == 'Week') $end_date = Carbon::now()->addDays($package->time * 7);
                     $paymentPackage->user_id = auth()->user()->id;
-                    $paymentPackage->package_id = $request->id;
+                    $paymentPackage->package_id = $request->package_id;
                     $paymentPackage->start_date = $date;
                     $paymentPackage->end_date = $end_date;
                     if (!$paymentPackage->save()) throw new Error('Package not Buy');
@@ -131,5 +131,12 @@ class PackageController extends Controller
             DB::rollBack();
             return response()->json(['status' => false, 'Message' =>  $th->getMessage()]);
         }
+    }
+
+    public function packageExpiredPeriod()
+    {
+        $expirePeriod = PackagePayment::with(['user', 'package'])->get();
+        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [],'duration'=>'877']);
+        else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
     }
 }
