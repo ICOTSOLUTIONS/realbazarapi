@@ -194,6 +194,7 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $product = Product::where('id', $request->id)->first();
+            dd($product);
             $user = auth()->user();
             if ($user->role_id == 4 || $user->role_id == 5) {
                 $product->user_id = $user->id;
