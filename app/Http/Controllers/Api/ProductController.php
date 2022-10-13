@@ -223,7 +223,7 @@ class ProductController extends Controller
                 //         }
                 //     }
                 // }
-                $product->sub_category_id = $request->sub_category_id->id;
+                $product->sub_category_id = $request->sub_category_id;
                 $product->title = $request->title;
                 $product->price = $request->price;
                 $product->discount_price = $request->discount;
