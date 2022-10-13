@@ -253,7 +253,8 @@ class ProductController extends Controller
     public function image($id)
     {
         $all_image = ProductImage::where('product_id', $id)->get();
-        return response()->json(['status' => true, 'Message' => 'Product Image found', 'Images' => $all_image], 200);
+        if (count($all_image)) return response()->json(['status' => true, 'Message' => 'Product Image found', 'Images' => $all_image], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product Image not found']);
     }
 
     public function addImage(Request $request)
@@ -262,15 +263,13 @@ class ProductController extends Controller
             foreach ($request->product_image as $image) {
                 $product_image = new ProductImage();
                 $product_image->product_id = $request->product_id;
-                $filename = "Image-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
-                $image->storeAs('image', $filename, "public");
-                $product_image->image = "image/" . $filename;
+                $filename = "Product-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                $image->storeAs('product', $filename, "public");
+                $product_image->image = "product/" . $filename;
                 $product_image->save();
             }
             return response()->json(['status' => true, 'Message' => 'Product Image Added Successfully!'], 200);
-        } else {
-            return response()->json(['status' => false, 'Message' => 'Product Image not Added!']);
-        }
+        } else return response()->json(['status' => false, 'Message' => 'Product Image not Added!']);
     }
 
     public function deleteImage(Request $request)
@@ -278,9 +277,7 @@ class ProductController extends Controller
         $product = ProductImage::where('id', $request->id)->first();
         if (!empty($product)) {
             if ($product->delete()) return response()->json(['status' => true, 'Message' => 'Successfully Image deleted'], 200);
-        } else {
-            return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted']);
-        }
+        } else return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted']);
     }
 
     public function delete(Request $request)
