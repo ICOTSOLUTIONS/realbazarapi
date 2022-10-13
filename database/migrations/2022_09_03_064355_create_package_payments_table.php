@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('package_payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('package_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('package_id')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
