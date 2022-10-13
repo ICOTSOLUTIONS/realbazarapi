@@ -45,7 +45,7 @@ class PackageController extends Controller
         $valid = Validator::make($request->all(), [
             'id' => 'required',
             'name' => 'required|unique:packages,name,' . $request->id,
-            'date' => 'required',
+            // 'date' => 'required',
             'time' => 'required|gt:0',
             'period' => 'required',
             'amount' => 'required|numeric',
@@ -56,7 +56,7 @@ class PackageController extends Controller
         }
         $package = Package::where('id', $request->id)->first();
         $package->name = $request->name;
-        $package->date = $request->date;
+        // $package->date = $request->date;
         $package->time = $request->time;
         $package->period = $request->period;
         $package->amount = $request->amount;
