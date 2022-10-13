@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('packages', function (Blueprint $table) {
+        Schema::create('banners', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->string('date')->nullable();
-            $table->string('time')->nullable();
-            $table->string('period')->nullable();
-            $table->string('amount')->nullable();
-            $table->boolean('is_active')->default(true);
+            // $table->string('title')->nullable();
+            // $table->string('heading')->nullable();
+            $table->text('image')->nullable();
+            $table->boolean('is_header')->default(false);
+            $table->boolean('is_body')->default(false);
+            $table->boolean('is_footer')->default(false);
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('packages');
+        Schema::dropIfExists('banners');
     }
 };

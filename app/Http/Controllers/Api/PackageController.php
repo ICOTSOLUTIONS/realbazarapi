@@ -21,7 +21,8 @@ class PackageController extends Controller
         $valid = Validator::make($request->all(), [
             'name' => 'required|unique:packages,name',
             'date' => 'required',
-            'expiry_date' => 'required',
+            'time' => 'required|gt:0',
+            'period' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -31,7 +32,8 @@ class PackageController extends Controller
         $package = new Package();
         $package->name = $request->name;
         $package->date = $request->date;
-        $package->expiry_date = $request->expiry_date;
+        $package->time = $request->time;
+        $package->period = $request->period;
         $package->amount = $request->amount;
         if ($package->save()) return response()->json(['status' => true, 'Message' => 'New Package Added Successfully!'], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Added!']);
@@ -43,7 +45,8 @@ class PackageController extends Controller
             'id' => 'required',
             'name' => 'required|unique:packages,name,' . $request->id,
             'date' => 'required',
-            'expiry_date' => 'required',
+            'time' => 'required|gt:0',
+            'period' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -53,7 +56,8 @@ class PackageController extends Controller
         $package = Package::where('id', $request->id)->first();
         $package->name = $request->name;
         $package->date = $request->date;
-        $package->expiry_date = $request->expiry_date;
+        $package->time = $request->time;
+        $package->period = $request->period;
         $package->amount = $request->amount;
         if ($package->save()) return response()->json(['status' => true, 'Message' => 'Package Updated Successfully!'], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Updated!']);

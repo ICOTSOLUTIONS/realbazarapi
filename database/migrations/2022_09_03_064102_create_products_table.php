@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('price')->nullable();
             $table->string('discount_price')->nullable();
             $table->string('color')->nullable();
-            // $table->string('size')->nullable();
+            $table->string('size')->nullable();
             $table->mediumText('desc')->nullable();
             // $table->string('brand')->nullable();
             // $table->string('selected_qty')->nullable();

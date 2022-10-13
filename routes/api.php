@@ -53,8 +53,16 @@ Route::middleware('auth:api')->group(function () {
     Route::post('delete/package', [Api\PackageController::class, 'delete']);
 
     //chat
+    Route::get('/allMessages', [Api\ChatController::class, 'allMessages']);
     Route::post('/message', [Api\ChatController::class, 'message']);
     Route::post('/chats', [Api\ChatController::class, 'chat']);
+
+    //banner
+    Route::get('/banner/{section}', [Api\BannerController::class, 'banner']);
+    Route::post('/add/banner', [Api\BannerController::class, 'addBanner']);
+    Route::post('/update/banner', [Api\BannerController::class, 'updateBanner']);
+    Route::post('/delete/banner', [Api\BannerController::class, 'deleteBanner']);
+
 });
 //product
 Route::get('sellers', [Api\AuthController::class, 'showSeller']);
