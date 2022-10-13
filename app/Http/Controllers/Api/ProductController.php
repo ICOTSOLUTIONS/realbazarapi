@@ -193,10 +193,10 @@ class ProductController extends Controller
         }
         try {
             DB::beginTransaction();
-            $product = Product::where('id', $request->id)->first();
-            dd($product);
             $user = auth()->user();
             if ($user->role_id == 4 || $user->role_id == 5) {
+                $product = Product::where('id', $request->id)->first();
+                // dd($request->all());
                 $product->user_id = $user->id;
                 // if ($request->category && $request->sub_category) {
                 //     $category = Category::where('name', $request->category)->first();
@@ -241,7 +241,8 @@ class ProductController extends Controller
                 // }
                 // $product->details = $request->product_details;
                 if (!$product->save()) throw new Error("Product not updated!");
-                return response()->json(['status' => true, 'Message' => 'Product Updated Successfully!'], 200);
+                DB::commit();
+                return response()->json(['status' => true, 'Message' => 'Product Updated Successfully!', 'product' => $product], 200);
             } else throw new Error("Authenticated User Required!");
         } catch (\Throwable $th) {
             DB::rollBack();
