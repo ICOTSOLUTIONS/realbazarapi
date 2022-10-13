@@ -15,6 +15,7 @@ use App\Models\SubCategory;
 use App\Models\User;
 use App\Models\UserProductHistory;
 use Carbon\Carbon;
+use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -129,7 +130,7 @@ class ProductController extends Controller
                 //     $new_product->status = "pending";
                 // }
 
-                $new_product->save();
+                if (!$new_product->save()) throw new Error("Product not added!");
                 if (!empty($request->product_image)) {
                     foreach ($request->product_image as $image) {
                         $product_image = new ProductImage();
@@ -137,15 +138,12 @@ class ProductController extends Controller
                         $filename = "Product-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
                         $image->storeAs('product', $filename, "public");
                         $product_image->image = "product/" . $filename;
-                        $product_image->save();
+                        if (!$product_image->save()) throw new Error("Product Images not added!");
                     }
                 }
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Product Added Successfully!'], 200);
-            } else {
-                DB::rollBack();
-                return response()->json(['status' => false, 'Message' => 'Authenticated User Required!']);
-            }
+            } else throw new Error("Authenticated User Required!");
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
@@ -182,7 +180,7 @@ class ProductController extends Controller
             // 'product_status' => 'required',
             // 'product_selected_qty' => 'nullable',
             'product_desc' => 'required',
-            'product_image' => 'required|array',
+            // 'product_image' => 'required|array',
             // 'category' => 'required',
             // 'featured' => 'required',
             'tags' => 'required',
@@ -192,56 +190,60 @@ class ProductController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $product = Product::where('id', $request->id)->first();
-        $user = auth()->user();
-        if ($user->role_id == 4 || $user->role_id == 5) {
-            $product->user_id = $user->id;
-            // if ($request->category && $request->sub_category) {
-            //     $category = Category::where('name', $request->category)->first();
-            //     if (!is_object($category)) {
-            //         $category = new Category();
-            //         $category->name = $request->category;
-            //         $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
-            //         $category->save();
+        try {
+            DB::beginTransaction();
+            $product = Product::where('id', $request->id)->first();
+            $user = auth()->user();
+            if ($user->role_id == 4 || $user->role_id == 5) {
+                $product->user_id = $user->id;
+                // if ($request->category && $request->sub_category) {
+                //     $category = Category::where('name', $request->category)->first();
+                //     if (!is_object($category)) {
+                //         $category = new Category();
+                //         $category->name = $request->category;
+                //         $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
+                //         $category->save();
 
-            //         $subcategory = new SubCategory();
-            //         $subcategory->category_id = $category->id;
-            //         $subcategory->name = $request->sub_category;
-            //         $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-            //         $subcategory->save();
-            //     } else {
-            //         $subcategory = SubCategory::whereHas('categories', function ($query) use ($request, $category) {
-            //             $query->where('id', $category->id);
-            //         })->where('name', $request->sub_category)->first();
-            //         if (!is_object($subcategory)) {
-            //             $subcategory = new SubCategory();
-            //             $subcategory->category_id = $category->id;
-            //             $subcategory->name = $request->sub_category;
-            //             $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-            //             $subcategory->save();
-            //         }
-            //     }
-            // }
-            $product->sub_category_id = $request->sub_category_id->id;
-            $product->title = $request->title;
-            $product->price = $request->price;
-            $product->discount_price = $request->discount;
-            $product->tags = $request->tags;
-            $product->desc = $request->product_desc;
-            // $product->size = $request->size;
-            // $product->brand = $request->brand;
-            // $product->type = $request->product_status;
-            // $product->featured = $request->featured;
-            // if ($request->featured == "Featured") {
-            // $product->status = "pending";
-            // } else {
-            // $product->status = null;
-            // }
-            // $product->details = $request->product_details;
-            $product->save();
-            return response()->json(['status' => true, 'Message' => 'Product Updated Successfully!'], 200);
-        } else {
-            return response()->json(['status' => false, 'Message' => 'Product not Updated!']);
+                //         $subcategory = new SubCategory();
+                //         $subcategory->category_id = $category->id;
+                //         $subcategory->name = $request->sub_category;
+                //         $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
+                //         $subcategory->save();
+                //     } else {
+                //         $subcategory = SubCategory::whereHas('categories', function ($query) use ($request, $category) {
+                //             $query->where('id', $category->id);
+                //         })->where('name', $request->sub_category)->first();
+                //         if (!is_object($subcategory)) {
+                //             $subcategory = new SubCategory();
+                //             $subcategory->category_id = $category->id;
+                //             $subcategory->name = $request->sub_category;
+                //             $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
+                //             $subcategory->save();
+                //         }
+                //     }
+                // }
+                $product->sub_category_id = $request->sub_category_id->id;
+                $product->title = $request->title;
+                $product->price = $request->price;
+                $product->discount_price = $request->discount;
+                $product->tags = $request->tags;
+                $product->desc = $request->product_desc;
+                // $product->size = $request->size;
+                // $product->brand = $request->brand;
+                // $product->type = $request->product_status;
+                // $product->featured = $request->featured;
+                // if ($request->featured == "Featured") {
+                // $product->status = "pending";
+                // } else {
+                // $product->status = null;
+                // }
+                // $product->details = $request->product_details;
+                if (!$product->save()) throw new Error("Product not updated!");
+                return response()->json(['status' => true, 'Message' => 'Product Updated Successfully!'], 200);
+            } else throw new Error("Authenticated User Required!");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
         }
     }
 
