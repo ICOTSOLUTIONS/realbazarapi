@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Package;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,7 +21,7 @@ class PackageController extends Controller
     {
         $valid = Validator::make($request->all(), [
             'name' => 'required|unique:packages,name',
-            'date' => 'required',
+            // 'date' => 'required',
             'time' => 'required|gt:0',
             'period' => 'required',
             'amount' => 'required|numeric',
@@ -31,7 +32,7 @@ class PackageController extends Controller
         }
         $package = new Package();
         $package->name = $request->name;
-        $package->date = $request->date;
+        $package->date = Carbon::now();
         $package->time = $request->time;
         $package->period = $request->period;
         $package->amount = $request->amount;
