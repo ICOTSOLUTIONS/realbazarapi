@@ -51,6 +51,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('add/package', [Api\PackageController::class, 'add']);
     Route::post('update/package', [Api\PackageController::class, 'update']);
     Route::post('delete/package', [Api\PackageController::class, 'delete']);
+    Route::post('buy/package', [Api\PackageController::class, 'payment']);
 
     //chat
     Route::get('/allMessages', [Api\ChatController::class, 'allMessages']);

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Package;
+use App\Models\PackagePayment;
 use Carbon\Carbon;
+use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PackageController extends Controller
@@ -79,6 +82,54 @@ class PackageController extends Controller
             else return response()->json(['status' => false, 'Message' => 'Package not deleted']);
         } else {
             return response()->json(['status' => false, 'Message' => 'Package not found']);
+        }
+    }
+
+    public function payment(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $package = Package::where('id', $request->id)->first();
+            $exist_user = PackagePayment::where('user_id', auth()->user()->id)
+                ->where('package_id', $request->id)->first();
+            if (!empty($exist_user)) {
+                $date = Carbon::now();
+                if ($exist_user->end_date > $date) throw new Error('Your Package expiry date is ' . $exist_user->end_date);
+                else {
+                    $response = 'success';
+                    if (!empty($response)) {
+                        if ($package->period == 'year') $end_date = Carbon::now()->addYear($package->time);
+                        if ($package->period == 'month') $end_date = Carbon::now()->addMonths($package->time);
+                        if ($package->period == 'week') $end_date = Carbon::now()->addDays($package->time * 7);
+                        $exist_user->user_id = auth()->user()->id;
+                        $exist_user->package_id = $request->id;
+                        $exist_user->start_date = $date;
+                        $exist_user->end_date = $end_date;
+                        if (!$exist_user->save()) throw new Error('Package not Buy');
+                        DB::commit();
+                        return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
+                    } else throw new Error('Response not success');
+                }
+            } else {
+                $response = 'success';
+                if (!empty($response)) {
+                    $date = Carbon::now();
+                    $paymentPackage = new PackagePayment();
+                    if ($package->period == 'year') $end_date = Carbon::now()->addYear($package->time);
+                    if ($package->period == 'month') $end_date = Carbon::now()->addMonths($package->time);
+                    if ($package->period == 'week') $end_date = Carbon::now()->addDays($package->time * 7);
+                    $paymentPackage->user_id = auth()->user()->id;
+                    $paymentPackage->package_id = $request->id;
+                    $paymentPackage->start_date = $date;
+                    $paymentPackage->end_date = $end_date;
+                    if (!$paymentPackage->save()) throw new Error('Package not Buy');
+                    DB::commit();
+                    return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
+                } else throw new Error('Response not success');
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'Message' =>  $th->getMessage()]);
         }
     }
 }
