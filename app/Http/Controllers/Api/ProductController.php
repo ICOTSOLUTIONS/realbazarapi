@@ -259,6 +259,14 @@ class ProductController extends Controller
 
     public function addImage(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'product_id' => 'required|numeric',
+            'product_image' => 'required|array',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
         if (!empty($request->product_image)) {
             foreach ($request->product_image as $image) {
                 $product_image = new ProductImage();
