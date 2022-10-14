@@ -39,7 +39,7 @@ class ChatController extends Controller
             $chat->receiver_id = $receiver_id;
             $chat->save();
         }
-        return response()->json(['Message' => "Done", 'chat' => $chat, 'user' => $user, 'receiver' => $receiver]);
+        return response()->json(['Message' => "Done", 'chat' => $chat]);
     }
 
     public function message(Request $request)
