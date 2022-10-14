@@ -22,10 +22,11 @@ class ChatController extends Controller
         return response()->json(['Message' => "Done", 'chat' => $chat, 'user' => $user]);
     }
 
-    public function chat($receiver_id)
+    public function chat(Request $request)
     {
         $user = auth()->user();
         $user_id = $user->id;
+        $receiver_id = $request->receiver_id;
         $receiver = User::find($receiver_id);
         $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
             $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
