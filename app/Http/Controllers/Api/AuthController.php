@@ -15,12 +15,27 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
 
-    public function showSeller()
+    public function wholesaler()
     {
-        $users = User::with('role')->where('role_id', 4)->orWhere('role_id', 5)->get();
+        $wholesalers = User::with('role')->where('role_id', 4)->get();
+        if (count($wholesalers)) return response()->json(['status' => true, 'wholesalers' => $wholesalers ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'not found']);
+    }
+
+    public function user()
+    {
+        $users = User::with('role')->where('role_id', 3)->get();
         if (count($users)) return response()->json(['status' => true, 'users' => $users ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'not found']);
     }
+
+    public function retailer()
+    {
+        $retailers = User::with('role')->where('role_id', 5)->get();
+        if (count($retailers)) return response()->json(['status' => true, 'retailers' => $retailers ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'not found']);
+    }
+    
     public function signup(Request $request)
     {
         $rules = [

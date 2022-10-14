@@ -67,7 +67,9 @@ Route::middleware('auth:api')->group(function () {
 
 });
 //product
-Route::get('sellers', [Api\AuthController::class, 'showSeller']);
+Route::get('wholesalers', [Api\AuthController::class, 'wholesaler']);
+Route::get('users', [Api\AuthController::class, 'user']);
+Route::get('retailers', [Api\AuthController::class, 'retailer']);
 Route::get('search/{name}', [Api\ProductController::class, 'search']);
 Route::get('products', [Api\ProductController::class, 'show']);
 Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
