@@ -19,7 +19,7 @@ class ChatController extends Controller
         })->orWhere(function ($q) use ($user_id) {
             $q->where('receiver_id', $user_id);
         })->get();
-        return response()->json(['Message' => "Done", 'chat' => $chat, 'user' => $user]);
+        return response()->json(['Message' => "Done", 'chat' => $chat]);
     }
 
     public function chat(Request $request)
