@@ -25,24 +25,26 @@ class ChatController extends Controller
     public function chat(Request $request)
     {
         $user = auth()->user();
-        $user_id = $user->id;
         $receiver_id = $request->receiver_id;
+        $user_id = $user->id;
         $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
             $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
         })->orWhere(function ($q) use ($receiver_id, $user_id) {
             $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
         })->first();
         if (!is_object($chat)) {
-            $chat = new Chat();
-            $chat->sender_id = $user_id;
-            $chat->receiver_id = $receiver_id;
-            if ($chat->save()) {
-                $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
-                    $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
-                })->orWhere(function ($q) use ($receiver_id, $user_id) {
-                    $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
-                })->first();
-            }
+            $receiver = User::find($receiver_id);
+            // $chat = new Chat();
+            // $chat->sender_id = $user_id;
+            // $chat->receiver_id = $receiver_id;
+            // if ($chat->save()) {
+            //     $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
+            //         $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
+            //     })->orWhere(function ($q) use ($receiver_id, $user_id) {
+            //         $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
+            //     })->first();
+            // }
+            return response()->json(['Message' => "Done", 'sender' => $user, 'receiver' => $receiver]);
         }
         return response()->json(['Message' => "Done", 'chat' => $chat]);
     }
@@ -61,7 +63,13 @@ class ChatController extends Controller
             $chat = new Chat();
             $chat->sender_id = $user_id;
             $chat->receiver_id = $receiver_id;
-            $chat->save();
+            if ($chat->save()) {
+                $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
+                    $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
+                })->orWhere(function ($q) use ($receiver_id, $user_id) {
+                    $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
+                })->first();
+            }
         }
         event(new MessageEvent($user->name, $request->message, $chat->id));
         return response()->json(['Message' => "done", 'chat' => $chat]);
