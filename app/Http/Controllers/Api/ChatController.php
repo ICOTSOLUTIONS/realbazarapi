@@ -44,7 +44,7 @@ class ChatController extends Controller
             //         $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
             //     })->first();
             // }
-            return response()->json(['Message' => "Done", 'sender' => $user, 'receiver' => $receiver]);
+            return response()->json(['Message' => "Done", 'chat' => $chat, 'sender' => $user, 'receiver' => $receiver]);
         }
         return response()->json(['Message' => "Done", 'chat' => $chat]);
     }
