@@ -35,7 +35,7 @@ class AuthController extends Controller
         if (count($retailers)) return response()->json(['status' => true, 'retailers' => $retailers ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'not found']);
     }
-    
+
     public function signup(Request $request)
     {
         $rules = [
@@ -58,7 +58,7 @@ class AuthController extends Controller
             DB::beginTransaction();
             $user = new User();
             if ($request->role == 'user') $user->role_id = 3;
-            if ($request->role == 'holeseller') $user->role_id = 4;
+            if ($request->role == 'wholesaler') $user->role_id = 4;
             if ($request->role == 'retailer') $user->role_id = 5;
             $user->username =  $request->name;
             $user->first_name =  $request->first_name;

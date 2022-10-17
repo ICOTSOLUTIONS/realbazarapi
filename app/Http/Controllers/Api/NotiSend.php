@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-  class Handle{
+  class NotiSend{
 
 static  function sendNotif($token,$title,$msg){
 

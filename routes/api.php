@@ -65,6 +65,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/update/banner', [Api\BannerController::class, 'updateBanner']);
     Route::post('/delete/banner', [Api\BannerController::class, 'deleteBanner']);
 
+    //notification
+    Route::get('/allNotification', [Api\NotificationController::class, 'allNotification']);
+    Route::post('/sendNotification', [Api\NotificationController::class, 'sendNotification']);
+    Route::post('/singleNotification', [Api\NotificationController::class, 'singleNotification']);
+
 });
 //product
 Route::get('wholesalers', [Api\AuthController::class, 'wholesaler']);
