@@ -19,6 +19,26 @@ class NotificationController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Notification not Found']);
     }
 
+    public function notification()
+    {
+        $noti = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->get();
+        $notifications_count = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->count();
+        if (count($noti)) return response()->json(['status' => true, 'Message' => "Notifications found", 'Notifications' => $noti ?? [], "notifications_count" => $notifications_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => "Notifications not found"]);
+    }
+
+    public function notification_change()
+    {
+        $noti = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->get();
+        if (!count($noti)) return response()->json(['status' => false, 'Message' => "Notifications not found"]);
+        foreach ($noti as $key => $value) {
+            $value->status = 1;
+            $value->save();
+        }
+        $notifications_count = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->count();
+        return response()->json(['status' => true, 'Message' => "Notifications found", 'Notifications' => $noti ?? [], "notifications_count" => $notifications_count ?? []], 200);
+    }
+
     public function sendNotification(Request $request)
     {
         $valid = Validator::make($request->all(), [
