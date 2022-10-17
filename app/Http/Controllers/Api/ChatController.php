@@ -8,6 +8,7 @@ use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ChatController extends Controller
 {
@@ -54,6 +55,15 @@ class ChatController extends Controller
 
     public function message(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'receiver_id' => 'required',
+            'message' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
         try {
             DB::beginTransaction();
             $user = auth()->user();
