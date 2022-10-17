@@ -103,6 +103,8 @@ class AuthController extends Controller
             if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
                 if ($user->is_active == true) {
                     $token = $user->createToken('token')->accessToken;
+                    $user->device_token = request()->token;
+                    $user->save();
                     return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
                 } else {
                     auth()->logout();
@@ -110,6 +112,8 @@ class AuthController extends Controller
                 }
             } else {
                 $token = $user->createToken('token')->accessToken;
+                $user->device_token = request()->token;
+                $user->save();
                 return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             }
         } elseif (auth()->attempt([
@@ -120,6 +124,8 @@ class AuthController extends Controller
             if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
                 if ($user->is_active == true) {
                     $token = $user->createToken('token')->accessToken;
+                    $user->device_token = request()->token;
+                    $user->save();
                     return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
                 } else {
                     auth()->logout();
@@ -127,6 +133,8 @@ class AuthController extends Controller
                 }
             } else {
                 $token = $user->createToken('token')->accessToken;
+                $user->device_token = request()->token;
+                $user->save();
                 return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             }
         } else {
