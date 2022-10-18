@@ -44,6 +44,7 @@ class NotificationController extends Controller
         $valid = Validator::make($request->all(), [
             'role' => 'required',
             'message' => 'required',
+            'title' => 'required',
         ]);
 
         if ($valid->fails()) {
@@ -60,9 +61,9 @@ class NotificationController extends Controller
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
                 $appnot->notification = $request->message;
-                $appnot->navigation = 'Message';
+                $appnot->navigation = $request->title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, 'Message', $request->message);
+                NotiSend::sendNotif($user->device_token, $request->title, $request->message);
             }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Notification Send'], 200);
@@ -77,6 +78,7 @@ class NotificationController extends Controller
         $valid = Validator::make($request->all(), [
             'id' => 'required',
             'message' => 'required',
+            'title' => 'required',
         ]);
 
         if ($valid->fails()) {
@@ -89,9 +91,9 @@ class NotificationController extends Controller
             $appnot = new AppNotification();
             $appnot->user_id = $user->id;
             $appnot->notification = $request->message;
-            $appnot->navigation = 'Message';
+            $appnot->navigation = $request->title;
             $appnot->save();
-            NotiSend::sendNotif($user->device_token, 'Message', $request->message);
+            NotiSend::sendNotif($user->device_token, $request->title, $request->message);
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Notification Send'], 200);
         } catch (\Throwable $th) {
