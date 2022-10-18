@@ -39,7 +39,7 @@ class PackageController extends Controller
         $package->time = $request->time;
         $package->period = $request->period;
         $package->amount = $request->amount;
-        if ($package->save()) return response()->json(['status' => true, 'Message' => 'New Package Added Successfully!'], 200);
+        if ($package->save()) return response()->json(['status' => true, 'Message' => 'New Package Added Successfully!','package'=>$package??[]], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Added!']);
     }
 
