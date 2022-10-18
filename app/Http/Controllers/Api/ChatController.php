@@ -35,21 +35,18 @@ class ChatController extends Controller
         })->orWhere(function ($q) use ($receiver_id, $user_id) {
             $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
         })->first();
-        if (!is_object($chat)) return response()->json(['status' => false, 'Message' => "Chat not Found", 'chat' => $chat]);
-        // {
-        // $receiver = User::find($receiver_id);
-        // $chat = new Chat();
-        // $chat->sender_id = $user_id;
-        // $chat->receiver_id = $receiver_id;
-        // if ($chat->save()) {
-        //     $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
-        //         $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
-        //     })->orWhere(function ($q) use ($receiver_id, $user_id) {
-        //         $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
-        //     })->first();
-        // }
-
-        // }
+        if (!is_object($chat)){
+            $chat = new Chat();
+            $chat->sender_id = $user_id;
+            $chat->receiver_id = $receiver_id;
+            if ($chat->save()) {
+                $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
+                    $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
+                })->orWhere(function ($q) use ($receiver_id, $user_id) {
+                    $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
+                })->first();
+            }
+        }
         return response()->json(['status' => true, 'Message' => "Done", 'chat' => $chat], 200);
     }
 
