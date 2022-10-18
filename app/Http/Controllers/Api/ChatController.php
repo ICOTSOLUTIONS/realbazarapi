@@ -89,7 +89,7 @@ class ChatController extends Controller
             })->orWhere(function ($q) use ($receiver_id, $user_id) {
                 $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
             })->first();
-            event(new MessageEvent($request->message));
+            event(new MessageEvent($request->message, $chat->id));
             DB::commit();
             return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
         } catch (\Throwable $th) {
