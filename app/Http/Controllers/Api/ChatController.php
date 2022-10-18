@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Events\MessageEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
+use App\Models\Message;
 use App\Models\User;
+use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -35,7 +37,7 @@ class ChatController extends Controller
         })->orWhere(function ($q) use ($receiver_id, $user_id) {
             $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
         })->first();
-        if (!is_object($chat)){
+        if (!is_object($chat)) {
             $chat = new Chat();
             $chat->sender_id = $user_id;
             $chat->receiver_id = $receiver_id;
@@ -75,14 +77,18 @@ class ChatController extends Controller
                 $chat = new Chat();
                 $chat->sender_id = $user_id;
                 $chat->receiver_id = $receiver_id;
-                if ($chat->save()) {
-                    $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
-                        $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
-                    })->orWhere(function ($q) use ($receiver_id, $user_id) {
-                        $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
-                    })->first();
-                }
+                if (!$chat->save()) throw new Error("Chat not save!");
+                $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
+                    $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
+                })->orWhere(function ($q) use ($receiver_id, $user_id) {
+                    $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
+                })->first();
             }
+            $message = new Message();
+            $message->chat_id = $chat->id;
+            $message->sender_id = $user_id;
+            $message->message = $request->message;
+            if (!$message->save()) throw new Error("Message not save!");
             event(new MessageEvent($user->name, $request->message, $chat->id));
             DB::commit();
             return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
