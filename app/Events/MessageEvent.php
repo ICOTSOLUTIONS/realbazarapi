@@ -22,13 +22,13 @@ class MessageEvent implements ShouldBroadcast
 
     public $message;
     // public $username;
-    public $chat_id;
+    // public $chat_id;
 
-    public function __construct($message,$chat_id)
+    public function __construct($message)
     {
         $this->message = $message;
         // $this->username = $username;
-        $this->chat_id = $chat_id;
+        // $this->chat_id = $chat_id;
     }
 
     /**
@@ -38,7 +38,7 @@ class MessageEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['chat-' . $this->chat_id];
+        return ['chat'];
     }
 
     public function broadcastAs()
