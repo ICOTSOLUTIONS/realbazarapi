@@ -78,17 +78,17 @@ class ChatController extends Controller
                 $chat->sender_id = $user_id;
                 $chat->receiver_id = $receiver_id;
                 if (!$chat->save()) throw new Error("Chat not save!");
-                $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
-                    $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
-                })->orWhere(function ($q) use ($receiver_id, $user_id) {
-                    $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
-                })->first();
             }
             $message = new Message();
             $message->chat_id = $chat->id;
             $message->sender_id = $user_id;
             $message->message = $request->message;
             if (!$message->save()) throw new Error("Message not save!");
+            $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
+                $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
+            })->orWhere(function ($q) use ($receiver_id, $user_id) {
+                $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
+            })->first();
             event(new MessageEvent($user->name, $request->message, $chat->id));
             DB::commit();
             return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
