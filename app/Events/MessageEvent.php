@@ -21,13 +21,13 @@ class MessageEvent implements ShouldBroadcast
      */
 
     public $message;
-    public $username;
+    // public $username;
     public $chat_id;
 
-    public function __construct($username,$message,$chat_id)
+    public function __construct($message,$chat_id)
     {
         $this->message = $message;
-        $this->username = $username;
+        // $this->username = $username;
         $this->chat_id = $chat_id;
     }
 
