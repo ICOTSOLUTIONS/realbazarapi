@@ -38,7 +38,7 @@ class MessageEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['realbazar'];
+        return ['chat-' . $this->chat_id];
     }
 
     public function broadcastAs()
