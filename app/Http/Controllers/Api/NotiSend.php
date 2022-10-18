@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 
 static  function sendNotif($token,$title,$msg){
 
-            $from = "AAAAdMPQRUw:APA91bGqNp74BHXYOEMoTB2VcNmae-2X-sNgSIf8YqPFb5Q5UOzKfinCVeiqHxErT53BdjFN0yY_vHLHE34z_m11pNZYAt_p0kpmvaLwexkA0pj4FWxWaE9yXWysvyERF6MMjisjgala";
+            $from = "AAAAayC1I6Y:APA91bFn-cnEk32ja33fDKPqzFCJaYj14PRF_-WemUbbqyGCxhzdeP_AXvhjvIUGx_4-ET08TZjUselT6mz2827yAkHlCdr12MVkgpsu8YZJh6bwE6Vp4K1BJg4nmycj6o7bGNeJAF48";
             $msg = array
               (
                 'body'  => "$msg",
