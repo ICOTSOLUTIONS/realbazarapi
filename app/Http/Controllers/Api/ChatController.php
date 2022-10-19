@@ -90,9 +90,9 @@ class ChatController extends Controller
             })->orWhere(function ($q) use ($receiver_id, $user_id) {
                 $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
             })->first();
-            $pusher = new \Pusher\Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), array('cluster' => env('PUSHER_APP_CLUSTER')));
-            $pusher->trigger('chat-' . $chat->id, 'message', array('message' => $request->message));
-            // event(new MessageEvent($request->message, $chat->id));
+            // $pusher = new \Pusher\Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), array('cluster' => env('PUSHER_APP_CLUSTER')));
+            // $pusher->trigger('chat-' . $chat->id, 'message', array('message' => $request->message));
+            event(new MessageEvent($request->message, $chat->id));
             DB::commit();
             return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
         } catch (\Throwable $th) {
