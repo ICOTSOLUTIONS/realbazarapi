@@ -33,7 +33,7 @@ class ProductSeeder extends Seeder
 
         $subcategory->create(['category_id'=>2,'name'=>'Clothes','url'=>'womenscollection/clothes','image'=>'subcategory/subcategory2.jpg']);
         $subcategory->create(['category_id'=>2,'name'=>'Purse','url'=>'womenscollection/purse','image'=>'subcategory/subcategory3.jpg']);
-        $subcategory->create(['category_id'=>2,'name'=>'Jewellery','url'=>'womenscollection/jewellery','image'=>'subcategory/subcategory4.jpg']);
+        $subcategory->create(['category_id'=>2,'name'=>'po','url'=>'womenscollection/jewellery','image'=>'subcategory/subcategory4.jpg']);
         // $subcategory->create(['category_id'=>1,'name'=>'Jeans','url'=>'menscollection/jeans','image'=>'subcategory/subcategory4.jpg']);
 
         // $subcategory->create(['category_id'=>3,'name'=>'Watch','url'=>'kidscollection/watch','image'=>'subcategory/subcategory9.jpg']);
