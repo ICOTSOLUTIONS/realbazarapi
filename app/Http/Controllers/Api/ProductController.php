@@ -162,7 +162,7 @@ class ProductController extends Controller
             if (count($product)) {
                 return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
             } else {
-                return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $product??[]]);
+                return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => []]);
             }
         } else {
             return response()->json(['status' => false, 'Message' => 'Parameter is null']);
