@@ -120,7 +120,7 @@ class CategoryController extends Controller
                 if (count($product)) {
                     return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product)], 200);
                 } else {
-                    return response()->json(['status' => false, 'Message' => 'Product not found']);
+                    return response()->json(['status' => false, 'Message' => 'Product not found','Product' =>$product??[]]);
                 }
             } else {
                 $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -129,7 +129,7 @@ class CategoryController extends Controller
                 if (count($product)) {
                     return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product)], 200);
                 } else {
-                    return response()->json(['status' => false,  'Message' => 'Product not found']);
+                    return response()->json(['status' => false,  'Message' => 'Product not found','Product' =>$product??[]]);
                 }
             }
         } else {
