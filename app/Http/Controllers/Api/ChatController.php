@@ -90,7 +90,7 @@ class ChatController extends Controller
             })->orWhere(function ($q) use ($receiver_id, $user_id) {
                 $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
             })->first();
-            $data = ['from' => $user_id, 'to' => $receiver_id, 'message' => $request->message];
+            $data = ['user_id' => $user_id, 'message' => $request->message];
             $pusher = new \Pusher\Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), array('cluster' => env('PUSHER_APP_CLUSTER')));
             if (!$pusher->trigger('chat-' . $chat->id, 'message', $data, array('userId' => $user_id))) throw new Error("Message not send!");
             // event(new MessageEvent($request->message, $chat->id));
