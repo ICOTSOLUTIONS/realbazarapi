@@ -56,6 +56,7 @@ Route::middleware('auth:api')->group(function () {
 
     //chat
     Route::get('/allMessages', [Api\ChatController::class, 'allMessages']);
+    Route::get('/adminShowChat/{id}', [Api\ChatController::class, 'adminShowChat']);
     Route::post('/message', [Api\ChatController::class, 'message']);
     Route::post('/chats', [Api\ChatController::class, 'chat']);
 

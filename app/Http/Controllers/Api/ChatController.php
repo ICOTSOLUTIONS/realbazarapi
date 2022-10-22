@@ -28,6 +28,18 @@ class ChatController extends Controller
         else return response()->json(['status' => false, 'Message' => "Chat not Found", 'chat' => $chat]);
     }
 
+    public function adminShowChat($id)
+    {
+        $user_id = $id;
+        $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id) {
+            $q->where('sender_id', $user_id);
+        })->orWhere(function ($q) use ($user_id) {
+            $q->where('receiver_id', $user_id);
+        })->get();
+        if (count($chat)) return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
+        else return response()->json(['status' => false, 'Message' => "Chat not Found", 'chat' => $chat]);
+    }
+
     public function chat(Request $request)
     {
         $user = auth()->user();
