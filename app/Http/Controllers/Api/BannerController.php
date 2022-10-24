@@ -25,6 +25,20 @@ class BannerController extends Controller
         return response()->json(['status' => false, 'Message' => 'Banners not found']);
     }
 
+    public function banners($section)
+    {
+        if (empty($section)) return response()->json(['status' => false, 'Message' => 'Section not found']);
+        $header = false;
+        $body = false;
+        $footer = false;
+        if ($section == 'header') $header = true;
+        if ($section == 'body') $body = true;
+        if ($section == 'footer') $footer = true;
+        $banner = Banner::where('is_header', $header)->where('is_body', $body)->where('is_footer', $footer)->get();
+        if (count($banner)) return response()->json(['status' => true, 'Message' => 'Banners found', 'banners' => $banner ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'Banners not found']);
+    }
+
     public function addBanner(Request $request)
     {
         $valid = Validator::make($request->all(), [
