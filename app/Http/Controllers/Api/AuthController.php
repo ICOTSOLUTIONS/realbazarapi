@@ -285,7 +285,7 @@ class AuthController extends Controller
         $user = User::where('id', $id)->first();
         if (empty($user)) return response()->json(['status' => false, 'Message' => 'User not found']);
         if ($user->is_block == false) $user->is_block = true;
-        $user->is_block = false;
+        else $user->is_block = false;
         if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
     }
 }
