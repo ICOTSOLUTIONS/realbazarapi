@@ -40,8 +40,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('add/product', [Api\ProductController::class, 'add']);
     Route::post('update/product', [Api\ProductController::class, 'update']);
     Route::post('delete/product', [Api\ProductController::class, 'delete']);
-    Route::post('hard/delete/product', [Api\ProductController::class, 'hardDelete']);
-    Route::post('all/hard/delete/product', [Api\ProductController::class, 'allHardDelete']);
+    Route::get('hard/delete/product/{id}', [Api\ProductController::class, 'hardDelete']);
+    Route::get('all/hard/delete/product', [Api\ProductController::class, 'allHardDelete']);
     Route::get('show/delete/product', [Api\ProductController::class, 'showDeleteProduct']);
     Route::get('image/{id}', [Api\ProductController::class, 'image']);
     Route::post('delete/image', [Api\ProductController::class, 'deleteImage']);

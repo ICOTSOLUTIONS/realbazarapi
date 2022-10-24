@@ -300,9 +300,10 @@ class ProductController extends Controller
         }
     }
 
-    public function hardDelete(Request $request)
+    public function hardDelete($id)
     {
-        $product = Product::where('id', $request->id)->where('is_delete', true)->first();
+        if (empty($id)) return response()->json(["status" => false, 'Message' => 'Id not found']);
+        $product = Product::where('id', $id)->where('is_delete', true)->first();
         if (!empty($product)) {
             if ($product->delete()) return response()->json(['status' => true, 'Message' => 'Successfully deleted Product'], 200);
         } else {
@@ -310,7 +311,7 @@ class ProductController extends Controller
         }
     }
 
-    public function allHardDelete(Request $request)
+    public function allHardDelete()
     {
         $product = Product::where('is_delete', true)->get();
         if (!empty($product)) {
