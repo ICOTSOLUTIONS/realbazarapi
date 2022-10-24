@@ -314,7 +314,7 @@ class ProductController extends Controller
     public function allHardDelete()
     {
         $product = Product::where('is_delete', true)->get();
-        if (!empty($product)) {
+        if (count($product)) {
             foreach ($product as $key => $value) {
                 if ($value->delete());
             }
@@ -327,7 +327,7 @@ class ProductController extends Controller
     public function showDeleteProduct()
     {
         $product = Product::where('is_delete', true)->get();
-        if (!empty($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
+        if (count($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
         else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $product ?? []]);
     }
 
