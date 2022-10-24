@@ -25,8 +25,8 @@ class PackageController extends Controller
         $valid = Validator::make($request->all(), [
             'name' => 'required|unique:packages,name',
             // 'date' => 'required',
-            'time' => 'required|gt:0',
-            'period' => 'required',
+            // 'time' => 'required|gt:0',
+            // 'period' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -36,8 +36,8 @@ class PackageController extends Controller
         $package = new Package();
         $package->name = $request->name;
         $package->date = Carbon::now();
-        $package->time = $request->time;
-        $package->period = $request->period;
+        $package->time = '1';
+        $package->period = 'month';
         $package->amount = $request->amount;
         if ($package->save()) return response()->json(['status' => true, 'Message' => 'New Package Added Successfully!','package'=>$package??[]], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Added!']);
@@ -49,8 +49,8 @@ class PackageController extends Controller
             'id' => 'required',
             'name' => 'required|unique:packages,name,' . $request->id,
             // 'date' => 'required',
-            'time' => 'required|gt:0',
-            'period' => 'required',
+            // 'time' => 'required|gt:0',
+            // 'period' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -60,8 +60,8 @@ class PackageController extends Controller
         $package = Package::where('id', $request->id)->first();
         $package->name = $request->name;
         // $package->date = $request->date;
-        $package->time = $request->time;
-        $package->period = $request->period;
+        // $package->time = $request->time;
+        // $package->period = $request->period;
         $package->amount = $request->amount;
         if ($package->save()) return response()->json(['status' => true, 'Message' => 'Package Updated Successfully!'], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Updated!']);
@@ -115,9 +115,9 @@ class PackageController extends Controller
                 if (!empty($response)) {
                     $date = Carbon::now();
                     $paymentPackage = new PackagePayment();
-                    if ($package->period == 'year' || $package->period == 'Year' ) $end_date = Carbon::now()->addYear($package->time);
+                    // if ($package->period == 'year' || $package->period == 'Year' ) $end_date = Carbon::now()->addYear($package->time);
                     if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
-                    if ($package->period == 'week' || $package->period == 'Week') $end_date = Carbon::now()->addDays($package->time * 7);
+                    // if ($package->period == 'week' || $package->period == 'Week') $end_date = Carbon::now()->addDays($package->time * 7);
                     $paymentPackage->user_id = auth()->user()->id;
                     $paymentPackage->package_id = $request->package_id;
                     $paymentPackage->start_date = $date;
