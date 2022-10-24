@@ -54,4 +54,12 @@ class Product extends Model
     {
         return $this->hasMany(ProductReview::class, 'product_id', 'id');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope('active', function ($builder) {
+            $builder->whereRelation('user', 'is_block', false);
+        });
+    }
 }
