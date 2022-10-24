@@ -300,10 +300,33 @@ class ProductController extends Controller
         }
     }
 
+    public function hardDelete(Request $request)
+    {
+        $product = Product::where('id', $request->id)->where('is_delete', true)->first();
+        if (!empty($product)) {
+            if ($product->delete()) return response()->json(['status' => true, 'Message' => 'Successfully deleted Product'], 200);
+        } else {
+            return response()->json(["status" => false, 'Message' => 'Product not deleted']);
+        }
+    }
+
+    public function allHardDelete(Request $request)
+    {
+        $product = Product::where('is_delete', true)->get();
+        if (!empty($product)) {
+            foreach ($product as $key => $value) {
+                if ($value->delete());
+            }
+            return response()->json(['status' => true, 'Message' => 'Successfully hard deleted Product'], 200);
+        } else {
+            return response()->json(["status" => false, 'Message' => 'Product not found']);
+        }
+    }
+
     public function showDeleteProduct()
     {
         $product = Product::where('is_delete', true)->get();
-        if (!empty($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => $product ?? []], 200);
+        if (!empty($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
         else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $product ?? []]);
     }
 
