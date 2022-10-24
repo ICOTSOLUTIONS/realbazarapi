@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->mediumText('image')->nullable();
             $table->boolean('is_active')->default(false);
+            $table->boolean('is_block')->default(false);
             $table->mediumText('token')->nullable();
             $table->mediumText('device_token')->nullable();
             $table->timestamp('email_verified_at')->nullable();

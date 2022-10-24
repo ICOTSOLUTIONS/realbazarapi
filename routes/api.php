@@ -24,18 +24,23 @@ Route::middleware('auth:api')->group(function () {
     Route::get('profile', [Api\AuthController::class, 'edit_profile']);
     Route::post('profile/update', [Api\AuthController::class, 'update_profile']);
     Route::post('shop/followers', [Api\AuthController::class, 'shopFollow']);
+    Route::get('user/block/{id}', [Api\AuthController::class, 'userBlock']);
+
     //category
     Route::post('add/category', [Api\CategoryController::class, 'add']);
     Route::post('update/category', [Api\CategoryController::class, 'update']);
     Route::post('delete/category', [Api\CategoryController::class, 'delete']);
+
     //subcategory
     Route::post('add/subcategory', [Api\SubCategoryController::class, 'add']);
     Route::post('update/subcategory', [Api\SubCategoryController::class, 'update']);
     Route::post('delete/subcategory', [Api\SubCategoryController::class, 'delete']);
+
     //product
     Route::post('add/product', [Api\ProductController::class, 'add']);
     Route::post('update/product', [Api\ProductController::class, 'update']);
     Route::post('delete/product', [Api\ProductController::class, 'delete']);
+    Route::get('show/delete/product', [Api\ProductController::class, 'showDeleteProduct']);
     Route::get('image/{id}', [Api\ProductController::class, 'image']);
     Route::post('delete/image', [Api\ProductController::class, 'deleteImage']);
     Route::post('add/image', [Api\ProductController::class, 'addImage']);
@@ -46,6 +51,7 @@ Route::middleware('auth:api')->group(function () {
 
     //order
     Route::post('order', [Api\OrderController::class, 'order']);
+
     //package
     Route::get('/package', [Api\PackageController::class, 'show']);
     Route::post('add/package', [Api\PackageController::class, 'add']);
@@ -74,18 +80,23 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/singleNotification', [Api\NotificationController::class, 'singleNotification']);
 
 });
-//product
+//users
 Route::get('wholesalers', [Api\AuthController::class, 'wholesaler']);
 Route::get('users', [Api\AuthController::class, 'user']);
 Route::get('retailers', [Api\AuthController::class, 'retailer']);
+
+//product
 Route::get('search/{name}', [Api\ProductController::class, 'search']);
 Route::get('products', [Api\ProductController::class, 'show']);
 Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
 Route::post('show/product', [Api\ProductController::class, 'showProduct']);
+
 //category
 Route::get('category', [Api\CategoryController::class, 'show']);
 Route::get('subcategory', [Api\SubCategoryController::class, 'show']);
 Route::get('show/subcategory/{id}', [Api\SubCategoryController::class, 'fetchSubCategory']);
 Route::post('search/category', [Api\CategoryController::class, 'searchCategory']);
 Route::post('subscribe', [Api\SettingController::class, 'subscribe']);
+
+//banner
 Route::get('/banners/{section}', [Api\BannerController::class, 'banners']);

@@ -28,6 +28,7 @@ return new class extends Migration
             // $table->string('type')->nullable();
             $table->string('variations')->nullable();
             $table->boolean('status')->default(true);
+            $table->boolean('is_delete')->default(false);
             $table->string('tags')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');

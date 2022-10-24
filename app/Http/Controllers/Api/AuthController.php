@@ -204,7 +204,6 @@ class AuthController extends Controller
         }
     }
 
-
     public function edit_profile()
     {
         $user = User::with('role')->where('id', auth()->user()->id)->first();
@@ -278,5 +277,15 @@ class AuthController extends Controller
         $follow->shop_id = $request->shop_id;
         if ($follow->save()) return response()->json(['status' => true, 'Message' => "Follow Successfully"], 200);
         return response()->json(['status' => false, 'Message' => "Follow not Successfull"]);
+    }
+
+    public function userBlock($id)
+    {
+        if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
+        $user = User::where('id', $id)->first();
+        if (empty($user)) return response()->json(['status' => false, 'Message' => 'User not found']);
+        if ($user->is_block == false) $user->is_block = true;
+        $user->is_block = false;
+        if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
     }
 }

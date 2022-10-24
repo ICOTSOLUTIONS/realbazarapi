@@ -41,7 +41,7 @@ class OrderController extends Controller
                     if (!empty($orders['product'])) {
                         foreach ($orders['product'] as $key => $product) {
                             if (is_object($product)) $product = $product->toArray();
-                            $product_price = Product::where('id', $product['id'])->first();
+                            $product_price = Product::where('id', $product['id'])->where('is_delete',false)->first();
                             $order_product = new OrderProduct();
                             $order_product->order_id = $order->id;
                             $order_product->product_id = $product['id'];
