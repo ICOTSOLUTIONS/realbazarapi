@@ -290,7 +290,7 @@ class ProductController extends Controller
 
     public function delete(Request $request)
     {
-        $product = Product::where('id', $request->id)->where('is_delete', false)->first();
+        $product = Product::where('id', $request->id)->first();
         if (!empty($product)) {
             if ($product->is_delete == false) $product->is_delete = true;
             else $product->is_delete = false;
