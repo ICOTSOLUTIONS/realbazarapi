@@ -56,7 +56,7 @@ class NotificationController extends Controller
             $users = User::whereHas('role', function ($query) use ($role) {
                 $query->where('name', $role);
             })->get();
-            if (!count($users)) return response()->json(['status' => false, 'message' => "Users not found"]);
+            if (!count($users)) return response()->json(['status' => false, 'Message' => "Users not found"]);
             foreach ($users as  $user) {
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
@@ -87,7 +87,7 @@ class NotificationController extends Controller
         try {
             DB::beginTransaction();
             $user = User::where('id', $request->id)->first();
-            if (empty($user)) return response()->json(['status' => false, 'message' => "User not found"]);
+            if (empty($user)) return response()->json(['status' => false, 'Message' => "User not found"]);
             $appnot = new AppNotification();
             $appnot->user_id = $user->id;
             $appnot->notification = $request->message;
