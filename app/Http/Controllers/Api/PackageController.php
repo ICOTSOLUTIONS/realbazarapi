@@ -26,7 +26,7 @@ class PackageController extends Controller
             'name' => 'required|unique:packages,name',
             // 'date' => 'required',
             // 'time' => 'required|gt:0',
-            // 'period' => 'required',
+            'product_qty' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -39,6 +39,7 @@ class PackageController extends Controller
         $package->time = '1';
         $package->period = 'month';
         $package->amount = $request->amount;
+        $package->product_qty = $request->product_qty;
         if ($package->save()) return response()->json(['status' => true, 'Message' => 'New Package Added Successfully!','package'=>$package??[]], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Added!']);
     }
@@ -51,6 +52,7 @@ class PackageController extends Controller
             // 'date' => 'required',
             // 'time' => 'required|gt:0',
             // 'period' => 'required',
+            'product_qty' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -63,6 +65,7 @@ class PackageController extends Controller
         // $package->time = $request->time;
         // $package->period = $request->period;
         $package->amount = $request->amount;
+        $package->product_qty = $request->product_qty;
         if ($package->save()) return response()->json(['status' => true, 'Message' => 'Package Updated Successfully!'], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Updated!']);
     }

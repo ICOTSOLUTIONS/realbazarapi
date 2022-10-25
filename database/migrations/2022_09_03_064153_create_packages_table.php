@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('time')->nullable();
             $table->string('period')->nullable();
             $table->string('amount')->nullable();
+            $table->string('product_qty')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
