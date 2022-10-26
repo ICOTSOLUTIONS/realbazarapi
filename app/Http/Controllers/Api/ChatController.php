@@ -95,14 +95,13 @@ class ChatController extends Controller
             $message = new Message();
             $message->chat_id = $chat->id;
             $message->sender_id = $user_id;
-            $message->message = $request->message;
             if (!empty($request->image)) {
                 $image = $request->image;
                 $filename = "Message-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
                 $image->storeAs('message', $filename, "public");
                 $message->image = "message/" . $filename;
-                $message->title = $request->title;
-            }
+                $message->title = $request->message;
+            }else $message->message = $request->message;
             if (!$message->save()) throw new Error("Message not save!");
             $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
                 $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
