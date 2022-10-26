@@ -96,10 +96,7 @@ class ChatController extends Controller
             $message->chat_id = $chat->id;
             $message->sender_id = $user_id;
             if (!empty($request->image)) {
-                $image = $request->image;
-                $filename = "Message-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
-                $image->storeAs('message', $filename, "public");
-                $message->image = "message/" . $filename;
+                $message->image = $request->image;
                 $message->title = $request->message;
             }else $message->message = $request->message;
             if (!$message->save()) throw new Error("Message not save!");

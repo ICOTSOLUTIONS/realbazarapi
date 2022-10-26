@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\FollowUserShop;
+use App\Models\Role;
 use App\Models\User;
 use Error;
 use Illuminate\Http\Request;
@@ -84,6 +85,7 @@ class AuthController extends Controller
     {
         $rules = [
             'password' => 'required',
+            'role' => 'required',
         ];
         if (is_numeric($request->get('emailphone'))) {
             $rules['emailphone'] = 'required|digits:11|exists:users,phone';
@@ -95,9 +97,11 @@ class AuthController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
+        $role = Role::where('name',$request->role)->first();
         if (auth()->attempt([
             'email' => $request->emailphone,
             'password' => $request->password,
+            'role_id' => $role->id,
         ])) {
             $user = auth()->user();
             if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
@@ -119,6 +123,7 @@ class AuthController extends Controller
         } elseif (auth()->attempt([
             'phone' => $request->emailphone,
             'password' => $request->password,
+            'role_id' => $role->id,
         ])) {
             $user = auth()->user();
             if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
