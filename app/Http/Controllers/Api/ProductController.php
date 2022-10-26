@@ -485,6 +485,7 @@ class ProductController extends Controller
     public function productStatusChange($id)
     {
         $product = Product::where('id', $id)->where('is_delete', false)->first();
+        dd($product);
         if ($product->status == true) $product->status = false;
         else $product->status = true;
         if ($product->save()) return response()->json(["status" => true, 'Message' => 'Product Status Change Successfully', 'Products' => ProductsResource::collection($product)], 200);
