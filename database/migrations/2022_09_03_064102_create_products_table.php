@@ -27,7 +27,7 @@ return new class extends Migration
             // $table->string('selected_qty')->nullable();
             // $table->string('type')->nullable();
             $table->string('variations')->nullable();
-            $table->boolean('status')->default(true);
+            $table->boolean('status')->default(false);
             $table->boolean('is_delete')->default(false);
             $table->string('tags')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
