@@ -482,18 +482,13 @@ class ProductController extends Controller
         return response()->json(["status" => true, 'feature_products' => $product], 200);
     }
 
-    public function featureProductStatusChange($id)
+    public function productStatusChange($id)
     {
         $product = Product::where('id', $id)->where('is_delete', false)->first();
-        if ($product->status == "active" && $product->featured == "Featured") {
-            $product->status = "pending";
-        } elseif ($product->status == "pending" && $product->featured == "Featured") {
-            $product->status = "active";
-        } else {
-            $product->status = null;
-        }
-        $product->save();
-        return response()->json(["status" => true, 'feature_products' => $product], 200);
+        if ($product->status == true) $product->status = false;
+        else $product->status = true;
+        if ($product->save()) return response()->json(["status" => true, 'Message' => 'Product Status Change Successfully', 'Products' => ProductsResource::collection($product)], 200);
+        else return response()->json(["status" => false, 'Message' => 'Product Status Change not Successfully', 'Products' => $product ?? []]);
     }
 
     public function likeProduct(Request $request)
