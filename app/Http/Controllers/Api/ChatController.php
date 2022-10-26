@@ -96,15 +96,22 @@ class ChatController extends Controller
             $message->chat_id = $chat->id;
             $message->sender_id = $user_id;
             $message->message = $request->message;
+            if (!empty($request->image)) {
+                $image = $request->image;
+                $filename = "Message-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                $image->storeAs('message', $filename, "public");
+                $message->image = "message/" . $filename;
+                $message->title = $request->title;
+            }
             if (!$message->save()) throw new Error("Message not save!");
             $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
                 $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
             })->orWhere(function ($q) use ($receiver_id, $user_id) {
                 $q->where('sender_id', $receiver_id)->where('receiver_id', $user_id);
             })->first();
-            $data = ['user_id' => $user_id, 'message' => $request->message];
+            $data = ['user_id' => $user_id, 'message' => $message];
             $pusher = new \Pusher\Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), array('cluster' => env('PUSHER_APP_CLUSTER')));
-            if (!$pusher->trigger('chat-' . $chat->id, 'message', $data, array('userId' => $user_id))) throw new Error("Message not send!");
+            if (!$pusher->trigger('chat-' . $chat->id, 'message', $data)) throw new Error("Message not send!");
             // event(new MessageEvent($request->message, $chat->id));
             DB::commit();
             return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);

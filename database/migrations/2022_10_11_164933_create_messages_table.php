@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('chat_id')->nullable();
             $table->unsignedBigInteger('sender_id')->nullable();
             $table->text('message')->nullable();
+            $table->text('title')->nullable();
+            $table->mediumText('image')->nullable();
             $table->boolean('is_read')->default(false);
             $table->foreign('chat_id')->references('id')->on('chats')->onDelete('cascade');
             $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
