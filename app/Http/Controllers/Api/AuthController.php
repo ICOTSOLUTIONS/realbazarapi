@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\FollowUserShop;
+use App\Models\Package;
+use App\Models\PackagePayment;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,11 +73,25 @@ class AuthController extends Controller
                 $user->email = $request->emailphone;
             }
             $user->password = Hash::make($request->password);
-            if ($user->save()) {
-                DB::commit();
-                $client = User::with('role')->where('id', $user->id)->first();
-                return response()->json(['status' => true, 'Message' => "User Successfully Added", 'user' => $client,], 200);
-            } else throw new Error("User Not Added!");
+            if (!$user->save()) throw new Error("User Not Added!");
+            if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+                $package = Package::first();
+                $date = Carbon::now();
+                $paymentPackage = new PackagePayment();
+                if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
+                $paymentPackage->user_id = $user->id;
+                $paymentPackage->package_id = $package->id;
+                $paymentPackage->start_date = $date;
+                $paymentPackage->end_date = $end_date;
+                if (!$paymentPackage->save()) throw new Error('Free Package not Buy');
+                $statusActive = User::find($user->id);
+                if (!$statusActive) throw new Error('User not found after buy package');
+                $statusActive->is_active = true;
+                if (!$statusActive->save()) throw new Error('User Status not change after buy package');
+            }
+            $client = User::with('role')->where('id', $user->id)->first();
+            DB::commit();
+            return response()->json(['status' => true, 'Message' => "User Successfully Added", 'user' => $client,], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
@@ -85,7 +102,7 @@ class AuthController extends Controller
     {
         $rules = [
             'password' => 'required',
-            'role' => 'required',
+            // 'role' => 'required',
         ];
         if (is_numeric($request->get('emailphone'))) {
             $rules['emailphone'] = 'required|digits:11|exists:users,phone';
@@ -97,51 +114,51 @@ class AuthController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $role = Role::where('name',$request->role)->first();
+        // $role = Role::where('name',$request->role)->first();
         if (auth()->attempt([
             'email' => $request->emailphone,
             'password' => $request->password,
-            'role_id' => $role->id,
+            // 'role_id' => $role->id,
         ])) {
-            $user = auth()->user();
-            if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
-                if ($user->is_active == true) {
-                    $token = $user->createToken('token')->accessToken;
-                    $user->device_token = request()->token;
-                    $user->save();
-                    return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
-                } else {
-                    auth()->logout();
-                    return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
-                }
-            } else {
-                $token = $user->createToken('token')->accessToken;
-                $user->device_token = request()->token;
-                $user->save();
-                return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
-            }
+            $user = auth()->user()->load('role');
+            // if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+            //     // if ($user->is_active == true) {
+            //         $token = $user->createToken('token')->accessToken;
+            //         $user->device_token = request()->token;
+            //         $user->save();
+            //         return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
+            //     // } else {
+            //     //     auth()->logout();
+            //     //     return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
+            //     // }
+            // } else {
+            $token = $user->createToken('token')->accessToken;
+            $user->device_token = request()->token;
+            $user->save();
+            return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
+            // }
         } elseif (auth()->attempt([
             'phone' => $request->emailphone,
             'password' => $request->password,
-            'role_id' => $role->id,
+            // 'role_id' => $role->id,
         ])) {
-            $user = auth()->user();
-            if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
-                if ($user->is_active == true) {
-                    $token = $user->createToken('token')->accessToken;
-                    $user->device_token = request()->token;
-                    $user->save();
-                    return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
-                } else {
-                    auth()->logout();
-                    return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
-                }
-            } else {
-                $token = $user->createToken('token')->accessToken;
-                $user->device_token = request()->token;
-                $user->save();
-                return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
-            }
+            $user = auth()->user()->load('role');
+            // // if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
+            //     if ($user->is_active == true) {
+            //         $token = $user->createToken('token')->accessToken;
+            //         $user->device_token = request()->token;
+            //         $user->save();
+            //         return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
+            //     } else {
+            //         auth()->logout();
+            //         return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
+            //     }
+            // } else {
+            $token = $user->createToken('token')->accessToken;
+            $user->device_token = request()->token;
+            $user->save();
+            return response()->json(['status' => true, 'Message' => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
+            // }
         } else {
             return response()->json(['status' => false, 'Message' => 'Invalid Credentials']);
         }
