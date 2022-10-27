@@ -58,8 +58,25 @@ class Product extends Model
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope('active', function ($builder) {
-            $builder->whereRelation('user', 'is_block', false);
-        });
+        if (auth()->check()) {
+            $user = auth()->user()->load('role');
+            if ($user->role->name == 'user') {
+                static::addGlobalScope('active', function ($builder) {
+                    $builder->where('status', 'approved')->where('is_delete', false)->whereRelation('user', 'is_block', false);
+                });
+            } elseif ($user->role->name == 'admin') {
+                static::addGlobalScope('active', function ($builder) {
+                    $builder->whereRelation('user', 'is_block', false);
+                });
+            } else {
+                static::addGlobalScope('active', function ($builder) {
+                    $builder->whereRelation('user', 'is_block', false)->where('is_delete', false);
+                });
+            }
+        } else {
+            static::addGlobalScope('active', function ($builder) {
+                $builder->where('status', 'approved')->where('is_delete', false)->whereRelation('user', 'is_block', false);
+            });
+        }
     }
 }

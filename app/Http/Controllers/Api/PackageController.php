@@ -40,7 +40,7 @@ class PackageController extends Controller
         $package->period = 'month';
         $package->amount = $request->amount;
         $package->product_qty = $request->product_qty;
-        if ($package->save()) return response()->json(['status' => true, 'Message' => 'New Package Added Successfully!','package'=>$package??[]], 200);
+        if ($package->save()) return response()->json(['status' => true, 'Message' => 'New Package Added Successfully!', 'package' => $package ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Package not Added!']);
     }
 
@@ -88,47 +88,50 @@ class PackageController extends Controller
         }
     }
 
+    public function existPayment(Request $request)
+    {
+        $exist_user = PackagePayment::where('user_id', auth()->user()->id)
+            ->where('package_id', $request->package_id)->first();
+        $date = Carbon::now();
+        if ($exist_user->end_date > $date) return response()->json(['status' => true, 'Message' => 'You already have active package and your Package expiry date is ' . $exist_user->end_date], 200);
+        return response()->json(['status' => false, 'Message' => 'Package not buy']);
+    }
     public function payment(Request $request)
     {
         try {
             DB::beginTransaction();
             $package = Package::where('id', $request->package_id)->first();
-            $exist_user = PackagePayment::where('user_id', auth()->user()->id)
-                ->where('package_id', $request->package_id)->first();
+            $exist_user = PackagePayment::where('user_id', auth()->user()->id)->first();
             if (!empty($exist_user)) {
                 $date = Carbon::now();
-                if ($exist_user->end_date > $date) throw new Error('Your Package expiry date is ' . $exist_user->end_date);
-                else {
-                    $response = 'success';
-                    if (!empty($response)) {
-                        if ($package->period == 'year') $end_date = Carbon::now()->addYear($package->time);
-                        if ($package->period == 'month') $end_date = Carbon::now()->addMonths($package->time);
-                        if ($package->period == 'week') $end_date = Carbon::now()->addDays($package->time * 7);
-                        $exist_user->user_id = auth()->user()->id;
-                        $exist_user->package_id = $request->package_id;
-                        $exist_user->start_date = $date;
-                        $exist_user->end_date = $end_date;
-                        if (!$exist_user->save()) throw new Error('Package not Buy');
-                        DB::commit();
-                        return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
-                    } else throw new Error('Response not success');
-                }
+                // if ($exist_user->end_date > $date) throw new Error('Your Package expiry date is ' . $exist_user->end_date);
+                // else {
+                // $response = 'success';
+                // if (!empty($response)) {
+                if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
+                $exist_user->user_id = auth()->user()->id;
+                $exist_user->package_id = $request->package_id;
+                $exist_user->start_date = $date;
+                $exist_user->end_date = $end_date;
+                if (!$exist_user->save()) throw new Error('Package not Buy');
+                DB::commit();
+                return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
+                // } else throw new Error('Response not success');
+                // }
             } else {
-                $response = 'success';
-                if (!empty($response)) {
-                    $date = Carbon::now();
-                    $paymentPackage = new PackagePayment();
-                    // if ($package->period == 'year' || $package->period == 'Year' ) $end_date = Carbon::now()->addYear($package->time);
-                    if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
-                    // if ($package->period == 'week' || $package->period == 'Week') $end_date = Carbon::now()->addDays($package->time * 7);
-                    $paymentPackage->user_id = auth()->user()->id;
-                    $paymentPackage->package_id = $request->package_id;
-                    $paymentPackage->start_date = $date;
-                    $paymentPackage->end_date = $end_date;
-                    if (!$paymentPackage->save()) throw new Error('Package not Buy');
-                    DB::commit();
-                    return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
-                } else throw new Error('Response not success');
+                // $response = 'success';
+                // if (!empty($response)) {
+                $date = Carbon::now();
+                $paymentPackage = new PackagePayment();
+                if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
+                $paymentPackage->user_id = auth()->user()->id;
+                $paymentPackage->package_id = $request->package_id;
+                $paymentPackage->start_date = $date;
+                $paymentPackage->end_date = $end_date;
+                if (!$paymentPackage->save()) throw new Error('Package not Buy');
+                DB::commit();
+                return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
+                // } else throw new Error('Response not success');
             }
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -139,7 +142,7 @@ class PackageController extends Controller
     public function packageExpiredPeriod()
     {
         $expirePeriod = PackagePayment::with(['user', 'package'])->get();
-        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [],'duration'=>'877']);
+        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? []]);
         else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
     }
 }

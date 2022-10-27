@@ -37,6 +37,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('delete/subcategory', [Api\SubCategoryController::class, 'delete']);
 
     //product
+    Route::get('show/admin/products', [Api\ProductController::class, 'showAdminProduct']);
+    Route::get('show/seller/products', [Api\ProductController::class, 'showSellerProduct']);
     Route::post('add/product', [Api\ProductController::class, 'add']);
     Route::post('update/product', [Api\ProductController::class, 'update']);
     Route::post('delete/product', [Api\ProductController::class, 'delete']);
@@ -61,6 +63,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('update/package', [Api\PackageController::class, 'update']);
     Route::post('delete/package', [Api\PackageController::class, 'delete']);
     Route::post('buy/package', [Api\PackageController::class, 'payment']);
+    Route::post('exist/package/payment', [Api\PackageController::class, 'existPayment']);
     Route::get('subscription/expired', [Api\PackageController::class, 'packageExpiredPeriod']);
 
     //chat
@@ -81,7 +84,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/changeNotification', [Api\NotificationController::class, 'notification_change']);
     Route::post('/sendNotification', [Api\NotificationController::class, 'sendNotification']);
     Route::post('/singleNotification', [Api\NotificationController::class, 'singleNotification']);
-
 });
 //users
 Route::get('wholesalers', [Api\AuthController::class, 'wholesaler']);
@@ -89,10 +91,15 @@ Route::get('users', [Api\AuthController::class, 'user']);
 Route::get('retailers', [Api\AuthController::class, 'retailer']);
 
 //product
-Route::get('search/{name}', [Api\ProductController::class, 'search']);
+Route::get('home', [Api\ProductController::class, 'home']);
 Route::get('products', [Api\ProductController::class, 'show']);
-Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
+Route::get('search/{name}', [Api\ProductController::class, 'search']);
 Route::post('show/product', [Api\ProductController::class, 'showProduct']);
+Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
+Route::get('discount/product', [Api\ProductController::class, 'discountProduct']);
+Route::get('featured/product', [Api\ProductController::class, 'featuredProduct']);
+Route::get('newArrival/product', [Api\ProductController::class, 'newArrivalProduct']);
+Route::get('wholesaler/products', [Api\ProductController::class, 'wholesalerProducts']);
 
 //category
 Route::get('category', [Api\CategoryController::class, 'show']);

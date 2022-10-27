@@ -27,8 +27,10 @@ return new class extends Migration
             // $table->string('selected_qty')->nullable();
             // $table->string('type')->nullable();
             $table->string('variations')->nullable();
-            $table->boolean('status')->default(false);
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->boolean('is_delete')->default(false);
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_new_arrival')->default(true);
             $table->string('tags')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');

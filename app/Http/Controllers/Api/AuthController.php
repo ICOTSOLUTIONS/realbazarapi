@@ -118,7 +118,7 @@ class AuthController extends Controller
         if (auth()->attempt([
             'email' => $request->emailphone,
             'password' => $request->password,
-            // 'role_id' => $role->id,
+            // 'is_block' => false,
         ])) {
             $user = auth()->user()->load('role');
             // if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
@@ -132,6 +132,7 @@ class AuthController extends Controller
             //     //     return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
             //     // }
             // } else {
+            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Status has been Blocked']);
             $token = $user->createToken('token')->accessToken;
             $user->device_token = request()->token;
             $user->save();
@@ -140,7 +141,7 @@ class AuthController extends Controller
         } elseif (auth()->attempt([
             'phone' => $request->emailphone,
             'password' => $request->password,
-            // 'role_id' => $role->id,
+            // 'is_block' => false,
         ])) {
             $user = auth()->user()->load('role');
             // // if ($user->role->name == 'holeseller' || $user->role->name == 'retailer') {
@@ -154,6 +155,7 @@ class AuthController extends Controller
             //         return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
             //     }
             // } else {
+            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Status has been Blocked']);
             $token = $user->createToken('token')->accessToken;
             $user->device_token = request()->token;
             $user->save();

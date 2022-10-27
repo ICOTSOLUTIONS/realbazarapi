@@ -116,7 +116,7 @@ class CategoryController extends Controller
                 $product = Product::whereHas('subCategories', function ($query) use ($request) {
                     $query->where('id', $request->subcategory_id);
                     $query->whereRelation('categories', 'id', $request->category_id);
-                })->where('is_delete',false)->get();
+                })->get();
                 if (count($product)) {
                     return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product)], 200);
                 } else {
@@ -125,7 +125,7 @@ class CategoryController extends Controller
             } else {
                 $product = Product::whereHas('subCategories', function ($query) use ($request) {
                     $query->whereRelation('categories', 'id', $request->category_id);
-                })->where('is_delete',false)->get();
+                })->get();
                 if (count($product)) {
                     return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product)], 200);
                 } else {

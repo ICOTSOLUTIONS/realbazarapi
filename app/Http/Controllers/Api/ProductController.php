@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductsResource;
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\LikeProduct;
 use App\Models\Order;
+use App\Models\Package;
+use App\Models\PackagePayment;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -23,10 +26,70 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    public function home()
+    {
+        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->take(5)->get();
+        $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->take(5)->get();
+        $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->take(5)->get();
+        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->take(5)->get();
+        $banner_header = Banner::where('is_header', true)->take(5)->get();
+        $banner_body = Banner::where('is_body', true)->take(5)->get();
+        $banner_footer = Banner::where('is_footer', true)->take(5)->get();
+        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->take(5)->get();
+        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->take(5)->get();
+        return response()->json([
+            'status' => true, 'Message' => 'Product found',
+            'all_product' => ProductsResource::collection($all_product),
+            'feature_product' => ProductsResource::collection($feature_product),
+            'discount_product' => ProductsResource::collection($discount_product),
+            'newArrivalProduct' => ProductsResource::collection($newArrivalProduct),
+            'banner_header' => $banner_header,
+            'banner_body' => $banner_body,
+            'banner_footer' => $banner_footer,
+        ], 200);
+    }
+
     public function show()
     {
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_delete', false)->get();
+        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->get();
         return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
+    }
+
+    public function wholesalerProducts()
+    {
+        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'wholesaler');
+        })->get();
+        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
+    }
+
+    public function showAdminProduct()
+    {
+        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->get();
+        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
+    }
+
+    public function showSellerProduct()
+    {
+        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)->get();
+        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
 
     public function vendorProduct(Request $request)
@@ -37,15 +100,9 @@ class ProductController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('user_id', $request->id)->where('is_delete', false)->get();
+        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('user_id', $request->id)->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
-    }
-
-    public function vendorFeaturedProduct()
-    {
-        $product = Product::with('user')->where('featured', 'Featured')->where('status', 'active')->where('is_delete', false)->get();
-        return response()->json(['status' => true, 'Message' => 'Product found', 'products' => $product ?? []], 200);
     }
 
     public function showProduct(Request $request)
@@ -58,9 +115,36 @@ class ProductController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $id = explode(',', $request->id);
-        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_delete', false)->get();
+        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
+    }
+
+    public function featuredProduct()
+    {
+        $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->get();
+        if (count($feature_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($feature_product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $feature_product ?? []]);
+    }
+
+    public function discountProduct()
+    {
+        $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->get();
+        if (count($discount_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($discount_product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $discount_product ?? []]);
+    }
+
+    public function newArrivalProduct()
+    {
+        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $q->whereRelation('role', 'name', 'retailer');
+        })->get();
+        if (count($newArrivalProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($newArrivalProduct)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $newArrivalProduct ?? []]);
     }
 
     public function add(Request $request)
@@ -87,7 +171,15 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $user = auth()->user();
-            if ($user->role_id == 4 || $user->role_id == 5) {
+            if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+                $payment = PackagePayment::where('user_id', $user->id)->where('end_date', '<', Carbon::now())->first();
+                // $payment exist means expired payment;
+                if ($payment || $user->is_active == false) throw new Error("Please buy package!");
+                $productCount = Product::where('user_id', $user->id)->count();
+                $packageProductCount = PackagePayment::with('package:id,product_qty')
+                    ->where('user_id', $user->id)->first();
+                $qty = $packageProductCount->package->product_qty;
+                if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
                 $new_product = new Product();
                 $new_product->user_id = $user->id;
                 // if ($request->category && $request->sub_category) {
@@ -122,6 +214,7 @@ class ProductController extends Controller
                 $new_product->discount_price = $request->discount;
                 $new_product->tags = $request->tags;
                 $new_product->desc = $request->product_desc;
+                $new_product->is_featured = $request->featured ?? false;
                 // $new_product->size = $request->size;
                 // $new_product->brand = $request->brand;
                 // $new_product->type = $request->product_status;
@@ -158,7 +251,7 @@ class ProductController extends Controller
                 foreach ($names as $tag) {
                     $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
                 }
-            })->where('is_delete', false)->get();
+            })->get();
             if (count($product)) {
                 return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
             } else {
@@ -194,9 +287,16 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $user = auth()->user();
-            if ($user->role_id == 4 || $user->role_id == 5) {
-                $product = Product::where('id', $request->id)->where('is_delete', false)->first();
-                // dd($request->all());
+            if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+                $payment = PackagePayment::where('user_id', $user->id)->where('end_date', '<', Carbon::now())->first();
+                // $payment exist means expired payment;
+                if ($payment || $user->is_active == false) throw new Error("Please buy package!");
+                $productCount = Product::where('user_id', $user->id)->count();
+                $packageProductCount = PackagePayment::with('package:id,product_qty')
+                    ->where('user_id', $user->id)->first();
+                $qty = $packageProductCount->package->product_qty;
+                if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
+                $product = Product::where('id', $request->id)->first();
                 $product->user_id = $user->id;
                 // if ($request->category && $request->sub_category) {
                 //     $category = Category::where('name', $request->category)->first();
@@ -230,6 +330,7 @@ class ProductController extends Controller
                 $product->discount_price = $request->discount;
                 $product->tags = $request->tags;
                 $product->desc = $request->product_desc;
+                $product->is_featured = $request->featured ?? false;
                 // $product->size = $request->size;
                 // $product->brand = $request->brand;
                 // $product->type = $request->product_status;
@@ -335,7 +436,7 @@ class ProductController extends Controller
     {
         $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('history', function ($query) {
             $query->where('user_id', auth()->user()->id);
-        })->where('is_delete', false)->get();
+        })->get();
         if (count($historyProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($historyProduct)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
@@ -385,7 +486,7 @@ class ProductController extends Controller
 
     public function seller_products_count()
     {
-        $seller_products_count = Product::where('user_id', auth()->user()->id)->where('is_delete', false)->count();
+        $seller_products_count = Product::where('user_id', auth()->user()->id)->count();
         $seller_category_count = SubCategory::with('categories:id,name')->withCount('products')->get();
         return response()->json([
             "status" => true, 'products_count' => $seller_products_count,
@@ -395,7 +496,7 @@ class ProductController extends Controller
 
     public function seller_top_products()
     {
-        $seller_top_products = Product::where('user_id', auth()->user()->id)->where('is_delete', false)->withCount('orders')->get();
+        $seller_top_products = Product::where('user_id', auth()->user()->id)->withCount('orders')->get();
         $seller_top_products = $seller_top_products->sortByDesc('orders_count')->values();
         return response()->json(["status" => true, 'seller_top_products' => $seller_top_products], 200);
     }
@@ -476,15 +577,9 @@ class ProductController extends Controller
         return response()->json(["status" => true, 'lineChart' => $lineChart], 200);
     }
 
-    public function featureProduct()
-    {
-        $product = Product::with('user')->where('featured', 'Featured')->where('is_delete', false)->get();
-        return response()->json(["status" => true, 'feature_products' => $product], 200);
-    }
-
     public function productStatusChange($id)
     {
-        $product = Product::where('id', $id)->where('is_delete', false)->first();
+        $product = Product::where('id', $id)->first();
         if ($product->status == true) $product->status = false;
         else $product->status = true;
         if ($product->save()) {
