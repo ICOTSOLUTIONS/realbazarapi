@@ -62,7 +62,10 @@ class Product extends Model
             $user = auth()->user()->load('role');
             if ($user->role->name == 'user') {
                 static::addGlobalScope('active', function ($builder) {
-                    $builder->where('status', 'approved')->where('is_delete', false)->whereRelation('user', 'is_block', false);
+                    $builder->where('status', 'approved')
+                    ->where('is_delete', false)
+                    ->whereRelation('user', 'is_block', false)
+                    ->whereRelation('user', 'is_active', false);
                 });
             } elseif ($user->role->name == 'admin') {
                 static::addGlobalScope('active', function ($builder) {
@@ -75,7 +78,10 @@ class Product extends Model
             }
         } else {
             static::addGlobalScope('active', function ($builder) {
-                $builder->where('status', 'approved')->where('is_delete', false)->whereRelation('user', 'is_block', false);
+                $builder->where('status', 'approved')
+                ->where('is_delete', false)
+                ->whereRelation('user', 'is_block', false)
+                ->whereRelation('user', 'is_active', false);
             });
         }
     }
