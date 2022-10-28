@@ -576,14 +576,22 @@ class ProductController extends Controller
         return response()->json(["status" => true, 'lineChart' => $lineChart], 200);
     }
 
-    public function productStatusChange($id)
+    public function productStatusChange(Request $request)
     {
-        $product = Product::where('id', $id)->first();
-        if ($product->status == true) $product->status = false;
-        else $product->status = true;
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+            'status' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $product = Product::where('id', $request->id)->first();
+        $product->status = $request->status;
         if ($product->save()) {
-            if ($product->status == true) return response()->json(["status" => true, 'Message' => 'Product Status Change to Active Successfully'], 200);
-            else return response()->json(["status" => true, 'Message' => 'Product Status Change to De-Active Successfully'], 200);
+            if ($product->status == 'approved') return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
+            elseif ($product->status == 'rejected') return response()->json(["status" => true, 'Message' => 'Product Status Change to Rejected Successfully'], 200);
+            else return response()->json(["status" => true, 'Message' => 'Product Status Change to Pending Successfully'], 200);
         } else return response()->json(["status" => false, 'Message' => 'Product Status Change not Successfully']);
     }
 
