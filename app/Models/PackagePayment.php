@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PackagePayment extends Model
 {
-    protected $appends = ["duration"];
+    protected $appends = ["duration", 'counter'];
     use HasFactory;
 
     public function user()
@@ -23,6 +23,8 @@ class PackagePayment extends Model
 
     protected function getDurationAttribute()
     {
+        $counter = 0;
+        $counter = now()->diffInDays(Carbon::parse($this->end_date));
         $duration = 0;
         $start_date = Carbon::parse($this->start_date);
         $end_date = Carbon::parse($this->end_date);
@@ -57,5 +59,15 @@ class PackagePayment extends Model
             $start_date = $start_date->addSeconds($seconds);
         }
         return $duration;
+    }
+
+    protected function getCounterAttribute()
+    {
+        $counter = 0;
+        $days = now()->diffInDays(Carbon::parse($this->end_date));
+        if ($days > 0) {
+            $counter = $counter . $days . ' days ';
+        }
+        return $counter;
     }
 }
