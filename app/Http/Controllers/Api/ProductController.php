@@ -181,15 +181,11 @@ class ProductController extends Controller
         if ($role == 'retailer') {
             $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
-            })->whereHas('reviews', function ($q1) {
-                $q1->selectRaw('SUM(stars)/COUNT(user_id) AS rating');
             })->get();
         }
         if ($role == 'wholesaler') {
             $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
-            })->whereHas('reviews', function ($q1) {
-                $q1->selectRaw('SUM(stars)/COUNT(user_id) AS rating');
             })->get();
         }
         if (count($topRatingProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($topRatingProduct)], 200);

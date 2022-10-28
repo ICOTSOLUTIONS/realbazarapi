@@ -37,6 +37,7 @@ class ProductsResource extends JsonResource
             'likes' => $this->likes,
             // 'reviews' => ProductReview::with('users')->where('product_id',$this->id)->get(),
             'reviews' => $this->reviews,
+            'rating' => $this->reviews->sum('stars'),
             'totalReviews' => $this->reviews->count(),
             'totalLikes' => $this->likes->count(),
             'totalFollowers' => $this->user->follow->count(),
