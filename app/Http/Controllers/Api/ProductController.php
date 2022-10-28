@@ -85,11 +85,19 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function show()
+    public function show($role = null)
     {
-        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->get();
+        $all_product = [];
+        if ($role == 'retailer') {
+            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->get();
+        }
+        if ($role == 'wholesaler') {
+            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->get();
+        }
         return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
     }
 
@@ -114,6 +122,57 @@ class ProductController extends Controller
         $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
+    }
+
+    public function featuredProduct($role = null)
+    {
+        $feature_product = [];
+        if ($role == 'retailer') {
+            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->get();
+        }
+        if ($role == 'wholesaler') {
+            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->get();
+        }
+        if (count($feature_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($feature_product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $feature_product ?? []]);
+    }
+
+    public function discountProduct($role = null)
+    {
+        $discount_product = [];
+        if ($role == 'retailer') {
+            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->get();
+        }
+        if ($role == 'wholesaler') {
+            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->get();
+        }
+        if (count($discount_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($discount_product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $discount_product ?? []]);
+    }
+
+    public function newArrivalProduct($role = null)
+    {
+        $newArrivalProduct = [];
+        if ($role == 'retailer') {
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->get();
+        }
+        if ($role == 'wholesaler') {
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->get();
+        }
+        if (count($newArrivalProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($newArrivalProduct)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $newArrivalProduct ?? []]);
     }
 
     public function vendorProduct(Request $request)
@@ -144,31 +203,37 @@ class ProductController extends Controller
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
-    public function featuredProduct()
+    public function search($name, $role = null)
     {
-        $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->get();
-        if (count($feature_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($feature_product)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $feature_product ?? []]);
-    }
-
-    public function discountProduct()
-    {
-        $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->get();
-        if (count($discount_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($discount_product)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $discount_product ?? []]);
-    }
-
-    public function newArrivalProduct()
-    {
-        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->get();
-        if (count($newArrivalProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($newArrivalProduct)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $newArrivalProduct ?? []]);
+        if (!empty($name)) {
+            $product = [];
+            $names = explode(',', $name);
+            if ($role == 'retailer') {
+                $product = Product::where(function ($query) use ($names) {
+                    foreach ($names as $tag) {
+                        $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
+                    }
+                })->whereHas('user', function ($q) {
+                    $q->whereRelation('role', 'name', 'retailer');
+                })->get();
+            } else if ($role == 'wholesaler') {
+                $product = Product::where(function ($query) use ($names) {
+                    foreach ($names as $tag) {
+                        $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
+                    }
+                })->whereHas('user', function ($q) {
+                    $q->whereRelation('role', 'name', 'wholesaler');
+                })->get();
+            } else {
+                $product = Product::where(function ($query) use ($names) {
+                    foreach ($names as $tag) {
+                        $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
+                    }
+                })->get();
+            }
+            if (count($product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
+            else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $product ?? []]);
+        } else return response()->json(['status' => false, 'Message' => 'Parameter is null']);
     }
 
     public function add(Request $request)
@@ -263,25 +328,6 @@ class ProductController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
-        }
-    }
-
-    public function search($name)
-    {
-        if (!empty($name)) {
-            $names = explode(',', $name);
-            $product = Product::where(function ($query) use ($names) {
-                foreach ($names as $tag) {
-                    $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
-                }
-            })->get();
-            if (count($product)) {
-                return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
-            } else {
-                return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $product ?? []]);
-            }
-        } else {
-            return response()->json(['status' => false, 'Message' => 'Parameter is null']);
         }
     }
 
@@ -381,6 +427,18 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product Image not found']);
     }
 
+    public function delete(Request $request)
+    {
+        $product = Product::where('id', $request->id)->first();
+        if (!empty($product)) {
+            if ($product->is_delete == false) $product->is_delete = true;
+            else $product->is_delete = false;
+            if ($product->save()) return response()->json(['status' => true, 'Message' => 'Successfully deleted Product'], 200);
+        } else {
+            return response()->json(["status" => false, 'Message' => 'Product not deleted']);
+        }
+    }
+
     public function addImage(Request $request)
     {
         $valid = Validator::make($request->all(), [
@@ -412,16 +470,11 @@ class ProductController extends Controller
         } else return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted']);
     }
 
-    public function delete(Request $request)
+    public function showDeleteProduct()
     {
-        $product = Product::where('id', $request->id)->first();
-        if (!empty($product)) {
-            if ($product->is_delete == false) $product->is_delete = true;
-            else $product->is_delete = false;
-            if ($product->save()) return response()->json(['status' => true, 'Message' => 'Successfully deleted Product'], 200);
-        } else {
-            return response()->json(["status" => false, 'Message' => 'Product not deleted']);
-        }
+        $product = Product::where('is_delete', true)->get();
+        if (count($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
+        else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $product ?? []]);
     }
 
     public function hardDelete($id)
@@ -448,11 +501,66 @@ class ProductController extends Controller
         }
     }
 
-    public function showDeleteProduct()
+    public function productStatusChange(Request $request)
     {
-        $product = Product::where('is_delete', true)->get();
-        if (count($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
-        else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $product ?? []]);
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+            'status' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $product = Product::where('id', $request->id)->first();
+        $product->status = $request->status;
+        if ($product->save()) {
+            if ($product->status == 'approved') return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
+            elseif ($product->status == 'rejected') return response()->json(["status" => true, 'Message' => 'Product Status Change to Rejected Successfully'], 200);
+            else return response()->json(["status" => true, 'Message' => 'Product Status Change to Pending Successfully'], 200);
+        } else return response()->json(["status" => false, 'Message' => 'Product Status Change not Successfully']);
+    }
+
+    public function likeProduct(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'product_id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        $likeExist = LikeProduct::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
+        if (is_object($likeExist)) {
+            if ($likeExist->delete()) return response()->json(['status' => true, 'Message' => "UnLike Successfully"], 200);
+            return response()->json(['status' => false, 'Message' => "UnLike not Successfull"]);
+        }
+        $like = new LikeProduct();
+        $like->user_id = auth()->user()->id;
+        $like->product_id = $request->product_id;
+        if ($like->save()) return response()->json(['status' => true, 'Message' => "Like Successfully"], 200);
+        return response()->json(['status' => false, 'Message' => "Like not Successfull"]);
+    }
+
+    public function reviewProduct(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'product_id' => 'required',
+            'stars' => 'required',
+            'comments' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        $review = new ProductReview();
+        $review->user_id = auth()->user()->id;
+        $review->product_id = $request->product_id;
+        $review->stars = $request->stars;
+        $review->comments = $request->comments;
+        if ($review->save()) return response()->json(['status' => true, 'Message' => "Review Successfully"], 200);
+        return response()->json(['status' => false, 'Message' => "Review not Successfull"]);
     }
 
     public function historyProduct()
@@ -598,67 +706,5 @@ class ProductController extends Controller
             ->orderBy('createdAt')
             ->get();
         return response()->json(["status" => true, 'lineChart' => $lineChart], 200);
-    }
-
-    public function productStatusChange(Request $request)
-    {
-        $valid = Validator::make($request->all(), [
-            'id' => 'required',
-            'status' => 'required',
-        ]);
-
-        if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
-        }
-        $product = Product::where('id', $request->id)->first();
-        $product->status = $request->status;
-        if ($product->save()) {
-            if ($product->status == 'approved') return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
-            elseif ($product->status == 'rejected') return response()->json(["status" => true, 'Message' => 'Product Status Change to Rejected Successfully'], 200);
-            else return response()->json(["status" => true, 'Message' => 'Product Status Change to Pending Successfully'], 200);
-        } else return response()->json(["status" => false, 'Message' => 'Product Status Change not Successfully']);
-    }
-
-    public function likeProduct(Request $request)
-    {
-        $valid = Validator::make($request->all(), [
-            'product_id' => 'required',
-        ]);
-
-        if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
-        }
-
-        $likeExist = LikeProduct::where('user_id', auth()->user()->id)->where('product_id', $request->product_id)->first();
-        if (is_object($likeExist)) {
-            if ($likeExist->delete()) return response()->json(['status' => true, 'Message' => "UnLike Successfully"], 200);
-            return response()->json(['status' => false, 'Message' => "UnLike not Successfull"]);
-        }
-        $like = new LikeProduct();
-        $like->user_id = auth()->user()->id;
-        $like->product_id = $request->product_id;
-        if ($like->save()) return response()->json(['status' => true, 'Message' => "Like Successfully"], 200);
-        return response()->json(['status' => false, 'Message' => "Like not Successfull"]);
-    }
-
-    public function reviewProduct(Request $request)
-    {
-        $valid = Validator::make($request->all(), [
-            'product_id' => 'required',
-            'stars' => 'required',
-            'comments' => 'required',
-        ]);
-
-        if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
-        }
-
-        $review = new ProductReview();
-        $review->user_id = auth()->user()->id;
-        $review->product_id = $request->product_id;
-        $review->stars = $request->stars;
-        $review->comments = $request->comments;
-        if ($review->save()) return response()->json(['status' => true, 'Message' => "Review Successfully"], 200);
-        return response()->json(['status' => false, 'Message' => "Review not Successfull"]);
     }
 }

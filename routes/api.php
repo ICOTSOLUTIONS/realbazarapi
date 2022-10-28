@@ -92,13 +92,13 @@ Route::get('retailers', [Api\AuthController::class, 'retailer']);
 
 //product
 Route::get('home/{role?}', [Api\ProductController::class, 'home']);
-Route::get('products', [Api\ProductController::class, 'show']);
-Route::get('search/{name}', [Api\ProductController::class, 'search']);
+Route::get('products/{role?}', [Api\ProductController::class, 'show']);
+Route::get('search/{name}/{role?}', [Api\ProductController::class, 'search']);
 Route::post('show/product', [Api\ProductController::class, 'showProduct']);
 Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
-Route::get('discount/product', [Api\ProductController::class, 'discountProduct']);
-Route::get('featured/product', [Api\ProductController::class, 'featuredProduct']);
-Route::get('newArrival/product', [Api\ProductController::class, 'newArrivalProduct']);
+Route::get('discount/product/{role?}', [Api\ProductController::class, 'discountProduct']);
+Route::get('featured/product/{role?}', [Api\ProductController::class, 'featuredProduct']);
+Route::get('newArrival/product/{role?}', [Api\ProductController::class, 'newArrivalProduct']);
 Route::get('wholesaler/products', [Api\ProductController::class, 'wholesalerProducts']);
 
 //category
