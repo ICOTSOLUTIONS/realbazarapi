@@ -101,6 +101,7 @@ Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
 Route::get('discount/product/{role?}', [Api\ProductController::class, 'discountProduct']);
 Route::get('featured/product/{role?}', [Api\ProductController::class, 'featuredProduct']);
 Route::get('newArrival/product/{role?}', [Api\ProductController::class, 'newArrivalProduct']);
+Route::get('topRating/product/{role?}', [Api\ProductController::class, 'topRatingProduct']);
 Route::get('wholesaler/products', [Api\ProductController::class, 'wholesalerProducts']);
 
 //category

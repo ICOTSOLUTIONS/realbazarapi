@@ -175,6 +175,27 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $newArrivalProduct ?? []]);
     }
 
+    public function topRatingProduct($role = null)
+    {
+        $topRatingProduct = [];
+        if ($role == 'retailer') {
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->whereHas('reviews', function ($q1) {
+                $q1->selectRaw('SUM(stars)/COUNT(user_id) AS rating');
+            })->get();
+        }
+        if ($role == 'wholesaler') {
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->whereHas('reviews', function ($q1) {
+                $q1->selectRaw('SUM(stars)/COUNT(user_id) AS rating');
+            })->get();
+        }
+        if (count($topRatingProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($topRatingProduct)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $topRatingProduct ?? []]);
+    }
+
     public function vendorProduct(Request $request)
     {
         $valid = Validator::make($request->all(), [
