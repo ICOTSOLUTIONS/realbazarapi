@@ -32,6 +32,7 @@ class ProductController extends Controller
         $feature_product = [];
         $discount_product = [];
         $newArrivalProduct = [];
+        $topRatingProduct = [];
         if ($role == 'retailer') {
             $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
@@ -43,6 +44,9 @@ class ProductController extends Controller
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
             $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->take(5)->get();
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
@@ -65,6 +69,9 @@ class ProductController extends Controller
             $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
@@ -79,6 +86,7 @@ class ProductController extends Controller
             'feature_product' => ProductsResource::collection($feature_product),
             'discount_product' => ProductsResource::collection($discount_product),
             'newArrivalProduct' => ProductsResource::collection($newArrivalProduct),
+            'topRatingProduct' => ProductsResource::collection($topRatingProduct),
             'banner_header' => $banner_header ?? [],
             'banner_body' => $banner_body ?? [],
             'banner_footer' => $banner_footer ?? [],
