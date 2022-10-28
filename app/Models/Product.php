@@ -65,7 +65,7 @@ class Product extends Model
                     $builder->where('status', 'approved')
                     ->where('is_delete', false)
                     ->whereRelation('user', 'is_block', false)
-                    ->whereRelation('user', 'is_active', false);
+                    ->whereRelation('user', 'is_active', true);
                 });
             } elseif ($user->role->name == 'admin') {
                 static::addGlobalScope('active', function ($builder) {
@@ -81,7 +81,7 @@ class Product extends Model
                 $builder->where('status', 'approved')
                 ->where('is_delete', false)
                 ->whereRelation('user', 'is_block', false)
-                ->whereRelation('user', 'is_active', false);
+                ->whereRelation('user', 'is_active', true);
             });
         }
     }
