@@ -15,6 +15,12 @@ use Stripe;
 
 class OrderController extends Controller
 {
+    public function show()
+    {
+        $order = Order::with(['user_orders','user_payments','users','seller'])->get();
+        dd($order);
+    }
+
     public function order(Request $request)
     {
         if (!empty($request->order)) {

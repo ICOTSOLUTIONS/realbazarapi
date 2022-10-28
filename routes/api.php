@@ -37,7 +37,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('delete/subcategory', [Api\SubCategoryController::class, 'delete']);
 
     //product
-    Route::get('show/admin/products', [Api\ProductController::class, 'showAdminProduct']);
+    Route::get('show/admin/products/{status?}', [Api\ProductController::class, 'showAdminProduct']);
     Route::get('show/seller/products', [Api\ProductController::class, 'showSellerProduct']);
     Route::post('add/product', [Api\ProductController::class, 'add']);
     Route::post('update/product', [Api\ProductController::class, 'update']);
@@ -110,3 +110,4 @@ Route::post('subscribe', [Api\SettingController::class, 'subscribe']);
 
 //banner
 Route::get('/banners/{section}', [Api\BannerController::class, 'banners']);
+Route::get('get/order', [Api\OrderController::class, 'show']);
