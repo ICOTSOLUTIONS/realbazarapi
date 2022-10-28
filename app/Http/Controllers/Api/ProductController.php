@@ -187,7 +187,7 @@ class ProductController extends Controller
         }
         if ($role == 'wholesaler') {
             $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
-                $q->whereRelation('role', 'name', 'retailer');
+                $q->whereRelation('role', 'name', 'wholesaler');
             })->whereHas('reviews', function ($q1) {
                 $q1->selectRaw('SUM(stars)/COUNT(user_id) AS rating');
             })->get();
