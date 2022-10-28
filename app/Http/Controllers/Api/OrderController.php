@@ -12,13 +12,14 @@ use Carbon\Carbon;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Stripe;
 
 class OrderController extends Controller
 {
     public function show()
     {
-        $order = Order::with(['user_orders.products','users','seller'])->get();
+        $order = Order::with(['user_orders.products', 'users', 'seller'])->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
@@ -87,5 +88,23 @@ class OrderController extends Controller
                 return response()->json(['status' => false, 'Message' => $th->getMessage(), 'request' => $request->all()]);
             }
         } else return response()->json(['status' => false, 'Message' => 'Order Request Failed!', 'request' => $request->all()]);
+    }
+
+    public function orderStatusChange(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+            'status' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $order = Order::where('id', $request->id)->first();
+        $order->status = $request->status;
+        if ($order->save()) {
+            if ($order->status == 'delivered') return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
+            else return response()->json(["status" => true, 'Message' => 'Order Status Change to Pending Successfully'], 200);
+        } else return response()->json(["status" => false, 'Message' => 'Order Status Change not Successfully']);
     }
 }
