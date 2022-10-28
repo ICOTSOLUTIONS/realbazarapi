@@ -113,6 +113,7 @@ class PackageController extends Controller
                 $exist_user->package_id = $request->package_id;
                 $exist_user->start_date = $date;
                 $exist_user->end_date = $end_date;
+                $exist_user->updated_product_qty += $package->product_qty;
                 if (!$exist_user->save()) throw new Error('Package not Buy');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
@@ -128,6 +129,7 @@ class PackageController extends Controller
                 $paymentPackage->package_id = $request->package_id;
                 $paymentPackage->start_date = $date;
                 $paymentPackage->end_date = $end_date;
+                $paymentPackage->updated_product_qty = $package->product_qty;
                 if (!$paymentPackage->save()) throw new Error('Package not Buy');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);

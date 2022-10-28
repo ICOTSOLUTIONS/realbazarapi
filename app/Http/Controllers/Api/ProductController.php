@@ -176,9 +176,8 @@ class ProductController extends Controller
                 // $payment exist means expired payment;
                 if ($payment || $user->is_active == false) throw new Error("Please buy package!");
                 $productCount = Product::where('user_id', $user->id)->count();
-                $packageProductCount = PackagePayment::with('package:id,product_qty')
-                    ->where('user_id', $user->id)->first();
-                $qty = $packageProductCount->package->product_qty;
+                $packageProductCount = PackagePayment::where('user_id', $user->id)->first();
+                $qty = $packageProductCount->updated_product_qty;
                 if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
                 $new_product = new Product();
                 $new_product->user_id = $user->id;
