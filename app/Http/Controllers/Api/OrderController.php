@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Payment;
@@ -17,8 +18,9 @@ class OrderController extends Controller
 {
     public function show()
     {
-        $order = Order::with(['user_orders','users','seller'])->get();
-        dd($order);
+        $order = Order::with(['user_orders.products','users','seller'])->get();
+        if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
 
     public function order(Request $request)
