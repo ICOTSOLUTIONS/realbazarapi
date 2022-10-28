@@ -17,7 +17,7 @@ class OrderController extends Controller
 {
     public function show()
     {
-        $order = Order::with(['user_orders','user_payments','users','seller'])->get();
+        $order = Order::with(['user_orders','users','seller'])->get();
         dd($order);
     }
 
