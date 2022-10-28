@@ -91,7 +91,7 @@ Route::get('users', [Api\AuthController::class, 'user']);
 Route::get('retailers', [Api\AuthController::class, 'retailer']);
 
 //product
-Route::get('home', [Api\ProductController::class, 'home']);
+Route::get('home/{role?}', [Api\ProductController::class, 'home']);
 Route::get('products', [Api\ProductController::class, 'show']);
 Route::get('search/{name}', [Api\ProductController::class, 'search']);
 Route::post('show/product', [Api\ProductController::class, 'showProduct']);

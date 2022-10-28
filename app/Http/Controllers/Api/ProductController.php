@@ -26,29 +26,49 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function home()
+    public function home($role = null)
     {
-        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->take(5)->get();
-        $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->take(5)->get();
-        $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->take(5)->get();
-        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->take(5)->get();
-        $banner_header = Banner::where('is_header', true)->take(5)->get();
-        $banner_body = Banner::where('is_body', true)->take(5)->get();
-        $banner_footer = Banner::where('is_footer', true)->take(5)->get();
-        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->take(5)->get();
-        $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
-            $q->whereRelation('role', 'name', 'retailer');
-        })->take(5)->get();
+        if ($role == 'retailer') {
+            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->take(5)->get();
+            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->take(5)->get();
+            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->take(5)->get();
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->take(5)->get();
+            $banner_header = Banner::where('is_header', true)->take(5)->get();
+            $banner_body = Banner::where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->take(5)->get();
+        }
+        if ($role == 'wholesaler') {
+            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->take(5)->get();
+            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->take(5)->get();
+            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->take(5)->get();
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->take(5)->get();
+            $banner_header = Banner::where('is_header', true)->take(5)->get();
+            $banner_body = Banner::where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->take(5)->get();
+        }
+
         return response()->json([
             'status' => true, 'Message' => 'Product found',
             'all_product' => ProductsResource::collection($all_product),
