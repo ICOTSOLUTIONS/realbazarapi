@@ -56,6 +56,7 @@ Route::middleware('auth:api')->group(function () {
 
     //order
     Route::post('order', [Api\OrderController::class, 'order']);
+    Route::get('get/order', [Api\OrderController::class, 'show']);
 
     //package
     Route::get('/package', [Api\PackageController::class, 'show']);
@@ -110,4 +111,3 @@ Route::post('subscribe', [Api\SettingController::class, 'subscribe']);
 
 //banner
 Route::get('/banners/{section}', [Api\BannerController::class, 'banners']);
-Route::get('get/order', [Api\OrderController::class, 'show']);

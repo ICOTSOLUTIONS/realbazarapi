@@ -93,36 +93,36 @@ class PackageController extends Controller
         $exist_user = PackagePayment::where('user_id', auth()->user()->id)
             ->where('package_id', $request->package_id)->first();
         $date = Carbon::now();
-        if ($exist_user->end_date > $date) return response()->json(['status' => true, 'Message' => 'You already have active package and your Package expiry date is ' . $exist_user->end_date], 200);
-        return response()->json(['status' => false, 'Message' => 'Package not buy']);
+        if (!empty($exist_user)) {
+            if ($exist_user->end_date > $date) return response()->json(['status' => false, 'Message' => 'You already have active package and your Package expiry date is ' . $exist_user->end_date]);
+        }
+        return response()->json(['status' => true, 'Message' => 'Your Package is expired please buy new Package']);
     }
+
     public function payment(Request $request)
     {
         try {
             DB::beginTransaction();
+            $date = Carbon::now();
+            $existing_package = PackagePayment::where('user_id', auth()->user()->id)
+                ->where('package_id', $request->package_id)->first();
+            if (!empty($existing_package)) {
+                if ($existing_package->end_date > $date)  throw new Error('You already have active package and your Package expiry date is ' . $existing_package->end_date);
+            }
             $package = Package::where('id', $request->package_id)->first();
             $exist_user = PackagePayment::where('user_id', auth()->user()->id)->first();
             if (!empty($exist_user)) {
                 $date = Carbon::now();
-                // if ($exist_user->end_date > $date) throw new Error('Your Package expiry date is ' . $exist_user->end_date);
-                // else {
-                // $response = 'success';
-                // if (!empty($response)) {
                 if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
                 $exist_user->user_id = auth()->user()->id;
                 $exist_user->package_id = $request->package_id;
                 $exist_user->start_date = $date;
                 $exist_user->end_date = $end_date;
-                $exist_user->updated_product_qty += $package->product_qty;
+                $exist_user->updated_product_qty = $package->product_qty;
                 if (!$exist_user->save()) throw new Error('Package not Buy');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
-                // } else throw new Error('Response not success');
-                // }
             } else {
-                // $response = 'success';
-                // if (!empty($response)) {
-                $date = Carbon::now();
                 $paymentPackage = new PackagePayment();
                 if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
                 $paymentPackage->user_id = auth()->user()->id;
@@ -133,7 +133,6 @@ class PackageController extends Controller
                 if (!$paymentPackage->save()) throw new Error('Package not Buy');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
-                // } else throw new Error('Response not success');
             }
         } catch (\Throwable $th) {
             DB::rollBack();
