@@ -28,6 +28,10 @@ class ProductController extends Controller
 {
     public function home($role = null)
     {
+        $all_product = [];
+        $feature_product = [];
+        $discount_product = [];
+        $newArrivalProduct = [];
         if ($role == 'retailer') {
             $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
@@ -75,9 +79,9 @@ class ProductController extends Controller
             'feature_product' => ProductsResource::collection($feature_product),
             'discount_product' => ProductsResource::collection($discount_product),
             'newArrivalProduct' => ProductsResource::collection($newArrivalProduct),
-            'banner_header' => $banner_header,
-            'banner_body' => $banner_body,
-            'banner_footer' => $banner_footer,
+            'banner_header' => $banner_header ?? [],
+            'banner_body' => $banner_body ?? [],
+            'banner_footer' => $banner_footer ?? [],
         ], 200);
     }
 
