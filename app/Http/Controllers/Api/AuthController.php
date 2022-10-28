@@ -83,6 +83,7 @@ class AuthController extends Controller
                 $paymentPackage->package_id = $package->id;
                 $paymentPackage->start_date = $date;
                 $paymentPackage->end_date = $end_date;
+                $paymentPackage->updated_product_qty = $package->product_qty;
                 if (!$paymentPackage->save()) throw new Error('Free Package not Buy');
                 $statusActive = User::find($user->id);
                 if (!$statusActive) throw new Error('User not found after buy package');
