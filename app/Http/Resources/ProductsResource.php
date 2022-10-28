@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\ProductReview;
 use Illuminate\Http\Resources\Json\JsonResource;
+use PHPUnit\Framework\Constraint\Count;
 
 class ProductsResource extends JsonResource
 {
@@ -37,7 +38,7 @@ class ProductsResource extends JsonResource
             'likes' => $this->likes,
             // 'reviews' => ProductReview::with('users')->where('product_id',$this->id)->get(),
             'reviews' => $this->reviews,
-            'rating' => $this->reviews->sum('stars'),
+            'rating' => $this->reviews->sum('stars')/Count($this->user_id),
             'totalReviews' => $this->reviews->count(),
             'totalLikes' => $this->likes->count(),
             'totalFollowers' => $this->user->follow->count(),
