@@ -29,7 +29,7 @@ class NewArrivalProductCommand extends Command
      */
     public function handle()
     {
-        $products = Product::where('is_newArrival', true)->get();
+        $products = Product::where('is_new_arrival', true)->get();
         foreach ($products as  $product) {
             $date = Carbon::now();
             $days = $product->created_at->addDays(2);
