@@ -14,6 +14,7 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductReview;
+use App\Models\ProductVariation;
 use App\Models\SubCategory;
 use App\Models\User;
 use App\Models\UserProductHistory;
@@ -34,50 +35,44 @@ class ProductController extends Controller
         $newArrivalProduct = [];
         $topRatingProduct = [];
         if ($role == 'retailer') {
-            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
-            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+            $feature_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
-            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+            $discount_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
-            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
-            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
-            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
-                $q->whereRelation('role', 'name', 'retailer');
-            })->take(5)->get();
         }
         if ($role == 'wholesaler') {
-            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
-            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+            $feature_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
-            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+            $discount_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
-            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
-            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
-            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
-                $q->whereRelation('role', 'name', 'wholesaler');
-            })->take(5)->get();
         }
 
         return response()->json([
@@ -97,12 +92,12 @@ class ProductController extends Controller
     {
         $all_product = [];
         if ($role == 'retailer') {
-            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->get();
         }
         if ($role == 'wholesaler') {
-            $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->get();
         }
@@ -111,7 +106,7 @@ class ProductController extends Controller
 
     public function wholesalerProducts()
     {
-        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+        $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
             $q->whereRelation('role', 'name', 'wholesaler');
         })->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
@@ -120,14 +115,14 @@ class ProductController extends Controller
 
     public function showAdminProduct($status = null)
     {
-        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)->get();
+        $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
 
     public function showSellerProduct()
     {
-        $all_product = Product::has('user')->with(['user', 'images', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)->get();
+        $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
@@ -136,12 +131,12 @@ class ProductController extends Controller
     {
         $feature_product = [];
         if ($role == 'retailer') {
-            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+            $feature_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->get();
         }
         if ($role == 'wholesaler') {
-            $feature_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+            $feature_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->get();
         }
@@ -153,12 +148,12 @@ class ProductController extends Controller
     {
         $discount_product = [];
         if ($role == 'retailer') {
-            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+            $discount_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->get();
         }
         if ($role == 'wholesaler') {
-            $discount_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+            $discount_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->get();
         }
@@ -170,12 +165,12 @@ class ProductController extends Controller
     {
         $newArrivalProduct = [];
         if ($role == 'retailer') {
-            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->get();
         }
         if ($role == 'wholesaler') {
-            $newArrivalProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+            $newArrivalProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->get();
         }
@@ -187,12 +182,12 @@ class ProductController extends Controller
     {
         $topRatingProduct = [];
         if ($role == 'retailer') {
-            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->get();
         }
         if ($role == 'wholesaler') {
-            $topRatingProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->get();
         }
@@ -208,7 +203,7 @@ class ProductController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $all_product = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->where('user_id', $request->id)->get();
+        $all_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('user_id', $request->id)->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
@@ -223,7 +218,7 @@ class ProductController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $id = explode(',', $request->id);
-        $all_product = Product::whereIn('id', $id)->has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->get();
+        $all_product = Product::whereIn('id', $id)->has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->get();
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
@@ -234,7 +229,7 @@ class ProductController extends Controller
             $product = [];
             $names = explode(',', $name);
             if ($role == 'retailer') {
-                $product = Product::where(function ($query) use ($names) {
+                $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where(function ($query) use ($names) {
                     foreach ($names as $tag) {
                         $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
                     }
@@ -242,7 +237,7 @@ class ProductController extends Controller
                     $q->whereRelation('role', 'name', 'retailer');
                 })->get();
             } else if ($role == 'wholesaler') {
-                $product = Product::where(function ($query) use ($names) {
+                $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where(function ($query) use ($names) {
                     foreach ($names as $tag) {
                         $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
                     }
@@ -267,16 +262,16 @@ class ProductController extends Controller
             'title' => 'required',
             'price' => 'required',
             'discount' => 'nullable',
-            // 'size' => 'required',
+            'product_desc' => 'required',
+            'product_image' => 'required|array',
+            'variations' => 'required',
+            'tags' => 'required',
+            'sub_category_id' => 'required',
             // 'brand' => 'required',
             // 'product_status' => 'required',
             // 'product_selected_qty' => 'nullable',
-            'product_desc' => 'required',
-            'product_image' => 'required|array',
             // 'category' => 'required',
             // 'featured' => 'required',
-            'tags' => 'required',
-            'sub_category_id' => 'required',
         ]);
 
         if ($valid->fails()) {
@@ -295,47 +290,13 @@ class ProductController extends Controller
                 if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
                 $new_product = new Product();
                 $new_product->user_id = $user->id;
-                // if ($request->category && $request->sub_category) {
-                //     $category = Category::where('id', $request->category)->first();
-                //     if (!is_object($category)) {
-                //         $category = new Category();
-                //         $category->name = $request->category;
-                //         $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
-                //         $category->save();
-
-                //         $subcategory = new SubCategory();
-                //         $subcategory->category_id = $category->id;
-                //         $subcategory->name = $request->sub_category;
-                //         $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                //         $subcategory->save();
-                //     } else {
-                //         $subcategory = SubCategory::whereHas('categories', function ($query) use ($category) {
-                //             $query->where('id', $category->id);
-                //         })->where('name', $request->sub_category)->first();
-                //         if (!is_object($subcategory)) {
-                //             $subcategory = new SubCategory();
-                //             $subcategory->category_id = $category->id;
-                //             $subcategory->name = $request->sub_category;
-                //             $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                //             $subcategory->save();
-                //         }
-                //     }
-                // }
                 $new_product->sub_category_id = $request->sub_category_id;
                 $new_product->title = $request->title;
                 $new_product->price = $request->price;
                 $new_product->discount_price = $request->discount;
-                $new_product->tags = $request->tags;
+                $new_product->tags = json_encode($request->tags);
                 $new_product->desc = $request->product_desc;
                 $new_product->is_featured = $request->featured ?? false;
-                // $new_product->size = $request->size;
-                // $new_product->brand = $request->brand;
-                // $new_product->type = $request->product_status;
-                // $new_product->featured = $request->featured;
-                // if ($request->featured == "Featured") {
-                //     $new_product->status = "pending";
-                // }
-
                 if (!$new_product->save()) throw new Error("Product not added!");
                 if (!empty($request->product_image)) {
                     foreach ($request->product_image as $image) {
@@ -347,8 +308,20 @@ class ProductController extends Controller
                         if (!$product_image->save()) throw new Error("Product Images not added!");
                     }
                 }
+                if (!empty($request->variations)) {
+                    foreach ($request->variations as $variation) {
+                        if (is_object($variation)) $variation = $variation->toArray();
+                        $newVariation = new ProductVariation();
+                        $newVariation->product_id = $new_product->id;
+                        $newVariation->size = $variation['size'];
+                        $newVariation->stock = $variation['stock'];
+                        $newVariation->price = $variation['price'];
+                        if (!$newVariation->save()) throw new Error("Product Variations not added!");
+                    }
+                }
+                $products = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('id', $new_product->id)->first();
                 DB::commit();
-                return response()->json(['status' => true, 'Message' => 'Product Added Successfully!'], 200);
+                return response()->json(['status' => true, 'Message' => 'Product Added Successfully!', 'Products' => new ProductsResource($products) ?? []], 200);
             } else throw new Error("Authenticated User Required!");
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -359,20 +332,20 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'id' => 'required|numeric',
+            'id' => 'required',
             'title' => 'required',
             'price' => 'required',
             'discount' => 'nullable',
-            // 'size' => 'required',
+            'product_desc' => 'required',
+            // 'product_image' => 'required|array',
+            'variations' => 'required',
+            'tags' => 'required',
+            'sub_category_id' => 'required',
             // 'brand' => 'required',
             // 'product_status' => 'required',
             // 'product_selected_qty' => 'nullable',
-            'product_desc' => 'required',
-            // 'product_image' => 'required|array',
             // 'category' => 'required',
             // 'featured' => 'required',
-            'tags' => 'required',
-            'sub_category_id' => 'required',
         ]);
 
         if ($valid->fails()) {
@@ -382,62 +355,59 @@ class ProductController extends Controller
             DB::beginTransaction();
             $user = auth()->user();
             if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
-                $payment = PackagePayment::where('user_id', $user->id)->where('end_date', '<', Carbon::now())->first();
-                // $payment exist means expired payment;
-                if ($payment || $user->is_active == false) throw new Error("Please buy package!");
-                $productCount = Product::where('user_id', $user->id)->count();
-                $packageProductCount = PackagePayment::with('package:id,product_qty')
-                    ->where('user_id', $user->id)->first();
-                $qty = $packageProductCount->package->product_qty;
-                if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
+                // $payment = PackagePayment::where('user_id', $user->id)->where('end_date', '<', Carbon::now())->first();
+                // // $payment exist means expired payment;
+                // if ($payment || $user->is_active == false) throw new Error("Please buy package!");
+                // $productCount = Product::where('user_id', $user->id)->count();
+                // $packageProductCount = PackagePayment::where('user_id', $user->id)->first();
+                // $qty = $packageProductCount->updated_product_qty;
+                // if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
                 $product = Product::where('id', $request->id)->first();
                 $product->user_id = $user->id;
-                // if ($request->category && $request->sub_category) {
-                //     $category = Category::where('name', $request->category)->first();
-                //     if (!is_object($category)) {
-                //         $category = new Category();
-                //         $category->name = $request->category;
-                //         $category->url = strtolower(preg_replace('/\s*/', '', $request->category));
-                //         $category->save();
-
-                //         $subcategory = new SubCategory();
-                //         $subcategory->category_id = $category->id;
-                //         $subcategory->name = $request->sub_category;
-                //         $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                //         $subcategory->save();
-                //     } else {
-                //         $subcategory = SubCategory::whereHas('categories', function ($query) use ($request, $category) {
-                //             $query->where('id', $category->id);
-                //         })->where('name', $request->sub_category)->first();
-                //         if (!is_object($subcategory)) {
-                //             $subcategory = new SubCategory();
-                //             $subcategory->category_id = $category->id;
-                //             $subcategory->name = $request->sub_category;
-                //             $subcategory->url = strtolower(preg_replace('/\s*/', '', $request->category . '/' . $request->sub_category));
-                //             $subcategory->save();
-                //         }
-                //     }
-                // }
                 $product->sub_category_id = $request->sub_category_id;
                 $product->title = $request->title;
                 $product->price = $request->price;
                 $product->discount_price = $request->discount;
-                $product->tags = $request->tags;
+                $product->tags = json_encode($request->tags);
                 $product->desc = $request->product_desc;
                 $product->is_featured = $request->featured ?? false;
-                // $product->size = $request->size;
-                // $product->brand = $request->brand;
-                // $product->type = $request->product_status;
-                // $product->featured = $request->featured;
-                // if ($request->featured == "Featured") {
-                // $product->status = "pending";
-                // } else {
-                // $product->status = null;
-                // }
-                // $product->details = $request->product_details;
-                if (!$product->save()) throw new Error("Product not updated!");
+                if (!$product->save()) throw new Error("Product not Updated!");
+                if (!empty($request->product_image)) {
+                    $existImage = ProductImage::where('product_id', $product->id)->get();
+                    if (!empty($existImage)) {
+                        foreach ($existImage as $key => $value) {
+                            $value->delete();
+                        }
+                    }
+                    foreach ($request->product_image as $image) {
+                        $product_image = new ProductImage();
+                        $product_image->product_id = $product->id;
+                        $filename = "Product-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                        $image->storeAs('product', $filename, "public");
+                        $product_image->image = "product/" . $filename;
+                        if (!$product_image->save()) throw new Error("Product Images not added!");
+                    }
+                }
+                if (!empty($request->variations)) {
+                    $existVariation = ProductVariation::where('product_id', $product->id)->get();
+                    if (!empty($existVariation)) {
+                        foreach ($existVariation as $key => $value) {
+                            $value->delete();
+                        }
+                    }
+                    foreach ($request->variations as $variation) {
+                        if (is_object($variation)) $variation = $variation->toArray();
+                        $newVariation = new ProductVariation();
+                        $newVariation->product_id = $product->id;
+                        $newVariation->size = $variation['size'];
+                        $newVariation->stock = $variation['stock'];
+                        $newVariation->price = $variation['price'];
+                        if (!$newVariation->save()) throw new Error("Product Variations not added!");
+                    }
+                }
+                $products = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('id', $product->id)->first();
                 DB::commit();
-                return response()->json(['status' => true, 'Message' => 'Product Updated Successfully!', 'product' => $product], 200);
+                return response()->json(['status' => true, 'Message' => 'Product Updated Successfully!', 'Products' => new ProductsResource($products) ?? []], 200);
             } else throw new Error("Authenticated User Required!");
         } catch (\Throwable $th) {
             DB::rollBack();

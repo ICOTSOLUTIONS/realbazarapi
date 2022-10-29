@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CnicImage;
 use App\Models\FollowUserShop;
 use App\Models\Package;
 use App\Models\PackagePayment;
@@ -21,7 +22,7 @@ class AuthController extends Controller
 
     public function wholesaler()
     {
-        $wholesalers = User::with('role')->where('role_id', 4)->get();
+        $wholesalers = User::with(['role', 'cnic_image'])->where('role_id', 4)->get();
         if (count($wholesalers)) return response()->json(['status' => true, 'wholesalers' => $wholesalers ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'not found']);
     }
@@ -35,7 +36,7 @@ class AuthController extends Controller
 
     public function retailer()
     {
-        $retailers = User::with('role')->where('role_id', 5)->get();
+        $retailers = User::with(['role', 'cnic_image'])->where('role_id', 5)->get();
         if (count($retailers)) return response()->json(['status' => true, 'retailers' => $retailers ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'not found']);
     }
@@ -45,14 +46,24 @@ class AuthController extends Controller
         $rules = [
             'role' => 'required',
             'name' => 'required',
-            'first_name' => 'nullable',
-            'last_name' => 'nullable',
             'password' => 'required',
         ];
-        if (is_numeric($request->get('emailphone'))) {
-            $rules['emailphone'] = 'required|digits:11|unique:users,phone';
+        if ($request->role == 'retailer' || $request->role == 'wholesaler') {
+            $rules['email'] = 'required|email|unique:users,email';
+            $rules['phone'] = 'required|digits:11|unique:users,phone';
+            $rules['business_name'] = 'required';
+            $rules['business_address'] = 'required';
+            $rules['province'] = 'required';
+            $rules['country'] = 'required';
+            $rules['cnic_number'] = 'required|digits:13';
+            $rules['cnic_image'] = 'required|array';
+            $rules['bill_image'] = 'required|image';
         } else {
-            $rules['emailphone'] = 'required|email|unique:users,email';
+            if (is_numeric($request->get('emailphone'))) {
+                $rules['emailphone'] = 'required|digits:11|unique:users,email';
+            } else {
+                $rules['emailphone'] = 'required|email|unique:users,email';
+            }
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
@@ -65,17 +76,45 @@ class AuthController extends Controller
             if ($request->role == 'wholesaler') $user->role_id = 4;
             if ($request->role == 'retailer') $user->role_id = 5;
             $user->username =  $request->name;
-            $user->first_name =  $request->first_name;
-            $user->last_name =  $request->last_name;
-            if (is_numeric($request->get('emailphone'))) {
-                $user->phone = $request->emailphone;
-            } else {
-                $user->email = $request->emailphone;
-            }
             $user->password = Hash::make($request->password);
+            // $user->address =  $request->address;
+            // $user->last_name =  $request->last_name;
+            if ($request->role == 'retailer' || $request->role == 'wholesaler') {
+                $user->email = $request->email;
+                $user->phone = $request->phone;
+                $user->business_name = $request->business_name;
+                $user->business_address = $request->business_address;
+                $user->province = $request->province;
+                $user->country = $request->country;
+                $user->cnic_number = $request->cnic_number;
+                if (!empty($request->hasFile('bill_image'))) {
+                    $image = $request->file('bill_image');
+                    $filename = "BillImage-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                    $image->storeAs('bill', $filename, "public");
+                    $user->bill_image = "bill/" . $filename;
+                }
+            } else {
+                if (is_numeric($request->get('emailphone'))) {
+                    $user->phone = $request->emailphone;
+                } else {
+                    $user->email = $request->emailphone;
+                }
+                $user->is_user_app = true;
+            }
             if (!$user->save()) throw new Error("User Not Added!");
             if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+                if (!empty($request->cnic_image)) {
+                    foreach ($request->cnic_image as $key => $images) {
+                        $cnic_image = new CnicImage();
+                        $filename = "CNICImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
+                        $images->storeAs('cnic', $filename, "public");
+                        $cnic_image->user_id = $user->id;
+                        $cnic_image->cnic_image = "cnic/" . $filename;
+                        if (!$cnic_image->save()) throw new Error("CNIC Images not added!");
+                    }
+                }
                 $package = Package::first();
+                if (empty($package)) throw new Error("Free Package is missing Contact with Admin!");
                 $date = Carbon::now();
                 $paymentPackage = new PackagePayment();
                 if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
@@ -90,7 +129,7 @@ class AuthController extends Controller
                 $statusActive->is_active = true;
                 if (!$statusActive->save()) throw new Error('User Status not change after buy package');
             }
-            $client = User::with('role')->where('id', $user->id)->first();
+            $client = User::with(['role', 'cnic_image'])->where('id', $user->id)->first();
             DB::commit();
             return response()->json(['status' => true, 'Message' => "User Successfully Added", 'user' => $client,], 200);
         } catch (\Throwable $th) {

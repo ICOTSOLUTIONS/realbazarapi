@@ -10,22 +10,6 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = ['category', 'status'];
-    // public function color(): Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn ($value) => json_decode($value),
-    //         set: fn ($value) => json_encode($value)
-    //     );
-    // }
-
-    // public function size(): Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn ($value) => json_decode($value),
-    //         set: fn ($value) => json_encode($value)
-    //     );
-    // }
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -33,6 +17,10 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class, 'product_id', 'id');
+    }
+    public function variation()
+    {
+        return $this->hasMany(ProductVariation::class, 'product_id', 'id');
     }
     public function subCategories()
     {
@@ -63,9 +51,9 @@ class Product extends Model
             if ($user->role->name == 'user') {
                 static::addGlobalScope('active', function ($builder) {
                     $builder->where('status', 'approved')
-                    ->where('is_delete', false)
-                    ->whereRelation('user', 'is_block', false)
-                    ->whereRelation('user', 'is_active', true);
+                        ->where('is_delete', false)
+                        ->whereRelation('user', 'is_block', false)
+                        ->whereRelation('user', 'is_active', true);
                 });
             } elseif ($user->role->name == 'admin') {
                 static::addGlobalScope('active', function ($builder) {
@@ -79,9 +67,9 @@ class Product extends Model
         } else {
             static::addGlobalScope('active', function ($builder) {
                 $builder->where('status', 'approved')
-                ->where('is_delete', false)
-                ->whereRelation('user', 'is_block', false)
-                ->whereRelation('user', 'is_active', true);
+                    ->where('is_delete', false)
+                    ->whereRelation('user', 'is_block', false)
+                    ->whereRelation('user', 'is_active', true);
             });
         }
     }

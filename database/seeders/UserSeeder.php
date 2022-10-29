@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         $admin = new User();
         $admin->role_id = 1;
         $admin->username = 'admin';
-        $admin->first_name = 'admin';
+        // $admin->first_name = 'admin';
         $admin->email = 'admin@gmail.com';
         $admin->password = Hash::make(12345678);
         $admin->is_active = true;
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
         $admin = new User();
         $admin->role_id = 2;
         $admin->username = 'superadmin';
-        $admin->first_name = 'superadmin';
+        // $admin->first_name = 'superadmin';
         $admin->email = 'superadmin@gmail.com';
         $admin->password = Hash::make(12345678);
         $admin->is_active = true;
