@@ -507,6 +507,7 @@ class ProductController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
         $product = Product::where('id', $request->id)->first();
+        if (empty($product)) return response()->json(["status" => false, 'Message' => 'Product not Found']);
         $product->status = $request->status;
         if ($product->save()) {
             if ($product->status == 'approved') return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
