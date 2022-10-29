@@ -33,7 +33,7 @@ class SellerStatusCheckCommand extends Command
     {
         $sellers = User::whereRelation('role', 'name', 'retailer')->orWhereRelation('role', 'name', 'wholesaler')->get();
         foreach ($sellers as  $seller) {
-            $payment = PackagePayment::where('user_id', $seller->id)->where('end_date', '<', Carbon::now())->first();
+            $payment = PackagePayment::where('user_id', $seller->id)->where('end_date', '>', Carbon::now())->first();
             // $payment exist means expired payment;
             if (!empty($payment)) {
                 $seller->is_active = 0;
