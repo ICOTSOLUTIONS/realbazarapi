@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductsResource;
 use App\Models\Banner;
 use App\Models\Category;
+use App\Models\HomePageImage;
 use App\Models\LikeProduct;
 use App\Models\Order;
 use App\Models\Package;
@@ -82,6 +83,47 @@ class ProductController extends Controller
             'discount_product' => ProductsResource::collection($discount_product),
             'newArrivalProduct' => ProductsResource::collection($newArrivalProduct),
             'topRatingProduct' => ProductsResource::collection($topRatingProduct),
+            'banner_header' => $banner_header ?? [],
+            'banner_body' => $banner_body ?? [],
+            'banner_footer' => $banner_footer ?? [],
+        ], 200);
+    }
+
+    public function webhome($role = null)
+    {
+        $all_product = [];
+        $feature_product = [];
+        $discount_product = [];
+        $newArrivalProduct = [];
+        $topRatingProduct = [];
+        if ($role == 'retailer') {
+            $all_product = HomePageImage::where('is_just_for_you', true)->take(5)->get();
+            $discount_product = HomePageImage::where('is_discount', true)->take(5)->get();
+            $feature_product = HomePageImage::where('is_featured', true)->take(5)->get();
+            $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->take(5)->get();
+            $topRatingProduct = HomePageImage::where('is_top_rating', true)->take(5)->get();
+            $banner_header = Banner::where('is_header', true)->take(5)->get();
+            $banner_body = Banner::where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
+        }
+        if ($role == 'wholesaler') {
+            $all_product = HomePageImage::where('is_just_for_you', true)->take(5)->get();
+            $discount_product = HomePageImage::where('is_discount', true)->take(5)->get();
+            $feature_product = HomePageImage::where('is_featured', true)->take(5)->get();
+            $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->take(5)->get();
+            $topRatingProduct = HomePageImage::where('is_top_rating', true)->take(5)->get();
+            $banner_header = Banner::where('is_header', true)->take(5)->get();
+            $banner_body = Banner::where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
+        }
+
+        return response()->json([
+            'status' => true, 'Message' => 'Product found',
+            'all_product' => $all_product ?? [],
+            'feature_product' => $feature_product ?? [],
+            'discount_product' => $discount_product ?? [],
+            'newArrivalProduct' => $newArrivalProduct ?? [],
+            'topRatingProduct' => $topRatingProduct ?? [],
             'banner_header' => $banner_header ?? [],
             'banner_body' => $banner_body ?? [],
             'banner_footer' => $banner_footer ?? [],

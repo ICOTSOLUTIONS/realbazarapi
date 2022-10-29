@@ -80,6 +80,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/update/banner', [Api\BannerController::class, 'updateBanner']);
     Route::post('/delete/banner', [Api\BannerController::class, 'deleteBanner']);
 
+    // homePageImage
+    Route::get('/homePageImage/{section}', [Api\HomePageImageController::class, 'homePageImage']);
+    Route::post('/add/homePageImage', [Api\HomePageImageController::class, 'addhomePageImage']);
+    Route::post('/update/homePageImage', [Api\HomePageImageController::class, 'updatehomePageImage']);
+    Route::post('/delete/homePageImage', [Api\HomePageImageController::class, 'deletehomePageImage']);
+
     //notification
     Route::get('/allNotification', [Api\NotificationController::class, 'allNotification']);
     Route::get('/showNotification', [Api\NotificationController::class, 'notification']);
@@ -94,6 +100,7 @@ Route::get('retailers', [Api\AuthController::class, 'retailer']);
 
 //product
 Route::get('home/{role?}', [Api\ProductController::class, 'home']);
+Route::get('webhome/{role?}', [Api\ProductController::class, 'webhome']);
 Route::get('products/{role?}', [Api\ProductController::class, 'show']);
 Route::get('search/{name}/{role?}', [Api\ProductController::class, 'search']);
 Route::post('show/product', [Api\ProductController::class, 'showProduct']);
@@ -113,3 +120,6 @@ Route::post('subscribe', [Api\SettingController::class, 'subscribe']);
 
 //banner
 Route::get('/banners/{section}', [Api\BannerController::class, 'banners']);
+
+//homePageImage
+Route::get('/homePageImages/{section}', [Api\HomePageImageController::class, 'homePageImages']);
