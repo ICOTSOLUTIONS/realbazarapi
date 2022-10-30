@@ -24,6 +24,20 @@ class OrderController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
 
+    public function userOrder()
+    {
+        $order = Order::with(['user_orders.products', 'users', 'seller'])->where('user_id', auth()->user()->id)->get();
+        if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
+    }
+
+    public function sellerOrder()
+    {
+        $order = Order::with(['user_orders.products', 'users', 'seller'])->where('seller_id', auth()->user()->id)->get();
+        if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
+    }
+
     public function order(Request $request)
     {
         if (!empty($request->order)) {
