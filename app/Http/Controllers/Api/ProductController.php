@@ -130,18 +130,18 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function show($role = null)
+    public function show($role = null, $skip = 0, $take = 0)
     {
         $all_product = [];
         if ($role == 'retailer') {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
-            })->get();
+            })->skip($skip)->take($take)->get();
         }
         if ($role == 'wholesaler') {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
-            })->get();
+            })->skip($skip)->take($take)->get();
         }
         return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
     }
