@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('total')->nullable();
             $table->string('brand')->nullable();
             $table->string('card')->nullable();
-            $table->enum('payment_method', ['stripe', 'cash on delivery'])->nullable();
+            $table->enum('payment_method', ['easypaisa', 'jazzcash', 'cash on delivery'])->default('cash on delivery');
             $table->timestamps();
         });
     }
