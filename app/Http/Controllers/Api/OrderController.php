@@ -75,25 +75,25 @@ class OrderController extends Controller
                         }
                     } else throw new Error("Order Request Failed!");
                 }
-                // if (!empty($request->total)) {
-                //     $payment = new Payment();
-                //     $payment->payment_method = $request->payment_method;
-                //     if ($request->payment_method == "stripe") {
-                //         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-                //         $charge = Stripe\Charge::create([
-                //             "amount" => round($request->total, 2) * 100,
-                //             "currency" => "usd",
-                //             "source" => $request->token['id'],
-                //             "description" => "Test payment from HNHTECHSOLUTIONS."
-                //         ]);
-                //         $payment->stripe_id = $charge->id;
-                //         $payment->brand = $request->token['brand'];
-                //         $payment->card = $request->token['last4'];
-                //     }
-                //     $payment->total = $request->total;
-                //     $payment->save();
-                //     $payment->orders()->sync($order_ids);
-                // }
+                if (!empty($request->total)) {
+                    $payment = new Payment();
+                    $payment->payment_method = $request->payment_method;
+                    // if ($request->payment_method == "stripe") {
+                    //     Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+                    //     $charge = Stripe\Charge::create([
+                    //         "amount" => round($request->total, 2) * 100,
+                    //         "currency" => "usd",
+                    //         "source" => $request->token['id'],
+                    //         "description" => "Test payment from HNHTECHSOLUTIONS."
+                    //     ]);
+                    //     $payment->stripe_id = $charge->id;
+                    //     $payment->brand = $request->token['brand'];
+                    //     $payment->card = $request->token['last4'];
+                    // }
+                    $payment->total = $request->total;
+                    $payment->save();
+                    $payment->orders()->sync($order_ids);
+                }
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
             } catch (\Throwable $th) {
