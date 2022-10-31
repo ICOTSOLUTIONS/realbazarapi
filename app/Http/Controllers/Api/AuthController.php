@@ -280,7 +280,7 @@ class AuthController extends Controller
         $user = User::where('id', auth()->user()->id)->first();
         if (!empty($user)) {
             $rules = [
-                'name' => 'required',
+                'username' => 'required',
                 'first_name' => 'nullable',
                 'last_name' => 'nullable',
             ];
@@ -300,9 +300,9 @@ class AuthController extends Controller
                 } else {
                     $user->email = $request->emailphone;
                 }
-                $user->username = $request->name;
-                $user->first_name = $request->fname;
-                $user->last_name = $request->lname;
+                $user->username = $request->username;
+                $user->first_name = $request->first_name;
+                $user->last_name = $request->last_name;
                 if (!empty($request->image)) {
                     $image = $request->image;
                     $filename = "Image-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
