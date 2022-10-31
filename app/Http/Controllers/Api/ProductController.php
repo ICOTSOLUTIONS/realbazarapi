@@ -169,7 +169,7 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
 
-    public function featuredProduct($role = null, $skip = null, $take = null)
+    public function featuredProduct($role = null, $skip = 0, $take = 0)
     {
         $feature_product = [];
         if ($role == 'retailer') {
@@ -186,7 +186,7 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $feature_product ?? []]);
     }
 
-    public function discountProduct($role = null, $skip = null, $take = null)
+    public function discountProduct($role = null, $skip = 0, $take = 0)
     {
         $discount_product = [];
         if ($role == 'retailer') {
@@ -203,7 +203,7 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $discount_product ?? []]);
     }
 
-    public function newArrivalProduct($role = null, $skip = null, $take = null)
+    public function newArrivalProduct($role = null, $skip = 0, $take = 0)
     {
         $newArrivalProduct = [];
         if ($role == 'retailer') {
@@ -220,7 +220,7 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $newArrivalProduct ?? []]);
     }
 
-    public function topRatingProduct($role = null, $skip = null, $take = null)
+    public function topRatingProduct($role = null, $skip = 0, $take = 0)
     {
         $topRatingProduct = [];
         if ($role == 'retailer') {
