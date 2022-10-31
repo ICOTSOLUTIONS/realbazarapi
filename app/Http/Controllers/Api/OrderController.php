@@ -19,21 +19,21 @@ class OrderController extends Controller
 {
     public function show()
     {
-        $order = Order::with(['user_orders.products.images', 'users', 'seller'])->get();
+        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
 
     public function userOrder()
     {
-        $order = Order::with(['user_orders.products.images', 'users', 'seller'])->where('user_id', auth()->user()->id)->get();
+        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
 
     public function sellerOrder()
     {
-        $order = Order::with(['user_orders.products.images', 'users', 'seller'])->where('seller_id', auth()->user()->id)->get();
+        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
