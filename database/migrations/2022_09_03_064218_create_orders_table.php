@@ -27,7 +27,7 @@ return new class extends Migration
             $table->float('gross_amount')->nullable();
             $table->float('net_amount')->nullable();
             $table->string('payment_type')->nullable();
-            $table->enum('status', ['pending', 'delivered', 'accept'])->default('pending');
+            $table->enum('status', ['pending', 'delivered', 'rejected'])->default('pending');
             $table->string('note')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('seller_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

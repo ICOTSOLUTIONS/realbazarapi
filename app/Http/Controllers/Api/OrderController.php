@@ -119,7 +119,7 @@ class OrderController extends Controller
         $order->status = $request->status;
         if ($order->save()) {
             if ($order->status == 'delivered') return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
-            elseif ($order->status == 'accept') return response()->json(["status" => true, 'Message' => 'Order Status Change to Accept Successfully'], 200);
+            elseif ($order->status == 'rejected') return response()->json(["status" => true, 'Message' => 'Order Status Change to Reject Successfully'], 200);
             else return response()->json(["status" => true, 'Message' => 'Order Status Change to Pending Successfully'], 200);
         } else return response()->json(["status" => false, 'Message' => 'Order Status Change not Successfully']);
     }
