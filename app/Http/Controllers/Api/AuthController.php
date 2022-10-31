@@ -300,7 +300,7 @@ class AuthController extends Controller
                 } else {
                     $user->email = $request->emailphone;
                 }
-                $user->username = $request->username;
+                $user->username = $request->name;
                 $user->first_name = $request->fname;
                 $user->last_name = $request->lname;
                 if (!empty($request->image)) {
