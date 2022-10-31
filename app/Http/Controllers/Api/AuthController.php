@@ -271,7 +271,7 @@ class AuthController extends Controller
     public function edit_profile()
     {
         $user = User::with('role')->where('id', auth()->user()->id)->first();
-        if (!empty($user)) return response()->json(['status' => true, 'Message', 'User found', 'user', $user ?? []], 200);
+        if (!empty($user)) return response()->json(['status' => true, 'Message' => 'User found', 'user' => $user ?? []], 200);
         else return response()->json(['status' => false, 'Message', 'User not found']);
     }
 
