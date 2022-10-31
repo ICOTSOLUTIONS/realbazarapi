@@ -145,12 +145,14 @@ class CategoryController extends Controller
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
                     }
-                    $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                        $query->where('id', $request->subcategory_id);
-                        $query->whereRelation('categories', 'id', $request->category_id);
-                    })->whereHas('user', function ($q) {
-                        $q->whereRelation('role', 'name', 'retailer');
-                    })->skip($skip)->take($take)->get();
+                    if ($type == '') {
+                        $product = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->skip($skip)->take($take)->get();
+                    }
                 }
                 if ($role == 'wholesaler') {
                     if ($type == 'discount') {
@@ -177,12 +179,14 @@ class CategoryController extends Controller
                             $q->whereRelation('role', 'name', 'wholesaler');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
                     }
-                    $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                        $query->where('id', $request->subcategory_id);
-                        $query->whereRelation('categories', 'id', $request->category_id);
-                    })->whereHas('user', function ($q) {
-                        $q->whereRelation('role', 'name', 'wholesaler');
-                    })->skip($skip)->take($take)->get();
+                    if ($type == '') {
+                        $product = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'wholesaler');
+                        })->skip($skip)->take($take)->get();
+                    }
                 }
             } else {
                 if ($role == 'retailer') {
@@ -210,11 +214,13 @@ class CategoryController extends Controller
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
                     }
-                    $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                        $query->whereRelation('categories', 'id', $request->category_id);
-                    })->whereHas('user', function ($q) {
-                        $q->whereRelation('role', 'name', 'retailer');
-                    })->skip($skip)->take($take)->get();
+                    if ($type == '') {
+                        $product = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->skip($skip)->take($take)->get();
+                    }
                 }
                 if ($role == 'wholesaler') {
                     if ($type == 'discount') {
@@ -241,11 +247,13 @@ class CategoryController extends Controller
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
                     }
-                    $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                        $query->whereRelation('categories', 'id', $request->category_id);
-                    })->whereHas('user', function ($q) {
-                        $q->whereRelation('role', 'name', 'wholesaler');
-                    })->skip($skip)->take($take)->get();
+                    if ($type == '') {
+                        $product = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'wholesaler');
+                        })->skip($skip)->take($take)->get();
+                    }
                 }
             }
             if (count($product)) {
