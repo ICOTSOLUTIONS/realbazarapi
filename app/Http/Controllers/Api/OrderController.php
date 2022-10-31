@@ -73,29 +73,28 @@ class OrderController extends Controller
                             $order_product->subtotal = $product['product_selected_qty'] * $product_price->price;
                             $order_product->discount = $product_price->discount_price * $product['product_selected_qty'];
                             $order_product->save();
-                            $total += $product['product_selected_qty'] * $product_price->price;
+                            $total += ($product['product_selected_qty'] * $product_price->price) - ($product_price->discount_price * $product['product_selected_qty']);
                         }
                     } else throw new Error("Order Request Failed!");
                 }
-                if ($total > 0) {
-                    $payment = new Payment();
-                    $payment->payment_method = $request->payment_method;
-                    // if ($request->payment_method == "stripe") {
-                    //     Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-                    //     $charge = Stripe\Charge::create([
-                    //         "amount" => round($request->total, 2) * 100,
-                    //         "currency" => "usd",
-                    //         "source" => $request->token['id'],
-                    //         "description" => "Test payment from HNHTECHSOLUTIONS."
-                    //     ]);
-                    //     $payment->stripe_id = $charge->id;
-                    //     $payment->brand = $request->token['brand'];
-                    //     $payment->card = $request->token['last4'];
-                    // }
-                    $payment->total = $total;
-                    $payment->save();
-                    $payment->orders()->sync($order_ids);
-                }
+                if ($total < 0) throw new Error("Order Request Failed because your total amount is 0!");
+                $payment = new Payment();
+                $payment->payment_method = $request->payment_method;
+                // if ($request->payment_method == "stripe") {
+                //     Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+                //     $charge = Stripe\Charge::create([
+                //         "amount" => round($request->total, 2) * 100,
+                //         "currency" => "usd",
+                //         "source" => $request->token['id'],
+                //         "description" => "Test payment from HNHTECHSOLUTIONS."
+                //     ]);
+                //     $payment->stripe_id = $charge->id;
+                //     $payment->brand = $request->token['brand'];
+                //     $payment->card = $request->token['last4'];
+                // }
+                $payment->total = $total;
+                $payment->save();
+                $payment->orders()->sync($order_ids);
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
             } catch (\Throwable $th) {
