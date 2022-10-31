@@ -19,7 +19,7 @@ class OrderController extends Controller
 {
     public function show()
     {
-        $order = Order::with(['user_orders.products', 'users', 'seller'])->get();
+        $order = Order::with(['user_orders.products.images', 'users', 'seller'])->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
