@@ -25,6 +25,7 @@ class OrderResource extends JsonResource
             'user' => $this->users,
             'seller' => $this->seller,
             'order_products' => $this->user_orders,
+            'payment' => $this->user_payments,
         ];
     }
 }
