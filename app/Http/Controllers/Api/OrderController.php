@@ -44,6 +44,7 @@ class OrderController extends Controller
             try {
                 DB::beginTransaction();
                 $order_ids = [];
+                $total = 0;
                 foreach ($request->order as $key => $orders) {
                     if (is_object($orders)) $orders = $orders->toArray();
                     $order = new Order();
@@ -72,10 +73,11 @@ class OrderController extends Controller
                             $order_product->subtotal = $product['product_selected_qty'] * $product_price->price;
                             $order_product->discount = $product_price->discount_price * $product['product_selected_qty'];
                             $order_product->save();
+                            $total += $product['product_selected_qty'] * $product_price->price;
                         }
                     } else throw new Error("Order Request Failed!");
                 }
-                if (!empty($request->total)) {
+                if ($total > 0) {
                     $payment = new Payment();
                     $payment->payment_method = $request->payment_method;
                     // if ($request->payment_method == "stripe") {
@@ -90,7 +92,7 @@ class OrderController extends Controller
                     //     $payment->brand = $request->token['brand'];
                     //     $payment->card = $request->token['last4'];
                     // }
-                    $payment->total = $request->total;
+                    $payment->total = $total;
                     $payment->save();
                     $payment->orders()->sync($order_ids);
                 }
