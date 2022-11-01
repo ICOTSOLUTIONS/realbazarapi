@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
+use App\Models\AppNotification;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Payment;
@@ -13,7 +14,7 @@ use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Stripe;
+use App\Http\Controllers\Api\NotiSend;
 
 class OrderController extends Controller
 {
@@ -118,9 +119,37 @@ class OrderController extends Controller
         $order = Order::where('id', $request->id)->first();
         $order->status = $request->status;
         if ($order->save()) {
-            if ($order->status == 'delivered') return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
-            elseif ($order->status == 'rejected') return response()->json(["status" => true, 'Message' => 'Order Status Change to Reject Successfully'], 200);
-            else return response()->json(["status" => true, 'Message' => 'Order Status Change to Pending Successfully'], 200);
+            $user = $order->users;
+            if ($order->status == 'delivered') {
+                $title = 'YOUR PRODUCT HAS BEEN DELIVERED';
+                $message = 'Dear ' . $user->username . ' your order has been delivered from admin-The Real Bazaar';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
+                return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
+            } elseif ($order->status == 'rejected') {
+                $title = 'YOUR PRODUCT HAS BEEN REJECTED';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $request->message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $request->message);
+                return response()->json(["status" => true, 'Message' => 'Order Status Change to Reject Successfully'], 200);
+            } else {
+                $title = 'YOUR PRODUCT HAS BEEN PENDING';
+                $message = 'Dear ' . $user->username . ' your order has been pending from admin-The Real Bazaar';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
+                return response()->json(["status" => true, 'Message' => 'Order Status Change to Pending Successfully'], 200);
+            }
         } else return response()->json(["status" => false, 'Message' => 'Order Status Change not Successfully']);
     }
 }

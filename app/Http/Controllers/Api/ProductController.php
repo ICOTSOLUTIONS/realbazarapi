@@ -567,7 +567,7 @@ class ProductController extends Controller
                 NotiSend::sendNotif($user->device_token, $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
             } elseif ($product->status == 'rejected') {
-                $title = 'YOUR PRODUCT HAS BEEN Rejected';
+                $title = 'YOUR PRODUCT HAS BEEN REJECTED';
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
                 $appnot->notification = $request->message;
@@ -576,7 +576,7 @@ class ProductController extends Controller
                 NotiSend::sendNotif($user->device_token, $title, $request->message);
                 return response()->json(["status" => true, 'Message' => 'Product Status Change to Rejected Successfully'], 200);
             } else {
-                $title = 'YOUR PRODUCT HAS BEEN Pending';
+                $title = 'YOUR PRODUCT HAS BEEN PENDING';
                 $message = 'Dear ' . $user->username . ' your product has been pending from admin-The Real Bazaar';
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
