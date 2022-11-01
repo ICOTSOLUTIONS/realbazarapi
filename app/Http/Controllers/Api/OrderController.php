@@ -121,7 +121,7 @@ class OrderController extends Controller
         if ($order->save()) {
             $user = $order->users;
             if ($order->status == 'delivered') {
-                $title = 'YOUR PRODUCT HAS BEEN DELIVERED';
+                $title = 'YOUR ORDER HAS BEEN DELIVERED';
                 $message = 'Dear ' . $user->username . ' your order has been delivered from admin-The Real Bazaar';
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
@@ -131,7 +131,7 @@ class OrderController extends Controller
                 NotiSend::sendNotif($user->device_token, $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
             } elseif ($order->status == 'rejected') {
-                $title = 'YOUR PRODUCT HAS BEEN REJECTED';
+                $title = 'YOUR ORDER HAS BEEN REJECTED';
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
                 $appnot->notification = $request->message;
@@ -140,7 +140,7 @@ class OrderController extends Controller
                 NotiSend::sendNotif($user->device_token, $title, $request->message);
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Reject Successfully'], 200);
             } else {
-                $title = 'YOUR PRODUCT HAS BEEN PENDING';
+                $title = 'YOUR ORDER HAS BEEN PENDING';
                 $message = 'Dear ' . $user->username . ' your order has been pending from admin-The Real Bazaar';
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
