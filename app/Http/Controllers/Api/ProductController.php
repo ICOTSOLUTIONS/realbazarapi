@@ -324,9 +324,8 @@ class ProductController extends Controller
             $user = auth()->user();
             if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
                 $payment = PackagePayment::where('user_id', $user->id)->where('end_date', '<', Carbon::now())->first();
-                dd($payment);
                 // $payment exist means expired payment;
-                if ($payment || $user->is_active == false) throw new Error("Please buy package!");
+                if ($payment == null || $user->is_active == false) throw new Error("Please buy package!");
                 $productCount = Product::where('user_id', $user->id)->count();
                 $packageProductCount = PackagePayment::where('user_id', $user->id)->first();
                 $qty = $packageProductCount->updated_product_qty;
