@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductsResource;
+use App\Models\AppNotification;
 use App\Models\Banner;
 use App\Models\Category;
 use App\Models\HomePageImage;
@@ -23,7 +24,7 @@ use Carbon\Carbon;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
+use App\Http\Controllers\Api\NotiSend;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -544,6 +545,7 @@ class ProductController extends Controller
         $valid = Validator::make($request->all(), [
             'id' => 'required',
             'status' => 'required',
+            'message' => 'nullable',
         ]);
 
         if ($valid->fails()) {
@@ -553,9 +555,37 @@ class ProductController extends Controller
         if (empty($product)) return response()->json(["status" => false, 'Message' => 'Product not Found']);
         $product->status = $request->status;
         if ($product->save()) {
-            if ($product->status == 'approved') return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
-            elseif ($product->status == 'rejected') return response()->json(["status" => true, 'Message' => 'Product Status Change to Rejected Successfully'], 200);
-            else return response()->json(["status" => true, 'Message' => 'Product Status Change to Pending Successfully'], 200);
+            $user = $product->user;
+            if ($product->status == 'approved') {
+                $title = 'YOUR PRODUCT HAS BEEN APPROVED';
+                $message = 'Dear ' . $user->username . ' your product has been approved from admin-The Real Bazaar';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
+                return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
+            } elseif ($product->status == 'rejected') {
+                $title = 'YOUR PRODUCT HAS BEEN Rejected';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $request->message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $request->message);
+                return response()->json(["status" => true, 'Message' => 'Product Status Change to Rejected Successfully'], 200);
+            } else {
+                $title = 'YOUR PRODUCT HAS BEEN Pending';
+                $message = 'Dear ' . $user->username . ' your product has been pending from admin-The Real Bazaar';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
+                return response()->json(["status" => true, 'Message' => 'Product Status Change to Pending Successfully'], 200);
+            }
         } else return response()->json(["status" => false, 'Message' => 'Product Status Change not Successfully']);
     }
 
@@ -604,7 +634,7 @@ class ProductController extends Controller
 
     public function historyProduct()
     {
-        $historyProduct = Product::has('user')->with('user', 'images', 'subCategories.categories', 'reviews.users')->whereHas('history', function ($query) {
+        $historyProduct = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('history', function ($query) {
             $query->where('user_id', auth()->user()->id);
         })->get();
         if (count($historyProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($historyProduct)], 200);

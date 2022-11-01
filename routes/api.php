@@ -56,9 +56,9 @@ Route::middleware('auth:api')->group(function () {
 
     //order
     Route::post('order', [Api\OrderController::class, 'order']);
-    Route::get('get/order', [Api\OrderController::class, 'show']);
-    Route::get('users/order', [Api\OrderController::class, 'userOrder']);
-    Route::get('sellers/order', [Api\OrderController::class, 'sellerOrder']);
+    Route::get('get/order/{status?}', [Api\OrderController::class, 'show']);
+    Route::get('users/order/{status?}', [Api\OrderController::class, 'userOrder']);
+    Route::get('sellers/order/{status?}', [Api\OrderController::class, 'sellerOrder']);
     Route::post('status/change/order', [Api\OrderController::class, 'orderStatusChange']);
 
     //package

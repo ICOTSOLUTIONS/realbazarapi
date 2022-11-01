@@ -17,23 +17,23 @@ use Stripe;
 
 class OrderController extends Controller
 {
-    public function show()
+    public function show($status = null)
     {
-        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->get();
+        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('status', $status)->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
 
-    public function userOrder()
+    public function userOrder($status = null)
     {
-        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->get();
+        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->where('status', $status)->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }
 
-    public function sellerOrder()
+    public function sellerOrder($status = null)
     {
-        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->get();
+        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->where('status', $status)->get();
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
     }

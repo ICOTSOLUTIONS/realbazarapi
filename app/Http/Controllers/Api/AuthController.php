@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppNotification;
 use App\Models\CnicImage;
 use App\Models\FollowUserShop;
 use App\Models\Package;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Api\NotiSend;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -343,13 +345,31 @@ class AuthController extends Controller
         return response()->json(['status' => false, 'Message' => "Follow not Successfull"]);
     }
 
-    public function userBlock($id)
+    public function userBlock($id, $message = null)
     {
         if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
         $user = User::where('id', $id)->first();
         if (empty($user)) return response()->json(['status' => false, 'Message' => 'User not found']);
-        if ($user->is_block == false) $user->is_block = true;
-        else $user->is_block = false;
+        if ($user->is_block == false) {
+            $user->is_block = true;
+            $title = 'YOU HAVE BEEN BLOCKED';
+            $appnot = new AppNotification();
+            $appnot->user_id = $user->id;
+            $appnot->notification = $message;
+            $appnot->navigation = $title;
+            $appnot->save();
+            NotiSend::sendNotif($user->device_token, $title, $message);
+        } else {
+            $user->is_block = false;
+            $title = 'YOU HAVE BEEN UNBLOCKED';
+            $message = 'Dear '.$user->username . ' you have been unblocked from admin-The Real Bazaar';
+            $appnot = new AppNotification();
+            $appnot->user_id = $user->id;
+            $appnot->notification = $message;
+            $appnot->navigation = $title;
+            $appnot->save();
+            NotiSend::sendNotif($user->device_token, $title, $message);
+        }
         if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
     }
 }
