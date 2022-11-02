@@ -283,13 +283,23 @@ class AuthController extends Controller
         if (!empty($user)) {
             $rules = [
                 'username' => 'required',
-                'first_name' => 'nullable',
-                'last_name' => 'nullable',
             ];
-            if (is_numeric($request->get('emailphone'))) {
-                $rules['emailphone'] = 'required|digits:11|unique:users,phone,' . auth()->user()->id;
+            if ($user->role->name == 'retailer' || $user->role->name == 'wholesaler') {
+                $rules['email'] = 'required|email|unique:users,email' . auth()->user()->id;
+                $rules['phone'] = 'required|digits:11|unique:users,phone' . auth()->user()->id;
+                $rules['business_name'] = 'required';
+                $rules['business_address'] = 'required';
+                $rules['province'] = 'required';
+                $rules['country'] = 'required';
+                $rules['cnic_number'] = 'required|digits:13';
+                $rules['cnic_image'] = 'nullable|array';
+                $rules['bill_image'] = 'nullable|image';
             } else {
-                $rules['emailphone'] = 'required|email|unique:users,email,' . auth()->user()->id;
+                if (is_numeric($request->get('emailphone'))) {
+                    $rules['emailphone'] = 'required|digits:11|unique:users,phone,' . auth()->user()->id;
+                } else {
+                    $rules['emailphone'] = 'required|email|unique:users,email,' . auth()->user()->id;
+                }
             }
             $valid = Validator::make($request->all(), $rules);
             if ($valid->fails()) {
@@ -297,25 +307,56 @@ class AuthController extends Controller
             }
             try {
                 DB::beginTransaction();
-                if (is_numeric($request->get('emailphone'))) {
-                    $user->phone = $request->emailphone;
-                } else {
-                    $user->email = $request->emailphone;
-                }
                 $user->username = $request->username;
-                $user->first_name = $request->first_name;
-                $user->last_name = $request->last_name;
+                if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+                    $user->email = $request->email;
+                    $user->phone = $request->phone;
+                    $user->business_name = $request->business_name;
+                    $user->business_address = $request->business_address;
+                    $user->province = $request->province;
+                    $user->country = $request->country;
+                    $user->cnic_number = $request->cnic_number;
+                    if (!empty($request->hasFile('bill_image'))) {
+                        $image = $request->file('bill_image');
+                        $filename = "BillImage-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                        $image->storeAs('bill', $filename, "public");
+                        $user->bill_image = "bill/" . $filename;
+                    }
+                } else {
+                    if (is_numeric($request->get('emailphone'))) {
+                        $user->phone = $request->emailphone;
+                    } else {
+                        $user->email = $request->emailphone;
+                    }
+                    $user->first_name = $request->first_name;
+                    $user->last_name = $request->last_name;
+                }
                 if (!empty($request->image)) {
                     $image = $request->image;
                     $filename = "Image-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
                     $image->storeAs('image', $filename, "public");
                     $user->image = "image/" . $filename;
                 }
-                if ($user->save()) {
-                    DB::commit();
-                    $user = User::with('role')->where('id', $user->id)->get();
-                    return response()->json(['status' => true, 'Message' => "User Successfully Updated", 'user' => $user,], 200);
-                } else throw new Error("User Not Updated");
+                if (!$user->save()) throw new Error("User Not Updated");
+                if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+                    if (!empty($request->cnic_image)) {
+                        $cnic_images = CnicImage::where('user_id', $user->id)->get();
+                        foreach ($cnic_images as $value) {
+                            if (!$value->delete()) throw new Error("CNIC Images not deleted!");
+                        }
+                        foreach ($request->cnic_image as $key => $images) {
+                            $cnic_image = new CnicImage();
+                            $filename = "CNICImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
+                            $images->storeAs('cnic', $filename, "public");
+                            $cnic_image->user_id = $user->id;
+                            $cnic_image->cnic_image = "cnic/" . $filename;
+                            if (!$cnic_image->save()) throw new Error("CNIC Images not added!");
+                        }
+                    }
+                }
+                $updatedUser = User::with('role')->where('id', $user->id)->first();
+                DB::commit();
+                return response()->json(['status' => true, 'Message' => "User Successfully Updated", 'user' => $updatedUser,], 200);
             } catch (\Throwable $th) {
                 DB::rollBack();
                 return response()->json(['status' => false, 'Message' => $th->getMessage()]);
@@ -362,7 +403,7 @@ class AuthController extends Controller
         } else {
             $user->is_block = false;
             $title = 'YOU HAVE BEEN UNBLOCKED';
-            $message = 'Dear '.$user->username . ' you have been unblocked from admin-The Real Bazaar';
+            $message = 'Dear ' . $user->username . ' you have been unblocked from admin-The Real Bazaar';
             $appnot = new AppNotification();
             $appnot->user_id = $user->id;
             $appnot->notification = $message;
