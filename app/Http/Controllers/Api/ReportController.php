@@ -31,8 +31,8 @@ class ReportController extends Controller
         $report->user_id = auth()->user()->id;
         $report->shop_id = $request->shop_id;
         $report->reason = $request->message;
-        if (!$report->save()) return response()->json(['status' => true, 'Message' => 'Report Added'], 200);
-        else return response()->json(['status' => false, 'Message' => 'Report not Added']);
+        if (!$report->save()) return response()->json(['status' => false, 'Message' => 'Report not Added']);
+        else return response()->json(['status' => true, 'Message' => 'Report Added','reports'=>$report??[]], 200);
     }
 
 
