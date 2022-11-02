@@ -354,7 +354,7 @@ class AuthController extends Controller
                         }
                     }
                 }
-                $updatedUser = User::with('role')->where('id', $user->id)->first();
+                $updatedUser = User::with(['role','cnic_image'])->where('id', $user->id)->first();
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => "User Successfully Updated", 'user' => $updatedUser,], 200);
             } catch (\Throwable $th) {
