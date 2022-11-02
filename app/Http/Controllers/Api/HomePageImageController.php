@@ -62,6 +62,7 @@ class HomePageImageController extends Controller
         $valid = Validator::make($request->all(), [
             'images' => 'required|array',
             'section' => 'required',
+            'role' => 'required',
         ]);
 
         if ($valid->fails()) {
@@ -77,6 +78,8 @@ class HomePageImageController extends Controller
                 if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
                 if ($request->section == 'topRating') $homePageImage->is_top_rating = true;
                 if ($request->section == 'justForYou') $homePageImage->is_just_for_you = true;
+                if ($request->role == 'retailer') $homePageImage->is_retailer = true;
+                if ($request->role == 'wholesaler') $homePageImage->is_wholesaler = true;
                 $filename = "HomePageImage-" . time() . "-" . rand() . "." . $value->getClientOriginalExtension();
                 $value->storeAs('homePageImage', $filename, "public");
                 $homePageImage->image = "homePageImage/" . $filename;
