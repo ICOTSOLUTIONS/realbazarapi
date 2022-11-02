@@ -285,8 +285,8 @@ class AuthController extends Controller
                 'username' => 'required',
             ];
             if ($user->role->name == 'retailer' || $user->role->name == 'wholesaler') {
-                $rules['email'] = 'required|email|unique:users,email' . auth()->user()->id;
-                $rules['phone'] = 'required|digits:11|unique:users,phone' . auth()->user()->id;
+                $rules['email'] = 'required|email|unique:users,email,' . auth()->user()->id;
+                $rules['phone'] = 'required|digits:11|unique:users,phone,' . auth()->user()->id;
                 $rules['business_name'] = 'required';
                 $rules['business_address'] = 'required';
                 $rules['province'] = 'required';
