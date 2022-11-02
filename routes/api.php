@@ -94,6 +94,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/changeNotification', [Api\NotificationController::class, 'notification_change']);
     Route::post('/sendNotification', [Api\NotificationController::class, 'sendNotification']);
     Route::post('/singleNotification', [Api\NotificationController::class, 'singleNotification']);
+
+    //report
+    Route::get('/report', [Api\ReportController::class, 'report']);
+    Route::post('/add/report', [Api\ReportController::class, 'addReport']);
+    Route::get('/delete/report/{id}', [Api\ReportController::class, 'deleteReport']);
 });
 //users
 Route::get('wholesalers', [Api\AuthController::class, 'wholesaler']);
