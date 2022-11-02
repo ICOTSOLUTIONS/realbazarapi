@@ -366,8 +366,8 @@ class ProductController extends Controller
                 }
                 $products = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('id', $new_product->id)->first();
                 $user = User::whereRelation('role', 'name', 'admin')->first();
-                $title = 'NEW ORDER';
-                $message = 'You have recieved new order';
+                $title = 'NEW PRODUCT';
+                $message = 'You have recieved new product';
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
                 $appnot->notification = $message;
