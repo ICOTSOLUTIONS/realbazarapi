@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\NotiSend;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -96,6 +97,15 @@ class OrderController extends Controller
                 $payment->total = $total;
                 $payment->save();
                 $payment->orders()->sync($order_ids);
+                $user = User::whereRelation('role', 'name', 'admin')->first();
+                $title = 'NEW ORDER';
+                $message = 'You have recieved new order';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
             } catch (\Throwable $th) {

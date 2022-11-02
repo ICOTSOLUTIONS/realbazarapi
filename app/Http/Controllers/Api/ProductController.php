@@ -365,6 +365,15 @@ class ProductController extends Controller
                     }
                 }
                 $products = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('id', $new_product->id)->first();
+                $user = User::whereRelation('role', 'name', 'admin')->first();
+                $title = 'NEW ORDER';
+                $message = 'You have recieved new order';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Product Added Successfully!', 'Products' => new ProductsResource($products) ?? []], 200);
             } else throw new Error("Authenticated User Required!");
