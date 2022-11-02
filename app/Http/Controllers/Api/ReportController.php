@@ -29,7 +29,7 @@ class ReportController extends Controller
         }
         $report = new Report();
         $report->user_id = auth()->user()->id;
-        $report->user_id = $request->shop_id;
+        $report->shop_id = $request->shop_id;
         $report->reason = $request->message;
         if (!$report->save()) return response()->json(['status' => true, 'Message' => 'Report Added'], 200);
         else return response()->json(['status' => false, 'Message' => 'Report not Added']);
