@@ -174,19 +174,23 @@ class ProductController extends Controller
     {
         $all_product = [];
         if ($role == 'retailer' && $status != null) {
+            dd('um1');
+
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)
                 ->whereHas('user', function ($q) {
                     $q->whereRelation('role', 'name', 'retailer');
                 })->get();
         }
         if ($role == 'wholesaler' && $status != null) {
+            dd('um2');
+
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)
                 ->whereHas('user', function ($q) {
                     $q->whereRelation('role', 'name', 'wholesaler');
                 })->get();
         }
         if ($status == null) {
-            dd('um');
+            dd('um3');
             if ($role == 'retailer') {
                 $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)
                     ->whereHas('user', function ($q) {
@@ -201,9 +205,13 @@ class ProductController extends Controller
             }
         }
         if ($role == null && $status != null) {
+            dd('um4');
+
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)->get();
         }
         if ($role == null && $status == null) {
+            dd('um');
+
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->get();
         }
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
