@@ -98,8 +98,6 @@ class OrderController extends Controller
                         }
                     } else throw new Error("Order Request Failed!");
                 }
-            dd($total);
-
                 if ($total < 0) throw new Error("Order Request Failed because your total amount is 0!");
                 $payment = new Payment();
                 $payment->payment_method = $request->payment_method;
