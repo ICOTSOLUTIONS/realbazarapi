@@ -185,7 +185,7 @@ class ProductController extends Controller
                     $q->whereRelation('role', 'name', 'wholesaler');
                 })->get();
         }
-        if ($role == null) {
+        if ($role == null || $status == null) {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)->get();
         }
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
