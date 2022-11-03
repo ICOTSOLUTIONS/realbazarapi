@@ -57,6 +57,7 @@ class OrderController extends Controller
 
     public function order(Request $request)
     {
+        dd($request->order);
         if (!empty($request->order)) {
             try {
                 DB::beginTransaction();
