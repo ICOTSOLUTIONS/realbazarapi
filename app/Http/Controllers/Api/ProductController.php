@@ -170,9 +170,24 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
 
-    public function showAdminProduct($status = null)
+    public function showAdminProduct($status = null, $role = null)
     {
-        $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)->get();
+        $all_product = [];
+        if ($role == 'retailer') {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)
+                ->whereHas('user', function ($q) {
+                    $q->whereRelation('role', 'name', 'retailer');
+                })->get();
+        }
+        if ($role == 'wholesaler') {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)
+                ->whereHas('user', function ($q) {
+                    $q->whereRelation('role', 'name', 'wholesaler');
+                })->get();
+        }
+        if ($role == null) {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)->get();
+        }
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
