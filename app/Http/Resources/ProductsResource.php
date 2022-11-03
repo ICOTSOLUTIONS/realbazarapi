@@ -30,7 +30,7 @@ class ProductsResource extends JsonResource
             'is_new_arrival' => $this->is_new_arrival,
             'variation' => $this->variation,
             'image' => $this->images,
-            'shop' => $this->user->role,
+            'shop' => $this->user,
             'category' => $this->subCategories->categories,
             'sub_category' => $this->subCategories,
             'followers' => $this->user->follow,
