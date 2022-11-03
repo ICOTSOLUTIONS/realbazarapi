@@ -23,19 +23,19 @@ class OrderController extends Controller
     {
         $order = [];
         if ($role == 'retailer') {
-            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('status', $status)
+            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('status', $status)
                 ->whereHas('seller', function ($q) {
                     $q->whereRelation('role', 'name', 'retailer');
                 })->get();
         }
         if ($role == 'wholesaler') {
-            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('status', $status)
+            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('status', $status)
                 ->whereHas('seller', function ($q) {
                     $q->whereRelation('role', 'name', 'wholesaler');
                 })->get();
         }
         if ($role == null) {
-            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('status', $status)->get();
+            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('status', $status)->get();
         }
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
