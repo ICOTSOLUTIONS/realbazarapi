@@ -15,8 +15,7 @@ class ReportController extends Controller
         $report_count = Report::groupBy('user_id')
             ->get([
                 DB::raw('count(user_id) as user_total_reports')
-            ])
-            ->pluck('total', 'user_id');
+            ])->pluck('user_total_reports', 'user_id');
         $reports = Report::with(['users', 'shop'])->withCount('users')->get();
         if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'reports' => $reports ?? [], 'count' => $report_count ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Reports not found', 'reports' => $reports ?? []]);
