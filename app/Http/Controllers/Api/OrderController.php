@@ -62,13 +62,16 @@ class OrderController extends Controller
                 DB::beginTransaction();
                 $order_ids = [];
                 $total = 0;
+                $latestOrderId = 0;
                 $latestOrder = Order::orderBy('created_at', 'DESC')->first();
                 foreach ($request->order as $key => $orders) {
                     if (is_object($orders)) $orders = $orders->toArray();
                     $order = new Order();
                     $order->user_id = auth()->user()->id;
                     $order->seller_id = $orders['sellerId'];
-                    $order->order_number = '#' . str_pad($latestOrder->id + 1, 8, "0", STR_PAD_LEFT);
+                    if (empty($latestOrder)) $latestOrderId = 0;
+                    else $latestOrderId = $latestOrder->id;
+                    $order->order_number = '#' . str_pad($latestOrderId + 1, 8, "0", STR_PAD_LEFT);
                     $order->customer_name = $orders['name'];
                     $order->email = $orders['email'];
                     $order->phone = $orders['phone'];
