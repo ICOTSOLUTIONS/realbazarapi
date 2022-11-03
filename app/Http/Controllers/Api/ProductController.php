@@ -185,8 +185,8 @@ class ProductController extends Controller
                     $q->whereRelation('role', 'name', 'wholesaler');
                 })->get();
         }
-
         if ($status == null) {
+            dd('um');
             if ($role == 'retailer') {
                 $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)
                     ->whereHas('user', function ($q) {
