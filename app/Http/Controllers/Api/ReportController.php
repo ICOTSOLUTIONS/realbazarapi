@@ -5,14 +5,20 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Report;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
 {
     public function report()
     {
+        $report_count = Report::groupBy('user_id')
+            ->get([
+                DB::raw('count(user_id) as user_total_reports')
+            ])
+            ->pluck('total', 'user_id');
         $reports = Report::with(['users', 'shop'])->withCount('users')->get();
-        if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'reports' => $reports ?? []], 200);
+        if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'reports' => $reports ?? [], 'count' => $report_count ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Reports not found', 'reports' => $reports ?? []]);
     }
 
