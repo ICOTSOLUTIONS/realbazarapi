@@ -62,18 +62,20 @@ class OrderController extends Controller
                 DB::beginTransaction();
                 $order_ids = [];
                 $total = 0;
+                $latestOrder = Order::orderBy('created_at', 'DESC')->first();
                 foreach ($request->order as $key => $orders) {
                     if (is_object($orders)) $orders = $orders->toArray();
                     $order = new Order();
                     $order->user_id = auth()->user()->id;
                     $order->seller_id = $orders['sellerId'];
+                    $order->order_number = '#' . str_pad($latestOrder->id + 1, 8, "0", STR_PAD_LEFT);
                     $order->customer_name = $orders['name'];
                     $order->email = $orders['email'];
                     $order->phone = $orders['phone'];
-                    // $order->area = $orders['area'];
-                    // $order->city = $orders['city'];
                     $order->delivery_address = $orders['address'];
                     $order->order_date = Carbon::now();
+                    // $order->area = $orders['area'];
+                    // $order->city = $orders['city'];
                     // $order->gross_amount = $orders['gross_amount'];
                     // $order->net_amount = $orders['net_amount'];
                     // $order->note = $orders['note'];
@@ -87,10 +89,12 @@ class OrderController extends Controller
                             $order_product->order_id = $order->id;
                             $order_product->product_id = $product['id'];
                             $order_product->qty = $product['product_selected_qty'];
-                            $order_product->subtotal = $product['product_selected_qty'] * $product_price->price;
+                            $order_product->size = $product['size'];
+                            $order_product->product_price = $product['product_price'];
+                            $order_product->subtotal = $product['product_selected_qty'] * $product['product_price'];
                             $order_product->discount = $product_price->discount_price * $product['product_selected_qty'];
                             $order_product->save();
-                            $total += ($product['product_selected_qty'] * $product_price->price) - ($product_price->discount_price * $product['product_selected_qty']);
+                            $total += ($product['product_selected_qty'] * $product['product_price']) - ($product_price->discount_price * $product['product_selected_qty']);
                         }
                     } else throw new Error("Order Request Failed!");
                 }
