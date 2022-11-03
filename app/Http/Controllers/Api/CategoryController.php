@@ -192,7 +192,6 @@ class CategoryController extends Controller
                 if ($role == 'retailer') {
                     if ($type == 'discount') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                            $query->where('id', $request->subcategory_id);
                             $query->whereRelation('categories', 'id', $request->category_id);
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
@@ -200,7 +199,6 @@ class CategoryController extends Controller
                     }
                     if ($type == 'newArrival') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                            $query->where('id', $request->subcategory_id);
                             $query->whereRelation('categories', 'id', $request->category_id);
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
@@ -208,7 +206,6 @@ class CategoryController extends Controller
                     }
                     if ($type == 'featured') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                            $query->where('id', $request->subcategory_id);
                             $query->whereRelation('categories', 'id', $request->category_id);
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
@@ -225,7 +222,6 @@ class CategoryController extends Controller
                 if ($role == 'wholesaler') {
                     if ($type == 'discount') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                            $query->where('id', $request->subcategory_id);
                             $query->whereRelation('categories', 'id', $request->category_id);
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
@@ -233,7 +229,6 @@ class CategoryController extends Controller
                     }
                     if ($type == 'newArrival') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                            $query->where('id', $request->subcategory_id);
                             $query->whereRelation('categories', 'id', $request->category_id);
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
@@ -241,7 +236,6 @@ class CategoryController extends Controller
                     }
                     if ($type == 'featured') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
-                            $query->where('id', $request->subcategory_id);
                             $query->whereRelation('categories', 'id', $request->category_id);
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
