@@ -101,4 +101,38 @@ class NotificationController extends Controller
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
         }
     }
+
+    public function sendAllNotification(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            // 'role' => 'required',
+            'message' => 'required',
+            'title' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        try {
+            DB::beginTransaction();
+            $role = 'admin';
+            $users = User::whereHas('role', function ($query) use ($role) {
+                $query->where('name', '!=', $role);
+            })->get();
+            if (!count($users)) return response()->json(['status' => false, 'Message' => "Users not found"]);
+            foreach ($users as  $user) {
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $request->message;
+                $appnot->navigation = $request->title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $request->title, $request->message);
+            }
+            DB::commit();
+            return response()->json(['status' => true, 'Message' => 'Notification Send'], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
+        }
+    }
 }
