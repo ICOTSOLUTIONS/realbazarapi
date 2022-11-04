@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('is_new_arrival')->default(false);
             $table->boolean('is_top_rating')->default(false);
             $table->boolean('is_just_for_you')->default(false);
+            $table->boolean('is_trending')->default(false);
             $table->boolean('is_retailer')->default(false);
             $table->boolean('is_wholesaler')->default(false);
             $table->timestamps();

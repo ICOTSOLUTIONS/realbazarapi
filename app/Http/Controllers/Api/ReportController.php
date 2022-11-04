@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppNotification;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\NotiSend;
+use Error;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -36,12 +40,28 @@ class ReportController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $report = new Report();
-        $report->user_id = auth()->user()->id;
-        $report->shop_id = $request->shop_id;
-        $report->reason = $request->message;
-        if (!$report->save()) return response()->json(['status' => false, 'Message' => 'Report not Added']);
-        else return response()->json(['status' => true, 'Message' => 'Report Added', 'reports' => $report ?? []], 200);
+        try {
+            DB::beginTransaction();
+            $report = new Report();
+            $report->user_id = auth()->user()->id;
+            $report->shop_id = $request->shop_id;
+            $report->reason = $request->message;
+            if (!$report->save()) throw new Error("Report not added!");
+            $user = User::whereRelation('role', 'name', 'admin')->first();
+            $title = 'NEW REPORT';
+            $message = 'You have recieved new report';
+            $appnot = new AppNotification();
+            $appnot->user_id = $user->id;
+            $appnot->notification = $message;
+            $appnot->navigation = $title;
+            $appnot->save();
+            NotiSend::sendNotif($user->device_token, $title, $message);
+            DB::commit();
+            return response()->json(['status' => false, 'Message' => 'Report not Added']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
+        }
     }
 
 
