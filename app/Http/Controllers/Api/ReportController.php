@@ -56,7 +56,7 @@ class ReportController extends Controller
             $appnot->save();
             NotiSend::sendNotif($user->device_token, $title, $message);
             DB::commit();
-            return response()->json(['status' => false, 'Message' => 'Report not Added']);
+            return response()->json(['status' => true, 'Message' => 'Report Added']);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
