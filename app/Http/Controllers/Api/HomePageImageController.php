@@ -19,16 +19,19 @@ class HomePageImageController extends Controller
         $new_arrival = false;
         $top_rating = false;
         $just_for_you = false;
+        $trending = false;
         if ($section == 'discount') $discount = true;
         if ($section == 'featured') $featured = true;
         if ($section == 'newArrival') $new_arrival = true;
         if ($section == 'topRating') $top_rating = true;
         if ($section == 'justForYou') $just_for_you = true;
+        if ($section == 'trending') $trending = true;
         $homePageImage = HomePageImage::where('is_discount', $discount)
             ->where('is_featured', $featured)
             ->where('is_new_arrival', $new_arrival)
             ->where('is_top_rating', $top_rating)
             ->where('is_just_for_you', $just_for_you)
+            ->where('is_trending', $trending)
             ->get();
         if (count($homePageImage)) return response()->json(['status' => true, 'Message' => 'HomePageImage found', 'homePageImages' => $homePageImage ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'HomePageImage not found']);
@@ -42,16 +45,19 @@ class HomePageImageController extends Controller
         $new_arrival = false;
         $top_rating = false;
         $just_for_you = false;
+        $trending = false;
         if ($section == 'discount') $discount = true;
         if ($section == 'featured') $featured = true;
         if ($section == 'newArrival') $new_arrival = true;
         if ($section == 'topRating') $top_rating = true;
         if ($section == 'justForYou') $just_for_you = true;
+        if ($section == 'trending') $trending = true;
         $homePageImage = HomePageImage::where('is_discount', $discount)
             ->where('is_featured', $featured)
             ->where('is_new_arrival', $new_arrival)
             ->where('is_top_rating', $top_rating)
             ->where('is_just_for_you', $just_for_you)
+            ->where('is_trending', $trending)
             ->get();
         if (count($homePageImage)) return response()->json(['status' => true, 'Message' => 'HomePageImage found', 'homePageImages' => $homePageImage ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'HomePageImage not found']);
@@ -78,6 +84,7 @@ class HomePageImageController extends Controller
                 if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
                 if ($request->section == 'topRating') $homePageImage->is_top_rating = true;
                 if ($request->section == 'justForYou') $homePageImage->is_just_for_you = true;
+                if ($request->section == 'trending') $homePageImage->is_trending = true;
                 if ($request->role == 'retailer') $homePageImage->is_retailer = true;
                 if ($request->role == 'wholesaler') $homePageImage->is_wholesaler = true;
                 $filename = "HomePageImage-" . time() . "-" . rand() . "." . $value->getClientOriginalExtension();

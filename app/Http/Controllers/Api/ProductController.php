@@ -37,6 +37,7 @@ class ProductController extends Controller
         $newArrivalProduct = [];
         $topRatingProduct = [];
         $justForYouProduct = [];
+        $trendingProduct = [];
         $banner_header = [];
         $banner_body = [];
         $banner_footer = [];
@@ -60,6 +61,7 @@ class ProductController extends Controller
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
+            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_retailer', true)->take(5)->get();
         }
         if ($role == 'wholesaler') {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
@@ -81,6 +83,7 @@ class ProductController extends Controller
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
+            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
         }
 
         return response()->json([
@@ -91,6 +94,7 @@ class ProductController extends Controller
             'newArrivalProduct' => ProductsResource::collection($newArrivalProduct),
             'topRatingProduct' => ProductsResource::collection($topRatingProduct),
             'justForYouProduct' => $justForYouProduct ?? [],
+            'trendingProduct' => $trendingProduct ?? [],
             'banner_header' => $banner_header ?? [],
             'banner_body' => $banner_body ?? [],
             'banner_footer' => $banner_footer ?? [],
@@ -105,6 +109,7 @@ class ProductController extends Controller
         $newArrivalProduct = [];
         $topRatingProduct = [];
         $justForYouProduct = [];
+        $trendingProduct = [];
         $banner_header = [];
         $banner_body = [];
         $banner_footer = [];
@@ -115,6 +120,7 @@ class ProductController extends Controller
             $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_retailer', true)->take(5)->get();
             $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_retailer', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
+            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_retailer', true)->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
@@ -126,6 +132,7 @@ class ProductController extends Controller
             $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_wholesaler', true)->take(5)->get();
             $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_wholesaler', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
+            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
@@ -139,6 +146,7 @@ class ProductController extends Controller
             'newArrivalProduct' => $newArrivalProduct ?? [],
             'topRatingProduct' => $topRatingProduct ?? [],
             'justForYouProduct' => $justForYouProduct ?? [],
+            'trendingProduct' => $trendingProduct ?? [],
             'banner_header' => $banner_header ?? [],
             'banner_body' => $banner_body ?? [],
             'banner_footer' => $banner_footer ?? [],
@@ -152,13 +160,19 @@ class ProductController extends Controller
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->skip($skip)->take($take)->get();
+            $all_product_count = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->count();
         }
         if ($role == 'wholesaler') {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->skip($skip)->take($take)->get();
+            $all_product_count = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->count();
         }
-        return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
+        return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product), 'ProductsCount' => $all_product_count], 200);
     }
 
     public function wholesalerProducts()
