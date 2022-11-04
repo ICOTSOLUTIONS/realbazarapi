@@ -144,19 +144,19 @@ class PackageController extends Controller
     {
         $expirePeriod = [];
         if ($role == 'retailer') {
-            $expirePeriod = PackagePayment::with(['user', 'package'])
+            $expirePeriod = PackagePayment::with(['user.role', 'package'])
                 ->whereHas('user', function ($q) {
                     $q->whereRelation('role', 'name', 'retailer');
                 })->get();
         }
         if ($role == 'wholesaler') {
-            $expirePeriod = PackagePayment::with(['user', 'package'])
+            $expirePeriod = PackagePayment::with(['user.role', 'package'])
                 ->whereHas('user', function ($q) {
                     $q->whereRelation('role', 'name', 'retailer');
                 })->get();
         }
         if ($role == null) {
-            $expirePeriod = PackagePayment::with(['user', 'package'])->get();
+            $expirePeriod = PackagePayment::with(['user.role', 'package'])->get();
         }
         if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? []]);
         else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);

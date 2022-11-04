@@ -552,17 +552,17 @@ class ProductController extends Controller
     {
         $product = [];
         if ($role == 'retailer') {
-            $product = Product::where('is_delete', true)->whereHas('user', function ($q) {
+            $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->get();
         }
         if ($role == 'wholesaler') {
-            $product = Product::where('is_delete', true)->whereHas('user', function ($q) {
+            $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->get();
         }
         if ($role == null) {
-            $product = Product::where('is_delete', true)->get();
+            $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true)->get();
         }
         if (count($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
         else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $product ?? []]);
