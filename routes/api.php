@@ -44,7 +44,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('delete/product', [Api\ProductController::class, 'delete']);
     Route::get('hard/delete/product/{id}', [Api\ProductController::class, 'hardDelete']);
     Route::get('all/hard/delete/product', [Api\ProductController::class, 'allHardDelete']);
-    Route::get('show/delete/product', [Api\ProductController::class, 'showDeleteProduct']);
+    Route::get('show/delete/product/{role?}', [Api\ProductController::class, 'showDeleteProduct']);
     Route::get('image/{id}', [Api\ProductController::class, 'image']);
     Route::post('delete/image', [Api\ProductController::class, 'deleteImage']);
     Route::post('add/image', [Api\ProductController::class, 'addImage']);

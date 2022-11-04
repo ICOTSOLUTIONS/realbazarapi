@@ -548,9 +548,22 @@ class ProductController extends Controller
         } else return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted']);
     }
 
-    public function showDeleteProduct()
+    public function showDeleteProduct($role = null)
     {
-        $product = Product::where('is_delete', true)->get();
+        $product = [];
+        if ($role == 'retailer') {
+            $product = Product::where('is_delete', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->get();
+        }
+        if ($role == 'wholesaler') {
+            $product = Product::where('is_delete', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->get();
+        }
+        if ($role == null) {
+            $product = Product::where('is_delete', true)->get();
+        }
         if (count($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
         else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $product ?? []]);
     }
