@@ -305,6 +305,29 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $topRatingProduct ?? [], 'ProductsCount' => $topRatingProduct_count ?? []]);
     }
 
+    public function trendingProduct($role = null, $skip = 0, $take = 0)
+    {
+        $trendingProduct = [];
+        if ($role == 'retailer') {
+            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->skip($skip)->take($take)->get();
+            $trendingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->count();
+        }
+        if ($role == 'wholesaler') {
+            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->skip($skip)->take($take)->get();
+            $trendingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->count();
+        }
+        if (count($trendingProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($trendingProduct), 'ProductsCount' => $trendingProduct_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $trendingProduct ?? [], 'ProductsCount' => $trendingProduct_count ?? []]);
+    }
+
     public function vendorProduct(Request $request)
     {
         $valid = Validator::make($request->all(), [

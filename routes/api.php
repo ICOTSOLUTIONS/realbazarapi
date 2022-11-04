@@ -120,6 +120,7 @@ Route::get('discount/product/{role?}/{skip?}/{take?}', [Api\ProductController::c
 Route::get('featured/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'featuredProduct']);
 Route::get('newArrival/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'newArrivalProduct']);
 Route::get('topRating/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'topRatingProduct']);
+Route::get('trending/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'trendingProduct']);
 Route::get('wholesaler/products', [Api\ProductController::class, 'wholesalerProducts']);
 
 //category
