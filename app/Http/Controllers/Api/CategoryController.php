@@ -128,6 +128,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('discount_price', '!=', null)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('discount_price', '!=', null)->count();
                     }
                     if ($type == 'newArrival') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -136,6 +142,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_new_arrival', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('is_new_arrival', true)->count();
                     }
                     if ($type == 'featured') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -144,6 +156,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('is_featured', true)->count();
                     }
                     if ($type == '') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -152,6 +170,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->count();
                     }
                 }
                 if ($role == 'wholesaler') {
@@ -162,6 +186,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'wholesaler');
                         })->where('discount_price', '!=', null)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'wholesaler');
+                        })->where('discount_price', '!=', null)->count();
                     }
                     if ($type == 'newArrival') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -170,6 +200,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'wholesaler');
                         })->where('is_new_arrival', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'wholesaler');
+                        })->where('is_new_arrival', true)->count();
                     }
                     if ($type == 'featured') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -178,6 +214,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'wholesaler');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'wholesaler');
+                        })->where('is_featured', true)->count();
                     }
                     if ($type == '') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -186,6 +228,12 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'wholesaler');
                         })->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->where('id', $request->subcategory_id);
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'wholesaler');
+                        })->count();
                     }
                 }
             } else {
@@ -196,6 +244,11 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('discount_price', '!=', null)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('discount_price', '!=', null)->count();
                     }
                     if ($type == 'newArrival') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -203,6 +256,11 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_new_arrival', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('is_new_arrival', true)->count();
                     }
                     if ($type == 'featured') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -210,6 +268,11 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('is_featured', true)->count();
                     }
                     if ($type == '') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -217,6 +280,11 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->count();
                     }
                 }
                 if ($role == 'wholesaler') {
@@ -226,6 +294,11 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('discount_price', '!=', null)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('discount_price', '!=', null)->count();
                     }
                     if ($type == 'newArrival') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -233,6 +306,11 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_new_arrival', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('is_new_arrival', true)->count();
                     }
                     if ($type == 'featured') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -240,6 +318,11 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'retailer');
                         })->where('is_featured', true)->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'retailer');
+                        })->where('is_featured', true)->count();
                     }
                     if ($type == '') {
                         $product = Product::whereHas('subCategories', function ($query) use ($request) {
@@ -247,13 +330,18 @@ class CategoryController extends Controller
                         })->whereHas('user', function ($q) {
                             $q->whereRelation('role', 'name', 'wholesaler');
                         })->skip($skip)->take($take)->get();
+                        $product_count = Product::whereHas('subCategories', function ($query) use ($request) {
+                            $query->whereRelation('categories', 'id', $request->category_id);
+                        })->whereHas('user', function ($q) {
+                            $q->whereRelation('role', 'name', 'wholesaler');
+                        })->count();
                     }
                 }
             }
             if (count($product)) {
-                return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product)], 200);
+                return response()->json(['status' => true, 'Message' => 'Product found', 'Product' => ProductsResource::collection($product), 'ProductsCount' => $product_count ?? []], 200);
             } else {
-                return response()->json(['status' => false,  'Message' => 'Product not found', 'Product' => $product ?? []]);
+                return response()->json(['status' => false,  'Message' => 'Product not found', 'Product' => $product ?? [], 'ProductsCount' => $product_count ?? []]);
             }
         } else {
             return response()->json(['status' => false, 'Message' => 'Parameter is null']);

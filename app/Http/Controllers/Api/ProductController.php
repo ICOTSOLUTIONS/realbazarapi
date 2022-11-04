@@ -220,14 +220,20 @@ class ProductController extends Controller
             $feature_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->skip($skip)->take($take)->get();
+            $feature_product_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->count();
         }
         if ($role == 'wholesaler') {
             $feature_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->skip($skip)->take($take)->get();
+            $feature_product_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_featured', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->count();
         }
-        if (count($feature_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($feature_product)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $feature_product ?? []]);
+        if (count($feature_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($feature_product), 'ProductsCount' => $feature_product_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $feature_product ?? [], 'ProductsCount' => $feature_product_count ?? []]);
     }
 
     public function discountProduct($role = null, $skip = 0, $take = 0)
@@ -237,14 +243,20 @@ class ProductController extends Controller
             $discount_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->skip($skip)->take($take)->get();
+            $discount_product_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->count();
         }
         if ($role == 'wholesaler') {
             $discount_product = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->skip($skip)->take($take)->get();
+            $discount_product_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('discount_price', '!=', null)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->count();
         }
-        if (count($discount_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($discount_product)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $discount_product ?? []]);
+        if (count($discount_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($discount_product), 'ProductsCount' => $discount_product_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $discount_product ?? [], 'ProductsCount' => $discount_product_count ?? []]);
     }
 
     public function newArrivalProduct($role = null, $skip = 0, $take = 0)
@@ -254,14 +266,20 @@ class ProductController extends Controller
             $newArrivalProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->skip($skip)->take($take)->get();
+            $newArrivalProductCount = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->count();
         }
         if ($role == 'wholesaler') {
             $newArrivalProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->skip($skip)->take($take)->get();
+            $newArrivalProductCount = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_new_arrival', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->count();
         }
-        if (count($newArrivalProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($newArrivalProduct)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $newArrivalProduct ?? []]);
+        if (count($newArrivalProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($newArrivalProduct), 'ProductsCount' => $newArrivalProductCount ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $newArrivalProduct ?? [], 'ProductsCount' => $newArrivalProductCount ?? []]);
     }
 
     public function topRatingProduct($role = null, $skip = 0, $take = 0)
@@ -271,14 +289,20 @@ class ProductController extends Controller
             $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->skip($skip)->take($take)->get();
+            $topRatingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->count();
         }
         if ($role == 'wholesaler') {
             $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->skip($skip)->take($take)->get();
+            $topRatingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->count();
         }
-        if (count($topRatingProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($topRatingProduct)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $topRatingProduct ?? []]);
+        if (count($topRatingProduct)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($topRatingProduct), 'ProductsCount' => $topRatingProduct_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $topRatingProduct ?? [], 'ProductsCount' => $topRatingProduct_count ?? []]);
     }
 
     public function vendorProduct(Request $request)
