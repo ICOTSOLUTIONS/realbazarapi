@@ -21,7 +21,7 @@ Route::post('/reset', [Api\AuthController::class, 'reset']);
 Route::post('/forgot', [Api\AuthController::class, 'forgot']);
 Route::middleware('auth:api')->group(function () {
     //auth
-    Route::get('show/user/{id}', [Api\AuthController::class, 'show']);
+    Route::get('show/shop/{id}', [Api\AuthController::class, 'show']);
     Route::get('profile', [Api\AuthController::class, 'edit_profile']);
     Route::post('profile/update', [Api\AuthController::class, 'update_profile']);
     Route::post('shop/followers', [Api\AuthController::class, 'shopFollow']);
