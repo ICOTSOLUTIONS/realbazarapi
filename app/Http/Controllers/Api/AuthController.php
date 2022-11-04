@@ -330,6 +330,8 @@ class AuthController extends Controller
                     }
                     $user->first_name = $request->first_name;
                     $user->last_name = $request->last_name;
+                    $user->address = $request->address;
+                    $user->address2 = $request->address2;
                 }
                 if (!empty($request->image)) {
                     $image = $request->image;
