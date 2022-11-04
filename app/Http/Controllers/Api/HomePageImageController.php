@@ -79,6 +79,8 @@ class HomePageImageController extends Controller
             if (!count($request->images)) throw new Error("Home Page Image Not found!");
             foreach ($request->images as $value) {
                 $homePageImage = new HomePageImage();
+                $homePageImage->title = $request->title ?? '';
+                $homePageImage->description = $request->description ?? '';
                 if ($request->section == 'discount') $homePageImage->is_discount = true;
                 if ($request->section == 'featured') $homePageImage->is_featured = true;
                 if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
