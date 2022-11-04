@@ -356,7 +356,7 @@ class AuthController extends Controller
                         }
                     }
                 }
-                $updatedUser = User::with(['role','cnic_image'])->where('id', $user->id)->first();
+                $updatedUser = User::with(['role', 'cnic_image'])->where('id', $user->id)->first();
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => "User Successfully Updated", 'user' => $updatedUser,], 200);
             } catch (\Throwable $th) {
@@ -414,5 +414,13 @@ class AuthController extends Controller
             NotiSend::sendNotif($user->device_token, $title, $message);
         }
         if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
+    }
+
+    public function show($id)
+    {
+        if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
+        $user = User::with('role')->where('id', $id)->first();
+        if (!empty($user)) return response()->json(['status' => true, 'Message' => 'User found', 'user' => $user ?? []], 200);
+        else return response()->json(['status' => false, 'Message', 'User not found']);
     }
 }
