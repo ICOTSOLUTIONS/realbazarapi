@@ -15,7 +15,7 @@ class PackageController extends Controller
 {
     public function show()
     {
-        $package = Package::where('name','!=','Free')->get();
+        $package = Package::where('name', '!=', 'Free')->get();
         if (count($package)) return response()->json(['status' => true, 'Message' => 'Package found', 'Package' => $package ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'Package not found']);
     }
@@ -140,9 +140,24 @@ class PackageController extends Controller
         }
     }
 
-    public function packageExpiredPeriod()
+    public function packageExpiredPeriod($role = null)
     {
-        $expirePeriod = PackagePayment::with(['user', 'package'])->get();
+        $expirePeriod = [];
+        if ($role == 'retailer') {
+            $expirePeriod = PackagePayment::with(['user', 'package'])
+                ->whereHas('user', function ($q) {
+                    $q->whereRelation('role', 'name', 'retailer');
+                })->get();
+        }
+        if ($role == 'wholesaler') {
+            $expirePeriod = PackagePayment::with(['user', 'package'])
+                ->whereHas('user', function ($q) {
+                    $q->whereRelation('role', 'name', 'retailer');
+                })->get();
+        }
+        if ($role == null) {
+            $expirePeriod = PackagePayment::with(['user', 'package'])->get();
+        }
         if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? []]);
         else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
     }
