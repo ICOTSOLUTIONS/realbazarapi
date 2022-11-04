@@ -29,7 +29,6 @@ class ReportController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Reports not found', 'reports' => $reports ?? []]);
     }
 
-
     public function addReport(Request $request)
     {
         $valid = Validator::make($request->all(), [
@@ -63,7 +62,6 @@ class ReportController extends Controller
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
         }
     }
-
 
     public function deleteReport($id)
     {

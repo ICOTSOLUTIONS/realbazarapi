@@ -26,6 +26,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->boolean('is_delete')->default(false);
             $table->boolean('is_featured')->default(false);
+            $table->boolean('is_trending')->default(false);
             $table->boolean('is_new_arrival')->default(true);
             // $table->string('size')->nullable();
             // $table->string('brand')->nullable();

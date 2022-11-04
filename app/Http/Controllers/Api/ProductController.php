@@ -57,11 +57,13 @@ class ProductController extends Controller
             $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
+            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
-            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_retailer', true)->take(5)->get();
         }
         if ($role == 'wholesaler') {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
@@ -79,11 +81,13 @@ class ProductController extends Controller
             $topRatingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
+            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
-            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
         }
 
         return response()->json([
@@ -309,18 +313,18 @@ class ProductController extends Controller
     {
         $trendingProduct = [];
         if ($role == 'retailer') {
-            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->skip($skip)->take($take)->get();
-            $trendingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $trendingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->count();
         }
         if ($role == 'wholesaler') {
-            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->skip($skip)->take($take)->get();
-            $trendingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->whereHas('user', function ($q) {
+            $trendingProduct_count = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->count();
         }

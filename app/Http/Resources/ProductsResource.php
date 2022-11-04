@@ -28,6 +28,7 @@ class ProductsResource extends JsonResource
             'is_delete' => $this->is_delete,
             'is_featured' => $this->is_featured,
             'is_new_arrival' => $this->is_new_arrival,
+            'is_trending' => $this->is_trending,
             'variation' => $this->variation,
             'image' => $this->images,
             'shop' => $this->user,
