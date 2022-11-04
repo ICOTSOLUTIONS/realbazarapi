@@ -101,6 +101,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/reports/{id}', [Api\ReportController::class, 'reports']);
     Route::post('/add/report', [Api\ReportController::class, 'addReport']);
     Route::get('/delete/report/{id}', [Api\ReportController::class, 'deleteReport']);
+    Route::get('/delete/all/report', [Api\ReportController::class, 'deleteAllReport']);
+    Route::get('/delete/all/user/report/{user_id}', [Api\ReportController::class, 'deleteAllUserReport']);
 });
 //users
 Route::get('wholesalers', [Api\AuthController::class, 'wholesaler']);

@@ -53,4 +53,26 @@ class ReportController extends Controller
             else return response()->json(["status" => false, 'Message' => 'Report not deleted']);
         } else return response()->json(["status" => false, 'Message' => 'Report not found']);
     }
+
+    public function deleteAllUserReport($user_id)
+    {
+        $report = Report::where('id', $user_id)->get();
+        if (count($report)) {
+            foreach ($report as $key => $value) {
+                $value->delete();
+            }
+            return response()->json(['status' => true, 'Message' => 'Successfully deleted User Reports'], 200);
+        } else return response()->json(["status" => false, 'Message' => 'Report not found']);
+    }
+
+    public function deleteAllReport()
+    {
+        $report = Report::all();
+        if (count($report)) {
+            foreach ($report as $key => $value) {
+                $value->delete();
+            }
+            return response()->json(['status' => true, 'Message' => 'Successfully deleted Reports'], 200);
+        } else return response()->json(["status" => false, 'Message' => 'Report not found']);
+    }
 }
