@@ -96,7 +96,7 @@ class PackageController extends Controller
         if (!empty($exist_user)) {
             if ($exist_user->end_date > $date) return response()->json(['status' => false, 'Message' => 'You already have active package and your Package expiry date is ' . $exist_user->end_date]);
         }
-        return response()->json(['status' => true, 'Message' => 'Your Package is expired please buy new Package']);
+        return response()->json(['status' => true, 'Message' => 'Please buy new Package']);
     }
 
     public function payment(Request $request)
@@ -107,7 +107,7 @@ class PackageController extends Controller
             $existing_package = PackagePayment::where('user_id', auth()->user()->id)
                 ->where('package_id', $request->package_id)->first();
             if (!empty($existing_package)) {
-                if ($existing_package->end_date > $date)  throw new Error('You already have active package and your Package expiry date is ' . $existing_package->end_date);
+                if ($existing_package->end_date > $date) throw new Error('You already have active package and your Package expiry date is ' . $existing_package->end_date);
             }
             $package = Package::where('id', $request->package_id)->first();
             $exist_user = PackagePayment::where('user_id', auth()->user()->id)->first();
