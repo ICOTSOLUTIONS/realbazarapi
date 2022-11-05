@@ -170,7 +170,7 @@ class PackageController extends Controller
         if (!$product > 0) {
             $remaining_product_count = $expirePeriod->updated_product_qty - $product;
         }
-        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [], 'ProductCount' => $product ?? 0, 'remainProductCount' => $remaining_product_count ?? 0]);
+        if (!empty($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [], 'ProductCount' => $product ?? 0, 'remainProductCount' => $remaining_product_count ?? 0]);
         else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
     }
 }
