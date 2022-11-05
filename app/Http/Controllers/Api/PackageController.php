@@ -161,4 +161,11 @@ class PackageController extends Controller
         if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? []]);
         else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
     }
+
+    public function subsPackageExpiredPeriod()
+    {
+        $expirePeriod = PackagePayment::where('user_id', auth()->user()->id)->with(['user.role', 'package'])->get();
+        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? []]);
+        else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
+    }
 }

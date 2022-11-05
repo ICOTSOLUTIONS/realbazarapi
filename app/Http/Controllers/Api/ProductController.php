@@ -651,7 +651,7 @@ class ProductController extends Controller
         }
     }
 
-    public function productStatusChange(Request $request)
+    public function statusChangeProduct(Request $request)
     {
         $valid = Validator::make($request->all(), [
             'id' => 'required',
@@ -698,6 +698,16 @@ class ProductController extends Controller
                 return response()->json(["status" => true, 'Message' => 'Product Status Change to Pending Successfully'], 200);
             }
         } else return response()->json(["status" => false, 'Message' => 'Product Status Change not Successfully']);
+    }
+
+    public function productStatusChange(Request $request)
+    {
+        $product = Product::where('id', $request->id)->first();
+        if (!empty($product)) {
+            if ($product->is_active == false) $product->is_active = true;
+            else $product->is_active = false;
+            if ($product->save()) return response()->json(['status' => true, 'Message' => 'Successfully change Product'], 200);
+        } else return response()->json(["status" => false, 'Message' => 'Product Status not change']);
     }
 
     public function likeProduct(Request $request)

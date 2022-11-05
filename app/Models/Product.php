@@ -52,6 +52,7 @@ class Product extends Model
                 static::addGlobalScope('active', function ($builder) {
                     $builder->where('status', 'approved')
                         ->where('is_delete', false)
+                        ->where('is_active', true)
                         ->whereRelation('user', 'is_block', false)
                         ->whereRelation('user', 'is_active', true);
                 });
@@ -68,6 +69,7 @@ class Product extends Model
             static::addGlobalScope('active', function ($builder) {
                 $builder->where('status', 'approved')
                     ->where('is_delete', false)
+                    ->where('is_active', true)
                     ->whereRelation('user', 'is_block', false)
                     ->whereRelation('user', 'is_active', true);
             });

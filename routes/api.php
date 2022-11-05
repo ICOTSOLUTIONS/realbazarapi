@@ -53,8 +53,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('add/history/products', [Api\ProductController::class, 'addHistoryProduct']);
     Route::post('like/products', [Api\ProductController::class, 'likeProduct']);
     Route::post('review/products', [Api\ProductController::class, 'reviewProduct']);
-    Route::post('status/change/product', [Api\ProductController::class, 'productStatusChange']);
+    Route::post('status/change/product', [Api\ProductController::class, 'statusChangeProduct']);
     Route::get('status/trending/product/{id}', [Api\ProductController::class, 'productStatusTrending']);
+    Route::post('product/status/change', [Api\ProductController::class, 'productStatusChange']);
 
     //order
     Route::post('order', [Api\OrderController::class, 'order']);
@@ -71,6 +72,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('buy/package', [Api\PackageController::class, 'payment']);
     Route::post('exist/package/payment', [Api\PackageController::class, 'existPayment']);
     Route::get('subscription/expired/{role?}', [Api\PackageController::class, 'packageExpiredPeriod']);
+    Route::get('c', [Api\PackageController::class, 'subsPackageExpiredPeriod']);
 
     //chat
     Route::get('/allMessages', [Api\ChatController::class, 'allMessages']);

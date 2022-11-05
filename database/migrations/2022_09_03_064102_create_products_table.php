@@ -24,6 +24,7 @@ return new class extends Migration
             $table->mediumText('desc')->nullable();
             $table->string('tags')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->boolean('is_active')->default(true);
             $table->boolean('is_delete')->default(false);
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_trending')->default(false);
