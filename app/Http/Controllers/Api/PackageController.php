@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Package;
 use App\Models\PackagePayment;
+use App\Models\Product;
 use Carbon\Carbon;
 use Error;
 use Illuminate\Http\Request;
@@ -164,8 +165,12 @@ class PackageController extends Controller
 
     public function subsPackageExpiredPeriod()
     {
-        $expirePeriod = PackagePayment::has('user')->with(['user.role', 'package'])->where('user_id', auth()->user()->id)->withCount('user.products')->get();
-        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? []]);
-        else return response()->json(['status' => false, 'Message' =>  'Expiry Periods not found']);
+        $expirePeriod = PackagePayment::has('user')->with(['user.role', 'package'])->where('user_id', auth()->user()->id)->get();
+        $product = Product::has('user')->where('user_id', auth()->user()->id)->count();
+        if (!$product > 0) {
+            $remaining_product_count = $expirePeriod->updated_product_qty - $product;
+        }
+        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [], 'ProductCount' => $product ?? 0, 'remainProductCount' => $remaining_product_count ?? 0]);
+        else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
     }
 }
