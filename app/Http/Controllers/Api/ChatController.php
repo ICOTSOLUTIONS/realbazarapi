@@ -19,7 +19,7 @@ class ChatController extends Controller
     {
         $user = auth()->user();
         $user_id = $user->id;
-        $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id) {
+        $chat = Chat::has('messages')->with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id) {
             $q->where('sender_id', $user_id);
         })->orWhere(function ($q) use ($user_id) {
             $q->where('receiver_id', $user_id);
