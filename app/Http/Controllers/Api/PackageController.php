@@ -165,7 +165,7 @@ class PackageController extends Controller
 
     public function subsPackageExpiredPeriod()
     {
-        $expirePeriod = PackagePayment::has('user')->with(['user.role', 'package'])->where('user_id', auth()->user()->id)->get();
+        $expirePeriod = PackagePayment::has('user')->with(['user.role', 'package'])->where('user_id', auth()->user()->id)->first();
         $product = Product::has('user')->where('user_id', auth()->user()->id)->count();
         if (!$product > 0) {
             $remaining_product_count = $expirePeriod->updated_product_qty - $product;
