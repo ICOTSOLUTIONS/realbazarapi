@@ -521,12 +521,6 @@ class ProductController extends Controller
                 $product->is_featured = $request->featured ?? false;
                 if (!$product->save()) throw new Error("Product not Updated!");
                 if (!empty($request->product_image)) {
-                    $existImage = ProductImage::where('product_id', $product->id)->get();
-                    if (!empty($existImage)) {
-                        foreach ($existImage as $key => $value) {
-                            $value->delete();
-                        }
-                    }
                     foreach ($request->product_image as $image) {
                         $product_image = new ProductImage();
                         $product_image->product_id = $product->id;
