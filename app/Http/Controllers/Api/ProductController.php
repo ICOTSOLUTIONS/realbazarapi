@@ -706,7 +706,7 @@ class ProductController extends Controller
         if (!empty($product)) {
             if ($product->is_active == false) $product->is_active = true;
             else $product->is_active = false;
-            if ($product->save()) return response()->json(['status' => true, 'Message' => 'Successfully change Product'], 200);
+            if ($product->save()) return response()->json(['status' => true, 'Message' => 'Successfully status change Product'], 200);
         } else return response()->json(["status" => false, 'Message' => 'Product Status not change']);
     }
 

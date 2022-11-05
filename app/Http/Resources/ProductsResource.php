@@ -26,6 +26,7 @@ class ProductsResource extends JsonResource
             'product_status' => $this->status,
             'color' => $this->color,
             'is_delete' => $this->is_delete,
+            'is_active' => $this->is_active,
             'is_featured' => $this->is_featured,
             'is_new_arrival' => $this->is_new_arrival,
             'is_trending' => $this->is_trending,
