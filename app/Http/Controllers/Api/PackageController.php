@@ -167,7 +167,7 @@ class PackageController extends Controller
     {
         $expirePeriod = PackagePayment::has('user')->with(['user.role', 'package'])->where('user_id', auth()->user()->id)->first();
         $product = Product::has('user')->where('user_id', auth()->user()->id)->count();
-        if (!$product > 0) {
+        if ($product > 0) {
             $remaining_product_count = $expirePeriod->updated_product_qty - $product;
         }
         if (!empty($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [], 'ProductCount' => $product ?? 0, 'remainProductCount' => $remaining_product_count ?? 0]);
