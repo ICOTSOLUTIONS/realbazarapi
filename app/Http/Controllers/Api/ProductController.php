@@ -400,7 +400,7 @@ class ProductController extends Controller
             'price' => 'required',
             'discount' => 'nullable',
             'product_desc' => 'required',
-            // 'product_image' => 'required|array',
+            'product_image' => 'required|array',
             'variations' => 'required',
             'tags' => 'required',
             'sub_category_id' => 'required',
