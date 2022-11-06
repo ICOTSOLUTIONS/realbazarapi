@@ -191,7 +191,7 @@ class ProductController extends Controller
     public function appWholesalerProducts()
     {
         $wholesalers = User::with(['role', 'products' => function ($query) {
-            $query->latest()->take(6);
+            $query->take(10);
         }])->where('role_id', 4)->has('products')->get();
         if (count($wholesalers)) return response()->json(['status' => true, 'wholesalers' => $wholesalers ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'not found']);
