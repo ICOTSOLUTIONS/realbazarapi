@@ -188,6 +188,13 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
 
+    public function appWholesalerProducts()
+    {
+        $wholesalers = User::has('products')->with(['role', 'products'])->where('role_id', 4)->get();
+        if (count($wholesalers)) return response()->json(['status' => true, 'wholesalers' => $wholesalers ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'not found']);
+    }
+
     public function showAdminProduct($status = null, $role = null)
     {
         $all_product = [];

@@ -126,6 +126,7 @@ Route::get('newArrival/product/{role?}/{skip?}/{take?}', [Api\ProductController:
 Route::get('topRating/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'topRatingProduct']);
 Route::get('trending/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'trendingProduct']);
 Route::get('wholesaler/products', [Api\ProductController::class, 'wholesalerProducts']);
+Route::get('app/wholesaler/products', [Api\ProductController::class, 'appWholesalerProducts']);
 
 //category
 Route::get('category', [Api\CategoryController::class, 'show']);
