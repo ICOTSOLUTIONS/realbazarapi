@@ -24,7 +24,7 @@ class ReportController extends Controller
     public function reports($id)
     {
         if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
-        $reports = Report::with(['users', 'shop'])->where('user_id', $id)->get();
+        $reports = Report::with(['users', 'shop.role'])->where('user_id', $id)->get();
         if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'reports' => $reports ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Reports not found', 'reports' => $reports ?? []]);
     }
