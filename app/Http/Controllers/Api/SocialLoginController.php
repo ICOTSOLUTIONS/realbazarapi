@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class SocialLoginController extends Controller
@@ -22,22 +22,23 @@ class SocialLoginController extends Controller
         if ($validation->fails()) {
             return response(['status' => false, 'Message' => $validation->errors()]);
         }
-
-        $existingAccount = User::where('account_type', 'google')->where('email', request()->email)->where('role_id', 2)->first();
+        $role = Role::where('name', request()->role)->first();
+        if (empty($role)) return response()->json(['status' => false, 'Message' => 'Role not found']);
+        $existingAccount = User::where('account_type', 'google')->where('email', request()->email)->where('role_id', $role->id)->first();
         if ($existingAccount != null) {
             if (auth()->loginUsingId($existingAccount->id)) {
-                $user = auth()->user();
+                $user = auth()->user()->load('role');
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => true, "Message" => 'User Sign In Success', 'user' => $user, 'token' => $token], 200);
+                return response()->json(["status" => true, "Message" => 'User Sign In Success', 'token' => $token, 'user' => $user], 200);
             } else {
                 return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
             }
         }
 
         $socailLogin = new User();
-        $socailLogin->role_id =  2;
+        $socailLogin->role_id =  $role->id;
         $socailLogin->account_type =  'google';
         $socailLogin->email =  request()->email;
         $socailLogin->account_id =  request()->id;
@@ -49,13 +50,13 @@ class SocialLoginController extends Controller
         if (isset(request()->photo)) $socailLogin->image =  request()->photo;
         if ($socailLogin->save()) {
             if (auth()->loginUsingId($socailLogin->id)) {
-                $user = auth()->user();
+                $user = auth()->user()->load('role');
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => true, "Message" => 'User Sign In Success', 'user' => $user, 'token' => $token], 200);
+                return response()->json(["status" => true, "Message" => 'User Sign In Success',  'token' => $token, 'user' => $user], 200);
             } else {
-                return response()->json(['status' => false, "Message" => 'User Sign In failed!'], 500);
+                return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
             }
         }
     }
@@ -71,24 +72,25 @@ class SocialLoginController extends Controller
         );
 
         if ($validation->fails()) {
-            return response(['status' => false, 'message' => $validation->errors()], 500);
+            return response(['status' => false, 'Message' => $validation->errors()]);
         }
-
-        $existingAccount = User::where('account_type', 'facebook')->where('email', request()->email)->where('role_id', 2)->first();
+        $role = Role::where('name', request()->role)->first();
+        if (empty($role)) return response()->json(['status' => false, 'Message' => 'Role not found']);
+        $existingAccount = User::where('account_type', 'facebook')->where('email', request()->email)->where('role_id', $role->id)->first();
         if ($existingAccount != null) {
             if (auth()->loginUsingId($existingAccount->id)) {
-                $user = auth()->user();
+                $user = auth()->user()->load('role');
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => 'Success', "message" => 'User Sign In Success', 'user' => $user, 'token' => $token], 200);
+                return response()->json(["status" => true, "Message" => 'User Sign In Success', 'token' => $token, 'user' => $user], 200);
             } else {
-                return response()->json(["message" => 'User Sign In failed!'], 500);
+                return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
             }
         }
 
         $socailLogin = new User();
-        $socailLogin->role_id =  2;
+        $socailLogin->role_id =  $role->id;
         $socailLogin->account_type =  'facebook';
         $socailLogin->email =  request()->email;
         $socailLogin->account_id =  request()->id;
@@ -100,13 +102,13 @@ class SocialLoginController extends Controller
         if (isset(request()->phone)) $socailLogin->phone =  request()->phone;
         if ($socailLogin->save()) {
             if (auth()->loginUsingId($socailLogin->id)) {
-                $user = auth()->user();
+                $user = auth()->user()->load('role');
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => 'Success', "message" => 'User Sign In Success', 'user' => $user, 'token' => $token], 200);
+                return response()->json(["status" => true, "message" => 'User Sign In Success', 'token' => $token, 'user' => $user], 200);
             } else {
-                return response()->json(["message" => 'User Sign In failed!'], 500);
+                return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
             }
         }
     }
