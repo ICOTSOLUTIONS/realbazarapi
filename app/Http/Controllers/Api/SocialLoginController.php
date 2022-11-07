@@ -15,6 +15,7 @@ class SocialLoginController extends Controller
             request()->all(),
             [
                 'id' => 'required',
+                'role' => 'required',
             ]
         );
 
@@ -65,6 +66,7 @@ class SocialLoginController extends Controller
             request()->all(),
             [
                 'id' => 'required',
+                'role' => 'required',
             ]
         );
 
