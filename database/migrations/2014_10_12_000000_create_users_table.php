@@ -29,6 +29,10 @@ return new class extends Migration
             $table->string('province')->nullable();
             $table->string('country')->nullable();
             $table->string('cnic_number')->nullable();
+            $table->enum('account_type', ['facebook', 'google'])->nullable();
+            $table->string('account_id')->nullable();
+            $table->string('family_name')->nullable();
+            $table->string('given_name')->nullable();
             $table->mediumText('image')->nullable();
             $table->mediumText('bill_image')->nullable();
             $table->mediumText('token')->nullable();

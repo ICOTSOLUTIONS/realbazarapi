@@ -50,7 +50,7 @@ class Product extends Model
             $user = auth()->user()->load('role');
             if ($user->role->name == 'user') {
                 static::addGlobalScope('active', function ($builder) {
-                    $builder->where('status', 'approved')
+                    $builder->orderBy('id', 'DESC')->where('status', 'approved')
                         ->where('is_delete', false)
                         ->where('is_active', true)
                         ->whereRelation('user', 'is_block', false)
@@ -58,16 +58,16 @@ class Product extends Model
                 });
             } elseif ($user->role->name == 'admin') {
                 static::addGlobalScope('active', function ($builder) {
-                    $builder->whereRelation('user', 'is_block', false);
+                    $builder->orderBy('id', 'DESC')->whereRelation('user', 'is_block', false);
                 });
             } else {
                 static::addGlobalScope('active', function ($builder) {
-                    $builder->whereRelation('user', 'is_block', false)->where('is_delete', false);
+                    $builder->orderBy('id', 'DESC')->whereRelation('user', 'is_block', false)->where('is_delete', false);
                 });
             }
         } else {
             static::addGlobalScope('active', function ($builder) {
-                $builder->where('status', 'approved')
+                $builder->orderBy('id', 'DESC')->where('status', 'approved')
                     ->where('is_delete', false)
                     ->where('is_active', true)
                     ->whereRelation('user', 'is_block', false)

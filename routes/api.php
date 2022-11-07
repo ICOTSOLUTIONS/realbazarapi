@@ -140,3 +140,7 @@ Route::get('/banners/{section}', [Api\BannerController::class, 'banners']);
 
 //homePageImage
 Route::get('/homePageImages/{section}', [Api\HomePageImageController::class, 'homePageImages']);
+
+// SOCIAL lOGIN
+Route::post('google/login', [Api\SocialLoginController::class, "googleLogin"]);
+Route::post('facebook/login', [Api\SocialLoginController::class, "facebookLogin"]);
