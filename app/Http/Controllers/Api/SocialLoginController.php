@@ -31,9 +31,9 @@ class SocialLoginController extends Controller
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => true, "Message" => 'User Sign In Success', 'token' => $token, 'user' => $user], 200);
+                return response()->json(["status" => true, "Message" => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             } else {
-                return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
+                return response()->json(['status' => false, "Message" => 'Invalid Credentials!']);
             }
         }
 
@@ -54,9 +54,9 @@ class SocialLoginController extends Controller
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => true, "Message" => 'User Sign In Success',  'token' => $token, 'user' => $user], 200);
+                return response()->json(["status" => true, "Message" => 'Login Successfull',  'token' => $token, 'user' => $user], 200);
             } else {
-                return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
+                return response()->json(['status' => false, "Message" => 'Invalid Credentials!']);
             }
         }
     }
@@ -83,9 +83,9 @@ class SocialLoginController extends Controller
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => true, "Message" => 'User Sign In Success', 'token' => $token, 'user' => $user], 200);
+                return response()->json(["status" => true, "Message" => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             } else {
-                return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
+                return response()->json(['status' => false, "Message" => 'Invalid Credentials!']);
             }
         }
 
@@ -106,9 +106,9 @@ class SocialLoginController extends Controller
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
                 $user->save();
-                return response()->json(["status" => true, "message" => 'User Sign In Success', 'token' => $token, 'user' => $user], 200);
+                return response()->json(["status" => true, "message" => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             } else {
-                return response()->json(['status' => false, "Message" => 'User Sign In failed!']);
+                return response()->json(['status' => false, "Message" => 'Invalid Credentials!']);
             }
         }
     }
