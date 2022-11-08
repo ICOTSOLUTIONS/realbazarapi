@@ -66,7 +66,7 @@ class AuthController extends Controller
                     ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
-        $wholesalers = $wholesaler->skip($skip)->take($take)->get();
+        $wholesalers = $wholesaler->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $wholesaler_counts = $wholesaler_count->count();
         if (count($wholesalers)) return response()->json(['status' => true, 'Message' => 'Wholesalers found', 'wholesalers' => $wholesalers ?? [], 'wholesalersCount' => $wholesaler_counts ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'Wholesalers not found', 'wholesalers' => $wholesalers ?? [], 'wholesalersCount' => $wholesaler_counts ?? []]);
@@ -106,7 +106,7 @@ class AuthController extends Controller
                     ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
-        $users = $user->skip($skip)->take($take)->get();
+        $users = $user->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $user_counts = $user_count->count();
         if (count($users)) return response()->json(['status' => true, 'users' => $users ?? [], 'usersCount' => $user_counts ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'not found', 'usersCount' => $user_counts ?? []]);
@@ -156,7 +156,7 @@ class AuthController extends Controller
                     ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
-        $retailers = $retailer->skip($skip)->take($take)->get();
+        $retailers = $retailer->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $retailer_counts = $retailer_count->count();
         if (count($retailers)) return response()->json(['status' => true, 'users' => $retailers ?? [], 'usersCount' => $retailer_counts ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'not found', 'usersCount' => $retailer_counts ?? []]);
