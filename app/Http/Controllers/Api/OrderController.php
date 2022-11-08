@@ -19,20 +19,35 @@ use App\Models\User;
 
 class OrderController extends Controller
 {
-    public function show($skip = 0, $take = 0, $status = null, $role = null, $search = null)
+    public function show(Request $request, $skip = 0, $take = 0, $status = null, $role = null, $search = null)
     {
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $skip = $request->skip;
+        $take = $request->take;
+        $role = $request->role;
+        $search = $request->search;
+        $status = $request->status;
         $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role']);
-        if ($role == 'retailer') {
-            $order->whereHas('seller', function ($q) {
-                $q->whereRelation('role', 'name', 'retailer');
+        $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role']);
+        if (!empty($status)) {
+            $order->where('status', $status);
+            $order_count->where('status', $status);
+        }
+        if (!empty($role)) {
+            $order->whereHas('seller', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
+            });
+            $order_count->whereHas('seller', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
             });
         }
-        if ($role == 'wholesaler') {
-            $order->whereHas('seller', function ($q) {
-                $q->whereRelation('role', 'name', 'wholesaler');
-            });
-        }
-        if ($search != null) {
+        if (!empty($search)) {
             $order->where(function ($q) use ($search) {
                 $q->where('order_number', 'like', '%' . $search . '%')
                     ->orWhere('customer_name', 'like', '%' . $search . '%')
@@ -41,14 +56,19 @@ class OrderController extends Controller
                     ->orWhere('delivery_address', 'like', '%' . $search . '%')
                     ->orWhere('order_date', 'like', '%' . $search . '%');
             });
+            $order_count->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', '%' . $search . '%')
+                    ->orWhere('customer_name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('delivery_address', 'like', '%' . $search . '%')
+                    ->orWhere('order_date', 'like', '%' . $search . '%');
+            });
         }
-        if ($skip == 0 && $take == 0) {
-            $orders = $order->where('status', $status)->get();
-        } else {
-            $orders = $order->where('status', $status)->skip($skip)->take($take)->get();
-        }
-        if (count($orders)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($orders) ?? []], 200);
-        else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $orders ?? []]);
+        $orders = $order->skip($skip)->take($take)->get();
+        $orders_counts = $order_count->count();
+        if (count($orders)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($orders) ?? [], 'OrdersCount' => $orders_counts ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $orders ?? [], 'OrdersCount' => $orders_counts ?? []]);
     }
 
     public function userOrder($status = null)
