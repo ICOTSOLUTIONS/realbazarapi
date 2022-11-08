@@ -38,18 +38,44 @@ class ReportController extends Controller
             // $report->whereRelation('users','username', 'like', '%' . $search . '%');
             // $report_count->whereRelation('users','username', 'like', '%' . $search . '%');
         }
-        $report_counts = $report_count->get()->count();
         $reports = $report->skip($skip)->take($take)->get();
+        $report_counts = $report_count->get()->count();
         if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Reports not found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []]);
     }
 
-    public function reports($id)
+    public function reports(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $skip = $request->skip;
+        $take = $request->take;
+        $search = $request->search;
         if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
-        $reports = Report::with(['users', 'shop.role'])->where('user_id', $id)->get();
-        if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'reports' => $reports ?? []], 200);
-        else return response()->json(['status' => false, 'Message' => 'Reports not found', 'reports' => $reports ?? []]);
+        $report = Report::with(['users', 'shop.role'])->where('user_id', $id);
+        $report_count = Report::with(['users', 'shop.role'])->where('user_id', $id);
+        if (!empty($search)) {
+            $report->where(function ($q) use ($search) {
+                $q->whereRelation('users', 'username', 'like', '%' . $search . '%')
+                    ->orWhereRelation('shop', 'username', 'like', '%' . $search . '%');
+            });
+            $report_count->where(function ($q) use ($search) {
+                $q->whereRelation('users', 'username', 'like', '%' . $search . '%')
+                    ->orWhereRelation('shop', 'username', 'like', '%' . $search . '%');
+            });
+            // $report->whereRelation('users', 'username', 'like', '%' . $search . '%');
+            // $report_count->whereRelation('users', 'username', 'like', '%' . $search . '%');
+        }
+        $reports = $report->skip($skip)->take($take)->get();
+        $report_counts = $report_count->count();
+        if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'reports' => $reports ?? [], 'reportsCount' => $report_counts ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Reports not found', 'reports' => $reports ?? [], 'reportsCount' => $report_counts ?? []]);
     }
 
     public function addReport(Request $request)

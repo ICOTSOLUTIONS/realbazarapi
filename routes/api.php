@@ -102,7 +102,7 @@ Route::middleware('auth:api')->group(function () {
 
     //report
     Route::post('/report', [Api\ReportController::class, 'report']);
-    Route::get('/reports/{id}', [Api\ReportController::class, 'reports']);
+    Route::post('/reports', [Api\ReportController::class, 'reports']);
     Route::post('/add/report', [Api\ReportController::class, 'addReport']);
     Route::get('/delete/report/{id}', [Api\ReportController::class, 'deleteReport']);
     Route::get('/delete/all/report', [Api\ReportController::class, 'deleteAllReport']);
