@@ -35,8 +35,6 @@ class ReportController extends Controller
             $report_count->whereHas('users', function ($q) use ($search) {
                 $q->where('username', 'like', '%' . $search . '%');
             });
-            // $report->whereRelation('users','username', 'like', '%' . $search . '%');
-            // $report_count->whereRelation('users','username', 'like', '%' . $search . '%');
         }
         $reports = $report->skip($skip)->take($take)->get();
         $report_counts = $report_count->get()->count();
@@ -70,8 +68,6 @@ class ReportController extends Controller
                 $q->whereRelation('users', 'username', 'like', '%' . $search . '%')
                     ->orWhereRelation('shop', 'username', 'like', '%' . $search . '%');
             });
-            // $report->whereRelation('users', 'username', 'like', '%' . $search . '%');
-            // $report_count->whereRelation('users', 'username', 'like', '%' . $search . '%');
         }
         $reports = $report->skip($skip)->take($take)->get();
         $report_counts = $report_count->count();
