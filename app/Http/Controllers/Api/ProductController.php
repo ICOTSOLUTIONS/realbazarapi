@@ -231,8 +231,8 @@ class ProductController extends Controller
             $all_product_count = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)
                 ->count();
         }
-        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
+        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product), 'ProductsCount' => $all_product_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? [], 'ProductsCount' => $all_product_count ?? []]);
     }
 
     public function featuredProduct($role = null, $skip = 0, $take = 0)
