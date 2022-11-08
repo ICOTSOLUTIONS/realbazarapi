@@ -21,7 +21,6 @@ class OrderController extends Controller
 {
     public function show($skip = 0, $take = 0, $status = null, $role = null, $search = null)
     {
-        dd($role);
         $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role']);
         if ($role == 'retailer') {
             $order->whereHas('seller', function ($q) {
