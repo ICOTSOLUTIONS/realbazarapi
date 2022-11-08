@@ -655,24 +655,51 @@ class ProductController extends Controller
         } else return response()->json(["status" => false, 'Message' => 'Unsuccessfull Image deleted']);
     }
 
-    public function showDeleteProduct($role = null)
+    public function showDeleteProduct(Request $request)
     {
-        $product = [];
-        if ($role == 'retailer') {
-            $product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true)->whereHas('user', function ($q) {
-                $q->whereRelation('role', 'name', 'retailer');
-            })->get();
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        if ($role == 'wholesaler') {
-            $product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true)->whereHas('user', function ($q) {
-                $q->whereRelation('role', 'name', 'wholesaler');
-            })->get();
+        $skip = $request->skip;
+        $take = $request->take;
+        $role = $request->role;
+        $search = $request->search;
+        $product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true);
+        $product_count = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true);
+        if (!empty($role)) {
+            $product->whereHas('user', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
+            });
+            $product_count->whereHas('user', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
+            });
         }
-        if ($role == null) {
-            $product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', true)->get();
+        if (!empty($search)) {
+            $product->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('price', 'like', '%' . $search . '%')
+                    ->orWhere('discount_price', 'like', '%' . $search . '%')
+                    ->orWhere('desc', 'like', '%' . $search . '%')
+                    ->orWhere('tags', 'like', '%' . $search . '%')
+                    ->orWhere('status', 'like', '%' . $search . '%');
+            });
+            $product_count->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('price', 'like', '%' . $search . '%')
+                    ->orWhere('discount_price', 'like', '%' . $search . '%')
+                    ->orWhere('desc', 'like', '%' . $search . '%')
+                    ->orWhere('tags', 'like', '%' . $search . '%')
+                    ->orWhere('status', 'like', '%' . $search . '%');
+            });
         }
-        if (count($product)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($product)], 200);
-        else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $product ?? []]);
+        $products = $product->skip($skip)->take($take)->get();
+        $products_counts = $product_count->count();
+        if (count($products)) return response()->json(['status' => true, 'Message' => 'Successfully Show Deleted Products', 'Products' => ProductsResource::collection($products), 'ProductsCount' => $products_counts ?? []], 200);
+        else return response()->json(["status" => false, 'Message' => 'Products not found', 'Products' => $products ?? [], 'ProductsCount' => $products_counts ?? []]);
     }
 
     public function hardDelete($id)
