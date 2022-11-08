@@ -19,7 +19,7 @@ use App\Models\User;
 
 class OrderController extends Controller
 {
-    public function show(Request $request, $skip = 0, $take = 0, $status = null, $role = null, $search = null)
+    public function show(Request $request)
     {
         $valid = Validator::make($request->all(), [
             'skip' => 'required',
