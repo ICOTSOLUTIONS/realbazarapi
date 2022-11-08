@@ -59,7 +59,7 @@ Route::middleware('auth:api')->group(function () {
 
     //order
     Route::post('order', [Api\OrderController::class, 'order']);
-    Route::get('get/order/{status?}/{role?}', [Api\OrderController::class, 'show']);
+    Route::get('get/order/{skip?}/{take?}/{status?}/{role?}/{?search?}', [Api\OrderController::class, 'show']);
     Route::get('users/order/{status?}', [Api\OrderController::class, 'userOrder']);
     Route::get('sellers/order/{status?}', [Api\OrderController::class, 'sellerOrder']);
     Route::post('status/change/order', [Api\OrderController::class, 'orderStatusChange']);

@@ -19,7 +19,7 @@ use App\Models\User;
 
 class OrderController extends Controller
 {
-    public function show($status = null, $role = null)
+    public function show($skip = 0, $take = 0, $status = null, $role = null, $search = null)
     {
         $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role']);
         if ($role == 'retailer') {
@@ -32,7 +32,21 @@ class OrderController extends Controller
                 $q->whereRelation('role', 'name', 'wholesaler');
             });
         }
-        $orders = $order->where('status', $status)->get();
+        if ($search != null) {
+            $order->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', '%' . $search . '%')
+                    ->orWhere('customer_name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('delivery_address', 'like', '%' . $search . '%')
+                    ->orWhere('order_date', 'like', '%' . $search . '%');
+            });
+        }
+        if ($skip == 0 && $take == 0) {
+            $orders = $order->where('status', $status)->get();
+        } else {
+            $orders = $order->where('status', $status)->skip($skip)->take($take)->get();
+        }
         if (count($orders)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($orders) ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $orders ?? []]);
     }
