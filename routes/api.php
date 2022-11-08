@@ -38,7 +38,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('delete/subcategory', [Api\SubCategoryController::class, 'delete']);
 
     //product
-    Route::get('show/admin/products/{status?}/{role?}', [Api\ProductController::class, 'showAdminProduct']);
+    Route::post('show/admin/products', [Api\ProductController::class, 'showAdminProduct']);
     Route::get('show/seller/products/{skip?}/{take?}', [Api\ProductController::class, 'showSellerProduct']);
     Route::post('add/product', [Api\ProductController::class, 'add']);
     Route::post('update/product', [Api\ProductController::class, 'update']);

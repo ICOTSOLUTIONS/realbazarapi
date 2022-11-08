@@ -195,26 +195,52 @@ class ProductController extends Controller
         return response()->json(['status' => false, 'Message' => 'not found']);
     }
 
-    public function showAdminProduct($status = null, $role = null)
+    public function showAdminProduct(Request $request)
     {
-        $all_product = [];
-        if ($role == 'retailer') {
-            $all_product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)
-                ->whereHas('user', function ($q) {
-                    $q->whereRelation('role', 'name', 'retailer');
-                })->get();
+        $skip = $request->skip;
+        $take = $request->take;
+        $status = $request->status;
+        $role = $request->role;
+        $search = $request->search;
+        $all_product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false);
+        $all_product_count = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false);
+        if (!empty($status)) {
+            $all_product->where('status', $status);
+            $all_product_count->where('status', $status);
         }
-        if ($role == 'wholesaler') {
-            $all_product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)
-                ->whereHas('user', function ($q) {
-                    $q->whereRelation('role', 'name', 'wholesaler');
-                })->get();
+        if (!empty($role)) {
+            $all_product->whereHas('user', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
+            });
+            $all_product_count->whereHas('user', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
+            });
         }
-        if ($role == null && $status != null) {
-            $all_product = Product::has('user')->with(['user.role', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('is_delete', false)->where('status', $status)->get();
+        if (!empty($search)) {
+            $all_product->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('price', 'like', '%' . $search . '%')
+                    ->orWhere('discount_price', 'like', '%' . $search . '%')
+                    ->orWhere('desc', 'like', '%' . $search . '%')
+                    ->orWhere('tags', 'like', '%' . $search . '%')
+                    ->orWhere('status', 'like', '%' . $search . '%');
+            });
+            $all_product_count->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('price', 'like', '%' . $search . '%')
+                    ->orWhere('discount_price', 'like', '%' . $search . '%')
+                    ->orWhere('desc', 'like', '%' . $search . '%')
+                    ->orWhere('tags', 'like', '%' . $search . '%')
+                    ->orWhere('status', 'like', '%' . $search . '%');
+            });
         }
-        if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
+        if (!empty($skip) && !empty($take)) {
+            $all_product->skip($skip)->take($take);
+        }
+        $all_products = $all_product->get();
+        $all_products_count = $all_product->count();
+        if (count($all_products)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_products), 'ProductsCount' => $all_products_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_products ?? [], 'ProductsCount' => $all_products_count ?? []]);
     }
 
     public function showSellerProduct($skip = 0, $take = 0)
