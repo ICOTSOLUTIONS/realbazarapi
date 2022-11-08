@@ -62,7 +62,9 @@ class Product extends Model
                 });
             } else {
                 static::addGlobalScope('active', function ($builder) {
-                    $builder->orderBy('id', 'DESC')->whereRelation('user', 'is_block', false)->where('is_delete', false);
+                    $builder->orderBy('id', 'DESC')->
+                    whereRelation('user', 'is_block', false)->
+                    where('is_delete', false);
                 });
             }
         } else {

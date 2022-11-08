@@ -217,9 +217,18 @@ class ProductController extends Controller
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
 
-    public function showSellerProduct()
+    public function showSellerProduct($skip = 0, $take = 0)
     {
-        $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)->get();
+        if ($skip == 0 && $take == 0) {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)->get();
+            $all_product_count = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)
+                ->count();
+        } else {
+            $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)
+                ->skip($skip)->take($take)->get();
+            $all_product_count = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)
+                ->count();
+        }
         if (count($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_product)], 200);
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_product ?? []]);
     }
