@@ -141,26 +141,43 @@ class PackageController extends Controller
         }
     }
 
-    public function packageExpiredPeriod($role = null)
+    public function packageExpiredPeriod(Request $request)
     {
-        $expirePeriod = [];
-        if ($role == 'retailer') {
-            $expirePeriod = PackagePayment::with(['user.role', 'package'])
-                ->whereHas('user', function ($q) {
-                    $q->whereRelation('role', 'name', 'retailer');
-                })->get();
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        if ($role == 'wholesaler') {
-            $expirePeriod = PackagePayment::with(['user.role', 'package'])
-                ->whereHas('user', function ($q) {
-                    $q->whereRelation('role', 'name', 'retailer');
-                })->get();
+        $skip = $request->skip;
+        $take = $request->take;
+        $role = $request->role;
+        $search = $request->search;
+        $expirePeriod = PackagePayment::with(['user.role', 'package']);
+        $expirePeriod_count = PackagePayment::with(['user.role', 'package']);
+        if (!empty($role)) {
+            $expirePeriod->whereHas('user', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
+            });
+            $expirePeriod_count->whereHas('user', function ($q) use ($role) {
+                $q->whereRelation('role', 'name', $role);
+            });
         }
-        if ($role == null) {
-            $expirePeriod = PackagePayment::with(['user.role', 'package'])->get();
+        if (!empty($search)) {
+            $expirePeriod->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', '%' . $search . '%')
+                    ->orWhere('customer_name', 'like', '%' . $search . '%');
+            });
+            $expirePeriod_count->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', '%' . $search . '%')
+                    ->orWhere('customer_name', 'like', '%' . $search . '%');
+            });
         }
-        if (count($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? []]);
-        else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
+        $expirePeriods = $expirePeriod->skip($skip)->take($take)->get();
+        $expirePeriods_counts = $expirePeriod_count->count();
+        if (count($expirePeriods)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriods ?? [], 'expiryCount' => $expirePeriods_counts ?? []]);
+        else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found', 'expiry' => $expirePeriods ?? [], 'expiryCount' => $expirePeriods_counts ?? []]);
     }
 
     public function subsPackageExpiredPeriod()
