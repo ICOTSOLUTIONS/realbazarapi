@@ -32,7 +32,7 @@ class ReportController extends Controller
 
         }
         $reports = $report->skip($skip)->take($take)->get();
-        $report_counts = $report_count->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id')->count();
+        $report_counts = $report_count->count();
         if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Reports not found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []]);
     }
