@@ -54,6 +54,7 @@ class ReportController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
+        $id = $request->id;
         $skip = $request->skip;
         $take = $request->take;
         $search = $request->search;
