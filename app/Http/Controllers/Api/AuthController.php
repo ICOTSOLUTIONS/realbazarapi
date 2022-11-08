@@ -44,6 +44,11 @@ class AuthController extends Controller
                     ->orWhere('phone', 'like', '%' . $search . '%')
                     ->orWhere('address', 'like', '%' . $search . '%')
                     ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('business_name', 'like', '%' . $search . '%')
+                    ->orWhere('business_address', 'like', '%' . $search . '%')
+                    ->orWhere('province', 'like', '%' . $search . '%')
+                    ->orWhere('country', 'like', '%' . $search . '%')
+                    ->orWhere('cnic_number', 'like', '%' . $search . '%')
                     ->orWhere('email', 'like', '%' . $search . '%');
             });
             $wholesaler_count->where(function ($q) use ($search) {
@@ -53,6 +58,11 @@ class AuthController extends Controller
                     ->orWhere('phone', 'like', '%' . $search . '%')
                     ->orWhere('address', 'like', '%' . $search . '%')
                     ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('business_name', 'like', '%' . $search . '%')
+                    ->orWhere('business_address', 'like', '%' . $search . '%')
+                    ->orWhere('province', 'like', '%' . $search . '%')
+                    ->orWhere('country', 'like', '%' . $search . '%')
+                    ->orWhere('cnic_number', 'like', '%' . $search . '%')
                     ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
@@ -124,6 +134,11 @@ class AuthController extends Controller
                     ->orWhere('phone', 'like', '%' . $search . '%')
                     ->orWhere('address', 'like', '%' . $search . '%')
                     ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('business_name', 'like', '%' . $search . '%')
+                    ->orWhere('business_address', 'like', '%' . $search . '%')
+                    ->orWhere('province', 'like', '%' . $search . '%')
+                    ->orWhere('country', 'like', '%' . $search . '%')
+                    ->orWhere('cnic_number', 'like', '%' . $search . '%')
                     ->orWhere('email', 'like', '%' . $search . '%');
             });
             $retailer_count->where(function ($q) use ($search) {
@@ -133,6 +148,11 @@ class AuthController extends Controller
                     ->orWhere('phone', 'like', '%' . $search . '%')
                     ->orWhere('address', 'like', '%' . $search . '%')
                     ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('business_name', 'like', '%' . $search . '%')
+                    ->orWhere('business_address', 'like', '%' . $search . '%')
+                    ->orWhere('province', 'like', '%' . $search . '%')
+                    ->orWhere('country', 'like', '%' . $search . '%')
+                    ->orWhere('cnic_number', 'like', '%' . $search . '%')
                     ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
