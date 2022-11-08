@@ -108,8 +108,8 @@ class AuthController extends Controller
         }
         $users = $user->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $user_counts = $user_count->count();
-        if (count($users)) return response()->json(['status' => true, 'users' => $users ?? [], 'usersCount' => $user_counts ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'not found', 'usersCount' => $user_counts ?? []]);
+        if (count($users)) return response()->json(['status' => true, 'Message' => 'Users found', 'users' => $users ?? [], 'usersCount' => $user_counts ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'Users not found', 'users' => $users ?? [], 'usersCount' => $user_counts ?? []]);
     }
 
     public function retailer(Request $request)
@@ -158,8 +158,8 @@ class AuthController extends Controller
         }
         $retailers = $retailer->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $retailer_counts = $retailer_count->count();
-        if (count($retailers)) return response()->json(['status' => true, 'users' => $retailers ?? [], 'usersCount' => $retailer_counts ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'not found', 'usersCount' => $retailer_counts ?? []]);
+        if (count($retailers)) return response()->json(['status' => true, 'Message' => 'Retailers found', 'retailers' => $retailers ?? [], 'retailersCount' => $retailer_counts ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'Retailers not found', 'retailers' => $retailers ?? [], 'retailersCount' => $retailer_counts ?? []]);
     }
 
     public function signup(Request $request)
