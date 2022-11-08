@@ -22,25 +22,124 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
 
-    public function wholesaler()
+    public function wholesaler(Request $request)
     {
-        $wholesalers = User::with(['role', 'cnic_image'])->where('role_id', 4)->get();
-        if (count($wholesalers)) return response()->json(['status' => true, 'wholesalers' => $wholesalers ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'not found']);
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $skip = $request->skip;
+        $take = $request->take;
+        $search = $request->search;
+        $wholesaler = User::with('role', 'cnic_image')->where('role_id', 4);
+        $wholesaler_count = User::with('role')->where('role_id', 4);
+        if (!empty($search)) {
+            $wholesaler->where(function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+            $wholesaler_count->where(function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+        $wholesalers = $wholesaler->skip($skip)->take($take)->get();
+        $wholesaler_counts = $wholesaler_count->count();
+        if (count($wholesalers)) return response()->json(['status' => true, 'Message' => 'Wholesalers found', 'wholesalers' => $wholesalers ?? [], 'wholesalersCount' => $wholesaler_counts ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'Wholesalers not found', 'wholesalers' => $wholesalers ?? [], 'wholesalersCount' => $wholesaler_counts ?? []]);
     }
 
-    public function user()
+    public function user(Request $request)
     {
-        $users = User::with('role')->where('role_id', 3)->get();
-        if (count($users)) return response()->json(['status' => true, 'users' => $users ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'not found']);
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $skip = $request->skip;
+        $take = $request->take;
+        $search = $request->search;
+        $user = User::with('role')->where('role_id', 3);
+        $user_count = User::with('role')->where('role_id', 3);
+        if (!empty($search)) {
+            $user->where(function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+            $user_count->where(function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+        $users = $user->skip($skip)->take($take)->get();
+        $user_counts = $user_count->count();
+        if (count($users)) return response()->json(['status' => true, 'users' => $users ?? [], 'usersCount' => $user_counts ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'not found', 'usersCount' => $user_counts ?? []]);
     }
 
-    public function retailer()
+    public function retailer(Request $request)
     {
-        $retailers = User::with(['role', 'cnic_image'])->where('role_id', 5)->get();
-        if (count($retailers)) return response()->json(['status' => true, 'retailers' => $retailers ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'not found']);
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $skip = $request->skip;
+        $take = $request->take;
+        $search = $request->search;
+        $retailer = User::with(['role', 'cnic_image'])->where('role_id', 5);
+        $retailer_count = User::with('role')->where('role_id', 5);
+        if (!empty($search)) {
+            $retailer->where(function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+            $retailer_count->where(function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%')
+                    ->orWhere('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%')
+                    ->orWhere('address2', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+        $retailers = $retailer->skip($skip)->take($take)->get();
+        $retailer_counts = $retailer_count->count();
+        if (count($retailers)) return response()->json(['status' => true, 'users' => $retailers ?? [], 'usersCount' => $retailer_counts ?? []], 200);
+        return response()->json(['status' => false, 'Message' => 'not found', 'usersCount' => $retailer_counts ?? []]);
     }
 
     public function signup(Request $request)

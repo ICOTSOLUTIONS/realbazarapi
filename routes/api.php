@@ -109,9 +109,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/delete/all/user/report/{user_id}', [Api\ReportController::class, 'deleteAllUserReport']);
 });
 //users
-Route::get('wholesalers', [Api\AuthController::class, 'wholesaler']);
-Route::get('users', [Api\AuthController::class, 'user']);
-Route::get('retailers', [Api\AuthController::class, 'retailer']);
+Route::post('wholesalers', [Api\AuthController::class, 'wholesaler']);
+Route::post('users', [Api\AuthController::class, 'user']);
+Route::post('retailers', [Api\AuthController::class, 'retailer']);
 
 //product
 Route::get('home/{role?}', [Api\ProductController::class, 'home']);
