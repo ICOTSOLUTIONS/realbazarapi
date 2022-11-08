@@ -42,10 +42,11 @@ class SocialLoginController extends Controller
         $socailLogin->account_type =  'google';
         $socailLogin->email =  request()->email;
         $socailLogin->account_id =  request()->id;
-        $socailLogin->family_name =  request()->family_name;
-        $socailLogin->given_name =  request()->given_name;
+        $socailLogin->family_name =  request()->familyName;
+        $socailLogin->given_name =  request()->givenName;
         $socailLogin->first_name =  request()->first_name;
         $socailLogin->last_name =  request()->last_name;
+        $socailLogin->username =  request()->name;
         if (isset(request()->phone)) $socailLogin->phone =  request()->phone;
         if (isset(request()->photo)) $socailLogin->image =  request()->photo;
         if ($socailLogin->save()) {
@@ -94,10 +95,11 @@ class SocialLoginController extends Controller
         $socailLogin->account_type =  'facebook';
         $socailLogin->email =  request()->email;
         $socailLogin->account_id =  request()->id;
-        $socailLogin->family_name =  request()->family_name;
-        $socailLogin->given_name =  request()->given_name;
+        $socailLogin->family_name =  request()->familyName;
+        $socailLogin->given_name =  request()->givenName;
         $socailLogin->first_name =  request()->first_name;
         $socailLogin->last_name =  request()->last_name;
+        $socailLogin->username =  request()->name;
         if (isset(request()->photo)) $socailLogin->image =  request()->photo;
         if (isset(request()->phone)) $socailLogin->phone =  request()->phone;
         if ($socailLogin->save()) {
