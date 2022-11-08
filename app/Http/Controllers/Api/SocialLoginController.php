@@ -14,7 +14,7 @@ class SocialLoginController extends Controller
         $validation = Validator::make(
             request()->all(),
             [
-                'id' => 'required',
+                'account_id' => 'required',
                 'role' => 'required',
             ]
         );
@@ -41,7 +41,7 @@ class SocialLoginController extends Controller
         $socailLogin->role_id =  $role->id;
         $socailLogin->account_type =  'google';
         $socailLogin->email =  request()->email;
-        $socailLogin->account_id =  request()->id;
+        $socailLogin->account_id =  request()->account_id;
         $socailLogin->family_name =  request()->familyName;
         $socailLogin->given_name =  request()->givenName;
         $socailLogin->first_name =  request()->first_name;
@@ -67,7 +67,7 @@ class SocialLoginController extends Controller
         $validation = Validator::make(
             request()->all(),
             [
-                'id' => 'required',
+                'account_id' => 'required',
                 'role' => 'required',
             ]
         );
@@ -94,7 +94,7 @@ class SocialLoginController extends Controller
         $socailLogin->role_id =  $role->id;
         $socailLogin->account_type =  'facebook';
         $socailLogin->email =  request()->email;
-        $socailLogin->account_id =  request()->id;
+        $socailLogin->account_id =  request()->account_id;
         $socailLogin->family_name =  request()->familyName;
         $socailLogin->given_name =  request()->givenName;
         $socailLogin->first_name =  request()->first_name;
