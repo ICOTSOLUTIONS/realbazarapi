@@ -197,6 +197,13 @@ class ProductController extends Controller
 
     public function showAdminProduct(Request $request)
     {
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
         $skip = $request->skip;
         $take = $request->take;
         $status = $request->status;
@@ -234,10 +241,7 @@ class ProductController extends Controller
                     ->orWhere('status', 'like', '%' . $search . '%');
             });
         }
-        if (!empty($skip) && !empty($take)) {
-            $all_product->skip($skip)->take($take);
-        }
-        $all_products = $all_product->get();
+        $all_products = $all_product->skip($skip)->take($take)->get();
         $all_products_counts = $all_product_count->count();
         if (count($all_products)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_products), 'ProductsCount' => $all_products_counts ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_products ?? [], 'ProductsCount' => $all_products_counts ?? []]);
