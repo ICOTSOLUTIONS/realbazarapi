@@ -27,7 +27,7 @@ class ReportController extends Controller
         $take = $request->take;
         $search = $request->search;
         $report = Report::with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
-        $report_count = Report::groupBy('user_id');
+        $report_count = Report::select('id')->groupBy('user_id');
         if (!empty($search)) {
             $report->whereHas('users', function ($q) use ($search) {
                 $q->where('username', 'like', '%' . $search . '%');
@@ -39,7 +39,7 @@ class ReportController extends Controller
             // $report_count->whereRelation('users','username', 'like', '%' . $search . '%');
         }
         $reports = $report->skip($skip)->take($take)->get();
-        $report_counts = $report_count->count();
+        $report_counts = $report_count->get()->count();
         if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Reports not found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []]);
     }
