@@ -38,10 +38,10 @@ class ReportController extends Controller
             // $report->whereRelation('users','username', 'like', '%' . $search . '%');
             // $report_count->whereRelation('users','username', 'like', '%' . $search . '%');
         }
-        $report_count->count();
+        $report_counts = $report_count->get()->count();
         $reports = $report->skip($skip)->take($take)->get();
-        if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'count' => $reports ?? [], 'totalCount' => $report_count ?? []], 200);
-        else return response()->json(['status' => false, 'Message' => 'Reports not found', 'count' => $reports ?? [], 'totalCount' => $report_count ?? []]);
+        if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Reports not found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []]);
     }
 
     public function reports($id)
