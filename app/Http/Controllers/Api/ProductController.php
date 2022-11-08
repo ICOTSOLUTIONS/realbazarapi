@@ -219,6 +219,8 @@ class ProductController extends Controller
 
     public function showSellerProduct($skip = 0, $take = 0)
     {
+        $all_product = [];
+        $all_product_count = [];
         if ($skip == 0 && $take == 0) {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)->get();
             $all_product_count = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('user_id', auth()->user()->id)
