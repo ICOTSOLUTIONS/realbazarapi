@@ -238,9 +238,9 @@ class ProductController extends Controller
             $all_product->skip($skip)->take($take);
         }
         $all_products = $all_product->get();
-        $all_products_count = $all_product->count();
-        if (count($all_products)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_products), 'ProductsCount' => $all_products_count ?? []], 200);
-        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_products ?? [], 'ProductsCount' => $all_products_count ?? []]);
+        $all_products_counts = $all_product_count->count();
+        if (count($all_products)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($all_products), 'ProductsCount' => $all_products_counts ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $all_products ?? [], 'ProductsCount' => $all_products_counts ?? []]);
     }
 
     public function showSellerProduct($skip = 0, $take = 0)
