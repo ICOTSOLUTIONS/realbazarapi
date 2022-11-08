@@ -29,8 +29,14 @@ class ReportController extends Controller
         $report = Report::with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
         $report_count = Report::with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
         if (!empty($search)) {
-            $report->whereRelation('users','username', 'like', '%' . $search . '%');
-            $report_count->whereRelation('users','username', 'like', '%' . $search . '%');
+            $report->whereHas('user', function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%');
+            });
+            $report_count->whereHas('user', function ($q) use ($search) {
+                $q->where('username', 'like', '%' . $search . '%');
+            });
+            // $report->whereRelation('users','username', 'like', '%' . $search . '%');
+            // $report_count->whereRelation('users','username', 'like', '%' . $search . '%');
         }
         $reports = $report->skip($skip)->take($take)->get();
         $report_counts = $report_count->count();
