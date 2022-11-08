@@ -14,11 +14,27 @@ use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
 {
-    public function report()
+    public function report(Request $request)
     {
-        $report_count = Report::with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id')->get();
-        if (count($report_count)) return response()->json(['status' => true, 'Message' => 'Reports found', 'count' => $report_count ?? []], 200);
-        else return response()->json(['status' => false, 'Message' => 'Reports not found', 'count' => $report_count ?? []]);
+        $valid = Validator::make($request->all(), [
+            'skip' => 'required',
+            'take' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $skip = $request->skip;
+        $take = $request->take;
+        $search = $request->search;
+        $report = Report::with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
+        $report_count = Report::with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
+        if(!empty($search)){
+
+        }
+        $reports = $report->skip($skip)->take($take)->get();
+        $report_counts = $report_count->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id')->count();
+        if (count($reports)) return response()->json(['status' => true, 'Message' => 'Reports found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Reports not found', 'count' => $reports ?? [], 'totalCount' => $report_counts ?? []]);
     }
 
     public function reports($id)

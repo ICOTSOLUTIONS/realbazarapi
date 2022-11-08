@@ -166,12 +166,12 @@ class PackageController extends Controller
         }
         if (!empty($search)) {
             $expirePeriod->where(function ($q) use ($search) {
-                $q->where('order_number', 'like', '%' . $search . '%')
-                    ->orWhere('customer_name', 'like', '%' . $search . '%');
+                $q->where('start_date', 'like', '%' . $search . '%')
+                    ->orWhere('end_date', 'like', '%' . $search . '%');
             });
             $expirePeriod_count->where(function ($q) use ($search) {
-                $q->where('order_number', 'like', '%' . $search . '%')
-                    ->orWhere('customer_name', 'like', '%' . $search . '%');
+                $q->where('start_date', 'like', '%' . $search . '%')
+                    ->orWhere('end_date', 'like', '%' . $search . '%');
             });
         }
         $expirePeriods = $expirePeriod->skip($skip)->take($take)->get();

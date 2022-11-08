@@ -101,7 +101,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/singleNotification', [Api\NotificationController::class, 'singleNotification']);
 
     //report
-    Route::get('/report', [Api\ReportController::class, 'report']);
+    Route::post('/report', [Api\ReportController::class, 'report']);
     Route::get('/reports/{id}', [Api\ReportController::class, 'reports']);
     Route::post('/add/report', [Api\ReportController::class, 'addReport']);
     Route::get('/delete/report/{id}', [Api\ReportController::class, 'deleteReport']);

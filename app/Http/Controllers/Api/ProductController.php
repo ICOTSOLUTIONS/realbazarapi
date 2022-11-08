@@ -785,6 +785,17 @@ class ProductController extends Controller
         } else return response()->json(["status" => false, 'Message' => 'Product Status not change']);
     }
 
+    public function productStatusTrending($id)
+    {
+        if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
+        $trending = Product::where('id', $id)->first();
+        if (empty($trending)) return response()->json(['status' => false, 'Message' => 'Trending not found']);
+        if ($trending->is_trending == false) $trending->is_trending = true;
+        else $trending->is_trending = false;
+        if ($trending->save()) return response()->json(['status' => true, 'Message' => 'Trending save', 'Product' => new ProductsResource($trending)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Trending not save']);
+    }
+
     public function likeProduct(Request $request)
     {
         $valid = Validator::make($request->all(), [
@@ -973,14 +984,4 @@ class ProductController extends Controller
         return response()->json(["status" => true, 'lineChart' => $lineChart], 200);
     }
 
-    public function productStatusTrending($id)
-    {
-        if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
-        $trending = Product::where('id', $id)->first();
-        if (empty($trending)) return response()->json(['status' => false, 'Message' => 'Trending not found']);
-        if ($trending->is_trending == false) $trending->is_trending = true;
-        else $trending->is_trending = false;
-        if ($trending->save()) return response()->json(['status' => true, 'Message' => 'Trending save', 'Product' => new ProductsResource($trending)], 200);
-        else return response()->json(['status' => false, 'Message' => 'Trending not save']);
-    }
 }
