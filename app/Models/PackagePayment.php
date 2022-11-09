@@ -68,6 +68,7 @@ class PackagePayment extends Model
         if ($days > 0) {
             $counter = $counter . $days . ' days ';
         }
-        return $counter;
+
+        return (int)$counter;
     }
 }
