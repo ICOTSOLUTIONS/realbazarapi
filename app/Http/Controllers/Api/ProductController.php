@@ -61,11 +61,11 @@ class ProductController extends Controller
             $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->take(5)->get();
-            $banner_header = Banner::where('is_header', true)->take(5)->get();
-            $banner_body = Banner::where('is_body', true)->take(5)->get();
-            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
-            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(6)->get();
+            $banner_header = Banner::orderBy('id','DESC')->where('is_header', true)->take(5)->get();
+            $banner_body = Banner::orderBy('id','DESC')->where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::orderBy('id','DESC')->where('is_footer', true)->take(5)->get();
+            $justForYouSlider = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
+            $justForYouProduct = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_retailer', true)->take(6)->get();
         }
         if ($role == 'wholesaler') {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
@@ -86,11 +86,11 @@ class ProductController extends Controller
             $trendingProduct = Product::has('user')->with('user', 'images', 'variation', 'subCategories.categories', 'reviews.users')->where('is_trending', true)->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->take(5)->get();
-            $banner_header = Banner::where('is_header', true)->take(5)->get();
-            $banner_body = Banner::where('is_body', true)->take(5)->get();
-            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
-            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(3)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(6)->get();
+            $banner_header = Banner::orderBy('id','DESC')->where('is_header', true)->take(5)->get();
+            $banner_body = Banner::orderBy('id','DESC')->where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::orderBy('id','DESC')->where('is_footer', true)->take(5)->get();
+            $justForYouSlider = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_wholesaler', true)->take(3)->get();
+            $justForYouProduct = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_wholesaler', true)->take(6)->get();
         }
 
         return response()->json([
@@ -122,30 +122,30 @@ class ProductController extends Controller
         $banner_body = [];
         $banner_footer = [];
         if ($role == 'retailer') {
-            $all_product = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
-            $discount_product = HomePageImage::where('is_discount', true)->where('is_retailer', true)->take(5)->get();
-            $feature_product = HomePageImage::where('is_featured', true)->where('is_retailer', true)->take(5)->get();
-            $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_retailer', true)->take(5)->get();
-            $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_retailer', true)->take(5)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(6)->get();
-            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
-            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_retailer', true)->take(5)->get();
-            $banner_header = Banner::where('is_header', true)->take(5)->get();
-            $banner_body = Banner::where('is_body', true)->take(5)->get();
-            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
+            $all_product = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
+            $discount_product = HomePageImage::orderBy('id','DESC')->where('is_discount', true)->where('is_retailer', true)->take(5)->get();
+            $feature_product = HomePageImage::orderBy('id','DESC')->where('is_featured', true)->where('is_retailer', true)->take(5)->get();
+            $newArrivalProduct = HomePageImage::orderBy('id','DESC')->where('is_new_arrival', true)->where('is_retailer', true)->take(5)->get();
+            $topRatingProduct = HomePageImage::orderBy('id','DESC')->where('is_top_rating', true)->where('is_retailer', true)->take(5)->get();
+            $justForYouProduct = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_retailer', true)->take(6)->get();
+            $justForYouSlider = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
+            $trendingProduct = HomePageImage::orderBy('id','DESC')->where('is_trending', true)->where('is_retailer', true)->take(5)->get();
+            $banner_header = Banner::orderBy('id','DESC')->where('is_header', true)->take(5)->get();
+            $banner_body = Banner::orderBy('id','DESC')->where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::orderBy('id','DESC')->where('is_footer', true)->take(5)->get();
         }
         if ($role == 'wholesaler') {
-            $all_product = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
-            $discount_product = HomePageImage::where('is_discount', true)->where('is_wholesaler', true)->take(5)->get();
-            $feature_product = HomePageImage::where('is_featured', true)->where('is_wholesaler', true)->take(5)->get();
-            $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_wholesaler', true)->take(5)->get();
-            $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_wholesaler', true)->take(5)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(6)->get();
-            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(3)->get();
-            $trendingProduct = HomePageImage::where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
-            $banner_header = Banner::where('is_header', true)->take(5)->get();
-            $banner_body = Banner::where('is_body', true)->take(5)->get();
-            $banner_footer = Banner::where('is_footer', true)->take(5)->get();
+            $all_product = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
+            $discount_product = HomePageImage::orderBy('id','DESC')->where('is_discount', true)->where('is_wholesaler', true)->take(5)->get();
+            $feature_product = HomePageImage::orderBy('id','DESC')->where('is_featured', true)->where('is_wholesaler', true)->take(5)->get();
+            $newArrivalProduct = HomePageImage::orderBy('id','DESC')->where('is_new_arrival', true)->where('is_wholesaler', true)->take(5)->get();
+            $topRatingProduct = HomePageImage::orderBy('id','DESC')->where('is_top_rating', true)->where('is_wholesaler', true)->take(5)->get();
+            $justForYouProduct = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_wholesaler', true)->take(6)->get();
+            $justForYouSlider = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_wholesaler', true)->take(3)->get();
+            $trendingProduct = HomePageImage::orderBy('id','DESC')->where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
+            $banner_header = Banner::orderBy('id','DESC')->where('is_header', true)->take(5)->get();
+            $banner_body = Banner::orderBy('id','DESC')->where('is_body', true)->take(5)->get();
+            $banner_footer = Banner::orderBy('id','DESC')->where('is_footer', true)->take(5)->get();
         }
 
         return response()->json([
