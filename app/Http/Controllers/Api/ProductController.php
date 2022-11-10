@@ -124,6 +124,7 @@ class ProductController extends Controller
             $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_retailer', true)->take(5)->get();
             $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_retailer', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
+            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
             $trendingProduct = HomePageImage::where('is_trending', true)->where('is_retailer', true)->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
@@ -136,6 +137,7 @@ class ProductController extends Controller
             $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_wholesaler', true)->take(5)->get();
             $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_wholesaler', true)->take(5)->get();
             $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
+            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
             $trendingProduct = HomePageImage::where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
@@ -150,6 +152,7 @@ class ProductController extends Controller
             'newArrivalProduct' => $newArrivalProduct ?? [],
             'topRatingProduct' => $topRatingProduct ?? [],
             'justForYouProduct' => $justForYouProduct ?? [],
+            'justForYouSlider' => $justForYouSlider ?? [],
             'trendingProduct' => $trendingProduct ?? [],
             'banner_header' => $banner_header ?? [],
             'banner_body' => $banner_body ?? [],
