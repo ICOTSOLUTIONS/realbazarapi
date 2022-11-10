@@ -37,6 +37,7 @@ class ProductController extends Controller
         $newArrivalProduct = [];
         $topRatingProduct = [];
         $justForYouProduct = [];
+        $justForYouSlider = [];
         $trendingProduct = [];
         $banner_header = [];
         $banner_body = [];
@@ -63,7 +64,8 @@ class ProductController extends Controller
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
+            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
+            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(6)->get();
         }
         if ($role == 'wholesaler') {
             $all_product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereHas('user', function ($q) {
@@ -87,7 +89,8 @@ class ProductController extends Controller
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
             $banner_footer = Banner::where('is_footer', true)->take(5)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
+            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(3)->get();
+            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(6)->get();
         }
 
         return response()->json([
@@ -98,6 +101,7 @@ class ProductController extends Controller
             'newArrivalProduct' => ProductsResource::collection($newArrivalProduct),
             'topRatingProduct' => ProductsResource::collection($topRatingProduct),
             'justForYouProduct' => $justForYouProduct ?? [],
+            'justForYouSlider' => $justForYouSlider ?? [],
             'trendingProduct' => $trendingProduct ?? [],
             'banner_header' => $banner_header ?? [],
             'banner_body' => $banner_body ?? [],
@@ -123,7 +127,7 @@ class ProductController extends Controller
             $feature_product = HomePageImage::where('is_featured', true)->where('is_retailer', true)->take(5)->get();
             $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_retailer', true)->take(5)->get();
             $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_retailer', true)->take(5)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(5)->get();
+            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(6)->get();
             $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
             $trendingProduct = HomePageImage::where('is_trending', true)->where('is_retailer', true)->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
@@ -136,8 +140,8 @@ class ProductController extends Controller
             $feature_product = HomePageImage::where('is_featured', true)->where('is_wholesaler', true)->take(5)->get();
             $newArrivalProduct = HomePageImage::where('is_new_arrival', true)->where('is_wholesaler', true)->take(5)->get();
             $topRatingProduct = HomePageImage::where('is_top_rating', true)->where('is_wholesaler', true)->take(5)->get();
-            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(5)->get();
-            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
+            $justForYouProduct = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(6)->get();
+            $justForYouSlider = HomePageImage::where('is_just_for_you', true)->where('is_wholesaler', true)->take(3)->get();
             $trendingProduct = HomePageImage::where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
             $banner_header = Banner::where('is_header', true)->take(5)->get();
             $banner_body = Banner::where('is_body', true)->take(5)->get();
