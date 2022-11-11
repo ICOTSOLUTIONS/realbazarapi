@@ -20,7 +20,7 @@ class BannerController extends Controller
         if ($section == 'header') $header = true;
         if ($section == 'body') $body = true;
         if ($section == 'footer') $footer = true;
-        $banner = Banner::where('is_header', $header)->where('is_body', $body)->where('is_footer', $footer)->get();
+        $banner = Banner::orderBy('id', 'DESC')->where('is_header', $header)->where('is_body', $body)->where('is_footer', $footer)->get();
         if (count($banner)) return response()->json(['status' => true, 'Message' => 'Banners found', 'banners' => $banner ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'Banners not found']);
     }
@@ -34,7 +34,7 @@ class BannerController extends Controller
         if ($section == 'header') $header = true;
         if ($section == 'body') $body = true;
         if ($section == 'footer') $footer = true;
-        $banner = Banner::where('is_header', $header)->where('is_body', $body)->where('is_footer', $footer)->get();
+        $banner = Banner::orderBy('id', 'DESC')->where('is_header', $header)->where('is_body', $body)->where('is_footer', $footer)->get();
         if (count($banner)) return response()->json(['status' => true, 'Message' => 'Banners found', 'banners' => $banner ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'Banners not found']);
     }

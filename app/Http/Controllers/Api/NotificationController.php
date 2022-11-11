@@ -14,14 +14,14 @@ class NotificationController extends Controller
 {
     public function allNotification()
     {
-        $noti = AppNotification::with('user')->get();
+        $noti = AppNotification::orderBy('id', 'DESC')->with('user')->get();
         if (count($noti)) return response()->json(['status' => true, 'Message' => 'Notification Found', 'notifications' => $noti], 200);
         else return response()->json(['status' => false, 'Message' => 'Notification not Found']);
     }
 
     public function notification()
     {
-        $noti = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->get();
+        $noti = AppNotification::orderBy('id', 'DESC')->where('user_id', auth()->user()->id)->where('status', '0')->get();
         $notifications_count = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->count();
         if (count($noti)) return response()->json(['status' => true, 'Message' => "Notifications found", 'Notifications' => $noti ?? [], "notifications_count" => $notifications_count ?? []], 200);
         else return response()->json(['status' => false, 'Message' => "Notifications not found"]);

@@ -13,7 +13,7 @@ class SubCategoryController extends Controller
 {
     public function show()
     {
-        $subcategory = SubCategory::has('categories')->with('categories')->get();
+        $subcategory = SubCategory::orderBy('id', 'DESC')->has('categories')->with('categories')->get();
         if (count($subcategory)) return response()->json(['status' => true, 'Message' => 'SubCategory found', 'SubCategory' => SubCategoryResource::collection($subcategory)], 200);
         return response()->json(['status' => false, 'Message' => 'SubCategory not found']);
     }

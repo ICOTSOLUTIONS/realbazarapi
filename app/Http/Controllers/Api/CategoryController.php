@@ -17,7 +17,7 @@ class CategoryController extends Controller
 {
     public function show()
     {
-        $category = Category::has('subCategory')->with('subCategory')->get();
+        $category = Category::orderBy('id', 'DESC')->has('subCategory')->with('subCategory')->get();
         if (count($category)) return response()->json(['status' => true, 'Message' => 'Category found', 'Category' => CategoryResource::collection($category)], 200);
         return response()->json(['status' => false, 'Message' => 'Category not found']);
     }

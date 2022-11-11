@@ -26,7 +26,7 @@ class ReportController extends Controller
         $skip = $request->skip;
         $take = $request->take;
         $search = $request->search;
-        $report = Report::with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
+        $report = Report::orderBy('id', 'DESC')->with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
         $report_count = Report::selectRaw('user_id,count(user_id) AS total')->groupBy('user_id');
         if (!empty($search)) {
             $report->whereHas('users', function ($q) use ($search) {
@@ -57,7 +57,7 @@ class ReportController extends Controller
         $take = $request->take;
         $search = $request->search;
         if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
-        $report = Report::with(['users', 'shop.role'])->where('user_id', $id);
+        $report = Report::orderBy('id', 'DESC')->with(['users', 'shop.role'])->where('user_id', $id);
         $report_count = Report::with(['users', 'shop.role'])->where('user_id', $id);
         if (!empty($search)) {
             $report->where(function ($q) use ($search) {
