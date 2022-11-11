@@ -40,7 +40,7 @@ class HomePageImageController extends Controller
         if ($role == 'wholesaler') {
             $homePageImage->where('is_wholesaler', true);
         }
-        $homePageImages = $homePageImage->get();
+        $homePageImages = $homePageImage->orderBy('id', 'DESC')->get();
         if (count($homePageImages)) return response()->json(['status' => true, 'Message' => 'HomePageImage found', 'homePageImages' => $homePageImages ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'HomePageImage not found']);
     }
