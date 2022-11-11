@@ -87,7 +87,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/delete/banner', [Api\BannerController::class, 'deleteBanner']);
 
     // homePageImage
-    Route::get('/homePageImage/{section}', [Api\HomePageImageController::class, 'homePageImage']);
+    Route::get('/homePageImage/{section}/{role?}', [Api\HomePageImageController::class, 'homePageImage']);
     Route::post('/add/homePageImage', [Api\HomePageImageController::class, 'addhomePageImage']);
     Route::post('/update/homePageImage', [Api\HomePageImageController::class, 'updatehomePageImage']);
     Route::post('/delete/homePageImage', [Api\HomePageImageController::class, 'deletehomePageImage']);

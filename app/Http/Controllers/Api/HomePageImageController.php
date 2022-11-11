@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class HomePageImageController extends Controller
 {
-    public function homePageImage($section)
+    public function homePageImage($section, $role = null)
     {
         if (empty($section)) return response()->json(['status' => false, 'Message' => 'Section not found']);
         $discount = false;
@@ -26,14 +26,22 @@ class HomePageImageController extends Controller
         if ($section == 'topRating') $top_rating = true;
         if ($section == 'justForYou') $just_for_you = true;
         if ($section == 'trending') $trending = true;
-        $homePageImage = HomePageImage::where('is_discount', $discount)
+        $homePageImage = HomePageImage::query();
+
+        $homePageImage->where('is_discount', $discount)
             ->where('is_featured', $featured)
             ->where('is_new_arrival', $new_arrival)
             ->where('is_top_rating', $top_rating)
             ->where('is_just_for_you', $just_for_you)
-            ->where('is_trending', $trending)
-            ->get();
-        if (count($homePageImage)) return response()->json(['status' => true, 'Message' => 'HomePageImage found', 'homePageImages' => $homePageImage ?? []], 200);
+            ->where('is_trending', $trending);
+        if ($role == 'retailer') {
+            $homePageImage->where('is_retailer', true);
+        }
+        if ($role == 'wholesaler') {
+            $homePageImage->where('is_wholesaler', true);
+        }
+        $homePageImages = $homePageImage->get();
+        if (count($homePageImages)) return response()->json(['status' => true, 'Message' => 'HomePageImage found', 'homePageImages' => $homePageImages ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'HomePageImage not found']);
     }
 
