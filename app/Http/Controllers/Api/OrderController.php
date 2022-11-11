@@ -39,8 +39,8 @@ class OrderController extends Controller
             $order->where('status', $status);
             $order_count->where('status', $status);
         }
-        if ($role != 'all') {
-            if (!empty($role)) {
+        if (!empty($role)) {
+            if ($role != 'all') {
                 $order->whereHas('users', function ($q) use ($role) {
                     $q->whereRelation('role', 'name', $role);
                 });
