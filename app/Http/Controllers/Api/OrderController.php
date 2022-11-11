@@ -33,7 +33,7 @@ class OrderController extends Controller
         $role = $request->role;
         $search = $request->search;
         $status = $request->status;
-        $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role']);
+        $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role']);
         $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role']);
         if (!empty($status)) {
             $order->where('status', $status);
@@ -74,9 +74,9 @@ class OrderController extends Controller
     public function userOrder($status = null)
     {
         if ($status == null) {
-            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->get();
         } else {
-            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->where('status', $status)->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->where('status', $status)->get();
         }
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
@@ -85,9 +85,9 @@ class OrderController extends Controller
     public function sellerOrder($status = null)
     {
         if ($status == null) {
-            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->get();
         } else {
-            $order = Order::with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->where('status', $status)->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->where('status', $status)->get();
         }
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
