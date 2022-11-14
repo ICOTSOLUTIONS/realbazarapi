@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('demand_products', function (Blueprint $table) {
+        Schema::create('complete_demand_products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->text('detail')->nullable();
-            $table->string('qty')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('demand_product_id')->nullable();
+            $table->foreign('demand_product_id')->references('id')->on('demand_products')->onDelete('cascade');
             $table->dateTime('timer')->nullable();
             $table->boolean('status')->default(false);
             $table->timestamps();
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('demand_products');
+        Schema::dropIfExists('complete_demand_products');
     }
 };

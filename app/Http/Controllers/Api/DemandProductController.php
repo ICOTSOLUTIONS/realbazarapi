@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppNotification;
 use App\Models\DemandProduct;
 use App\Models\DemandProductImage;
+use App\Models\User;
 use Carbon\Carbon;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Api\NotiSend;
 use Illuminate\Support\Facades\Validator;
 
 class DemandProductController extends Controller
@@ -48,6 +51,20 @@ class DemandProductController extends Controller
                 $value->storeAs('DemandImages', $filename, "public");
                 $demandImages->images = "demandImages/" . $filename;
                 if (!$demandImages->save()) throw new Error("Home Page Image Not Added!");
+            }
+            $users = User::whereHas('role', function ($query) {
+                $query->where('name', 'wholesaler')->orWhere('name', 'retailer');
+            })->get();
+            if (!count($users)) return response()->json(['status' => false, 'Message' => "Users not found"]);
+            $title = 'DEMAND PRODUCTS';
+            $message = 'New Request for Demand Product';
+            foreach ($users as  $user) {
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $request->title, $request->message);
             }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Demand Product Request Successfully'], 200);

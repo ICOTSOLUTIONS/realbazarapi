@@ -84,7 +84,7 @@ class BannerController extends Controller
         }
         try {
             DB::beginTransaction();
-            if (!empty($request->images)) {
+            // if (!empty($request->images)) {
                 $banner = Banner::where('id', $request->id)->first();
                 $banner = $request->url;
                 if(!empty($request->images)){
@@ -94,7 +94,7 @@ class BannerController extends Controller
                     $banner->image = "banner/" . $filename;
                 }
                 if (!$banner->save()) throw new Error("Banner Not added!");
-            }
+            // }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Banners Updated Successfully'], 200);
         } catch (\Throwable $th) {

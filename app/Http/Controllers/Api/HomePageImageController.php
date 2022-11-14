@@ -130,7 +130,7 @@ class HomePageImageController extends Controller
         }
         try {
             DB::beginTransaction();
-            if (!empty($request->images)) {
+            // if (!empty($request->images)) {
                 $homePageImage = HomePageImage::where('id', $request->id)->first();
                 $homePageImage->url = $request->url ?? '';
                 if (!empty($request->images)) {
@@ -140,7 +140,7 @@ class HomePageImageController extends Controller
                     $homePageImage->image = "homePageImage/" . $filename;
                 }
                 if (!$homePageImage->save()) throw new Error("Home Page Image Not Updated!");
-            }
+            // }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Home Page Image Updated Successfully'], 200);
         } catch (\Throwable $th) {
