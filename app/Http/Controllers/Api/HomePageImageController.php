@@ -20,12 +20,14 @@ class HomePageImageController extends Controller
         $top_rating = false;
         $just_for_you = false;
         $trending = false;
+        $bestSeller = false;
         if ($section == 'discount') $discount = true;
         if ($section == 'featured') $featured = true;
         if ($section == 'newArrival') $new_arrival = true;
         if ($section == 'topRating') $top_rating = true;
         if ($section == 'justForYou') $just_for_you = true;
         if ($section == 'trending') $trending = true;
+        if ($section == 'bestSeller') $bestSeller = true;
         $homePageImage = HomePageImage::query();
 
         $homePageImage->where('is_discount', $discount)
@@ -33,7 +35,8 @@ class HomePageImageController extends Controller
             ->where('is_new_arrival', $new_arrival)
             ->where('is_top_rating', $top_rating)
             ->where('is_just_for_you', $just_for_you)
-            ->where('is_trending', $trending);
+            ->where('is_trending', $trending)
+            ->where('is_best_seller', $bestSeller);
         if ($role == 'retailer') {
             $homePageImage->where('is_retailer', true);
         }
@@ -54,18 +57,21 @@ class HomePageImageController extends Controller
         $top_rating = false;
         $just_for_you = false;
         $trending = false;
+        $bestSeller = false;
         if ($section == 'discount') $discount = true;
         if ($section == 'featured') $featured = true;
         if ($section == 'newArrival') $new_arrival = true;
         if ($section == 'topRating') $top_rating = true;
         if ($section == 'justForYou') $just_for_you = true;
         if ($section == 'trending') $trending = true;
+        if ($section == 'bestSeller') $bestSeller = true;
         $homePageImage = HomePageImage::where('is_discount', $discount)
             ->where('is_featured', $featured)
             ->where('is_new_arrival', $new_arrival)
             ->where('is_top_rating', $top_rating)
             ->where('is_just_for_you', $just_for_you)
             ->where('is_trending', $trending)
+            ->where('is_best_seller', $bestSeller)
             ->get();
         if (count($homePageImage)) return response()->json(['status' => true, 'Message' => 'HomePageImage found', 'homePageImages' => $homePageImage ?? []], 200);
         return response()->json(['status' => false, 'Message' => 'HomePageImage not found']);
@@ -87,22 +93,23 @@ class HomePageImageController extends Controller
             DB::beginTransaction();
             if (empty($request->images)) throw new Error("Home Page Image Not found!");
             // foreach ($request->images as $value) {
-                $value = $request->images;
-                $homePageImage = new HomePageImage();
-                // $homePageImage->title = $request->title ?? '';
-                $homePageImage->url = $request->url ?? '';
-                if ($request->section == 'discount') $homePageImage->is_discount = true;
-                if ($request->section == 'featured') $homePageImage->is_featured = true;
-                if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
-                if ($request->section == 'topRating') $homePageImage->is_top_rating = true;
-                if ($request->section == 'justForYou') $homePageImage->is_just_for_you = true;
-                if ($request->section == 'trending') $homePageImage->is_trending = true;
-                if ($request->role == 'retailer') $homePageImage->is_retailer = true;
-                if ($request->role == 'wholesaler') $homePageImage->is_wholesaler = true;
-                $filename = "HomePageImage-" . time() . "-" . rand() . "." . $value->getClientOriginalExtension();
-                $value->storeAs('homePageImage', $filename, "public");
-                $homePageImage->image = "homePageImage/" . $filename;
-                if (!$homePageImage->save()) throw new Error("Home Page Image Not Added!");
+            $value = $request->images;
+            $homePageImage = new HomePageImage();
+            // $homePageImage->title = $request->title ?? '';
+            $homePageImage->url = $request->url ?? '';
+            if ($request->section == 'discount') $homePageImage->is_discount = true;
+            if ($request->section == 'featured') $homePageImage->is_featured = true;
+            if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
+            if ($request->section == 'topRating') $homePageImage->is_top_rating = true;
+            if ($request->section == 'justForYou') $homePageImage->is_just_for_you = true;
+            if ($request->section == 'trending') $homePageImage->is_trending = true;
+            if ($request->section == 'bestSeller') $homePageImage->is_best_seller = true;
+            if ($request->role == 'retailer') $homePageImage->is_retailer = true;
+            if ($request->role == 'wholesaler') $homePageImage->is_wholesaler = true;
+            $filename = "HomePageImage-" . time() . "-" . rand() . "." . $value->getClientOriginalExtension();
+            $value->storeAs('homePageImage', $filename, "public");
+            $homePageImage->image = "homePageImage/" . $filename;
+            if (!$homePageImage->save()) throw new Error("Home Page Image Not Added!");
             // }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Home Page Image Added Successfully'], 200);
