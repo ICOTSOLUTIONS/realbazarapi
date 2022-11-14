@@ -132,6 +132,7 @@ class HomePageImageController extends Controller
             DB::beginTransaction();
             // if (!empty($request->images)) {
                 $homePageImage = HomePageImage::where('id', $request->id)->first();
+                if(!$homePageImage) throw new Error('Promotion not found');
                 $homePageImage->url = $request->url ?? '';
                 if (!empty($request->images)) {
                     $images = $request->images;
