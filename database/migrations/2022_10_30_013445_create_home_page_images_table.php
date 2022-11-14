@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('home_page_images', function (Blueprint $table) {
             $table->id();
-            $table->text('title')->nullable();
-            $table->text('description')->nullable();
+            // $table->text('title')->nullable();
+            $table->mediumText('url')->nullable();
             $table->text('image')->nullable();
             $table->boolean('is_discount')->default(false);
             $table->boolean('is_featured')->default(false);

@@ -74,9 +74,10 @@ class HomePageImageController extends Controller
     public function addhomePageImage(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'images' => 'required|array',
+            'images' => 'required',
             'section' => 'required',
             'role' => 'required',
+            'url' => 'required',
         ]);
 
         if ($valid->fails()) {
@@ -84,11 +85,12 @@ class HomePageImageController extends Controller
         }
         try {
             DB::beginTransaction();
-            if (!count($request->images)) throw new Error("Home Page Image Not found!");
-            foreach ($request->images as $value) {
+            if (empty($request->images)) throw new Error("Home Page Image Not found!");
+            // foreach ($request->images as $value) {
+                $value = $request->images;
                 $homePageImage = new HomePageImage();
-                $homePageImage->title = $request->title ?? '';
-                $homePageImage->description = $request->description ?? '';
+                // $homePageImage->title = $request->title ?? '';
+                $homePageImage->url = $request->url ?? '';
                 if ($request->section == 'discount') $homePageImage->is_discount = true;
                 if ($request->section == 'featured') $homePageImage->is_featured = true;
                 if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
@@ -101,7 +103,7 @@ class HomePageImageController extends Controller
                 $value->storeAs('homePageImage', $filename, "public");
                 $homePageImage->image = "homePageImage/" . $filename;
                 if (!$homePageImage->save()) throw new Error("Home Page Image Not Added!");
-            }
+            // }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Home Page Image Added Successfully'], 200);
         } catch (\Throwable $th) {
@@ -123,6 +125,7 @@ class HomePageImageController extends Controller
             DB::beginTransaction();
             if (!empty($request->images)) {
                 $homePageImage = HomePageImage::where('id', $request->id)->first();
+                $homePageImage->url = $request->url ?? '';
                 $images = $request->images;
                 $filename = "homePageImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
                 $images->storeAs('homePageImage', $filename, "public");
