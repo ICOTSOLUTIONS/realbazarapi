@@ -18,7 +18,7 @@ class DemandProductController extends Controller
 {
     public function demandProduct()
     {
-        $demand = DemandProduct::with('demand_image')->get();
+        $demand = DemandProduct::with('demand_image')->where('status', false)->get();
         if (count($demand)) return response()->json(['status' => true, 'Message' => 'Demand Products found', 'demand' => $demand ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Demand Product not found', 'demand' => $demand ?? []]);
     }
