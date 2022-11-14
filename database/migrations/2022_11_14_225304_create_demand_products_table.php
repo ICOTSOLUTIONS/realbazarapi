@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->text('detail')->nullable();
             $table->string('qty')->nullable();
+            $table->dateTime('timer')->nullable();
             $table->timestamps();
         });
     }
