@@ -12,6 +12,7 @@ use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\NotiSend;
+use App\Models\CompleteDemandProduct;
 use Illuminate\Support\Facades\Validator;
 
 class DemandProductController extends Controller
@@ -21,6 +22,13 @@ class DemandProductController extends Controller
         $demand = DemandProduct::with('demand_image')->where('status', false)->get();
         if (count($demand)) return response()->json(['status' => true, 'Message' => 'Demand Products found', 'demand' => $demand ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Demand Product not found', 'demand' => $demand ?? []]);
+    }
+
+    public function completeDemandProduct()
+    {
+        $demand = CompleteDemandProduct::with(['user', 'demand_product.demand_image'])->get();
+        if (count($demand)) return response()->json(['status' => true, 'Message' => 'Complete Demand Products found', 'completeDemand' => $demand ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Complete Demand Product not found', 'completeDemand' => $demand ?? []]);
     }
 
     public function addDemandProduct(Request $request)
@@ -68,6 +76,33 @@ class DemandProductController extends Controller
             }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Demand Product Request Successfully'], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
+        }
+    }
+
+    public function completeDemand(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'demand_product_id' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        try {
+            DB::beginTransaction();
+            $demand = DemandProduct::where('id', $request->demand_product_id)->first();
+            if (empty($demand)) throw new Error('Demand Product not found');
+            $demand->status = true;
+            if (!$demand->save()) throw new Error('Demand status not update');
+            $completeDemand = new CompleteDemandProduct();
+            $completeDemand->user_id = auth()->user()->id;
+            $completeDemand->demand_product_id = $request->demand_product_id;
+            if (!$completeDemand->save()) throw new Error('Complete Demand not saved');
+            DB::commit();
+            return response()->json(['status' => true, 'Message' => 'Complete Demand Request Successfully'], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
