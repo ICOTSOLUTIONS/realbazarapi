@@ -135,7 +135,7 @@ class ProductController extends Controller
             $justForYouProduct = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_retailer', true)->skip(3)->take(6)->get();
             $justForYouSlider = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_retailer', true)->take(3)->get();
             $trendingProduct = HomePageImage::orderBy('id','DESC')->where('is_trending', true)->where('is_retailer', true)->take(5)->get();
-            $bestSeller = HomePageImage::orderBy('id','DESC')->where('is_best_seller', true)->where('is_retailer', true)->take(5)->get();
+            $bestSeller = HomePageImage::orderBy('id','DESC')->where('is_best_seller', true)->where('is_retailer', true)->take(3)->get();
             $banner_header = Banner::orderBy('id','DESC')->where('is_header', true)->take(5)->get();
             $banner_body = Banner::orderBy('id','DESC')->where('is_body', true)->take(5)->get();
             $banner_footer = Banner::orderBy('id','DESC')->where('is_footer', true)->take(5)->get();
@@ -149,7 +149,7 @@ class ProductController extends Controller
             $justForYouProduct = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_wholesaler', true)->skip(3)->take(6)->get();
             $justForYouSlider = HomePageImage::orderBy('id','DESC')->where('is_just_for_you', true)->where('is_wholesaler', true)->take(3)->get();
             $trendingProduct = HomePageImage::orderBy('id','DESC')->where('is_trending', true)->where('is_wholesaler', true)->take(5)->get();
-            $bestSeller = HomePageImage::orderBy('id','DESC')->where('is_best_seller', true)->where('is_wholesaler', true)->take(5)->get();
+            $bestSeller = HomePageImage::orderBy('id','DESC')->where('is_best_seller', true)->where('is_wholesaler', true)->take(3)->get();
             $banner_header = Banner::orderBy('id','DESC')->where('is_header', true)->take(5)->get();
             $banner_body = Banner::orderBy('id','DESC')->where('is_body', true)->take(5)->get();
             $banner_footer = Banner::orderBy('id','DESC')->where('is_footer', true)->take(5)->get();

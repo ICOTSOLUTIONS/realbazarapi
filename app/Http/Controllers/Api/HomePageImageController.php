@@ -93,23 +93,23 @@ class HomePageImageController extends Controller
             DB::beginTransaction();
             if (!count($request->images)) throw new Error("Home Page Image Not found!");
             foreach ($request->images as $value) {
-            // $value = $request->images;
-            $homePageImage = new HomePageImage();
-            // $homePageImage->title = $request->title ?? '';
-            $homePageImage->url = $request->url ?? '';
-            if ($request->section == 'discount') $homePageImage->is_discount = true;
-            if ($request->section == 'featured') $homePageImage->is_featured = true;
-            if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
-            if ($request->section == 'topRating') $homePageImage->is_top_rating = true;
-            if ($request->section == 'justForYou') $homePageImage->is_just_for_you = true;
-            if ($request->section == 'trending') $homePageImage->is_trending = true;
-            if ($request->section == 'bestSeller') $homePageImage->is_best_seller = true;
-            if ($request->role == 'retailer') $homePageImage->is_retailer = true;
-            if ($request->role == 'wholesaler') $homePageImage->is_wholesaler = true;
-            $filename = "HomePageImage-" . time() . "-" . rand() . "." . $value->getClientOriginalExtension();
-            $value->storeAs('homePageImage', $filename, "public");
-            $homePageImage->image = "homePageImage/" . $filename;
-            if (!$homePageImage->save()) throw new Error("Home Page Image Not Added!");
+                // $value = $request->images;
+                $homePageImage = new HomePageImage();
+                // $homePageImage->title = $request->title ?? '';
+                $homePageImage->url = $request->url ?? '';
+                if ($request->section == 'discount') $homePageImage->is_discount = true;
+                if ($request->section == 'featured') $homePageImage->is_featured = true;
+                if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
+                if ($request->section == 'topRating') $homePageImage->is_top_rating = true;
+                if ($request->section == 'justForYou') $homePageImage->is_just_for_you = true;
+                if ($request->section == 'trending') $homePageImage->is_trending = true;
+                if ($request->section == 'bestSeller') $homePageImage->is_best_seller = true;
+                if ($request->role == 'retailer') $homePageImage->is_retailer = true;
+                if ($request->role == 'wholesaler') $homePageImage->is_wholesaler = true;
+                $filename = "HomePageImage-" . time() . "-" . rand() . "." . $value->getClientOriginalExtension();
+                $value->storeAs('homePageImage', $filename, "public");
+                $homePageImage->image = "homePageImage/" . $filename;
+                if (!$homePageImage->save()) throw new Error("Home Page Image Not Added!");
             }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Home Page Image Added Successfully'], 200);
@@ -134,9 +134,11 @@ class HomePageImageController extends Controller
                 $homePageImage = HomePageImage::where('id', $request->id)->first();
                 $homePageImage->url = $request->url ?? '';
                 $images = $request->images;
-                $filename = "homePageImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
-                $images->storeAs('homePageImage', $filename, "public");
-                $homePageImage->image = "homePageImage/" . $filename;
+                if (!empty($request->images)) {
+                    $filename = "homePageImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
+                    $images->storeAs('homePageImage', $filename, "public");
+                    $homePageImage->image = "homePageImage/" . $filename;
+                }
                 if (!$homePageImage->save()) throw new Error("Home Page Image Not Updated!");
             }
             DB::commit();

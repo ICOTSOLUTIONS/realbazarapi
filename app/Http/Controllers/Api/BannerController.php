@@ -87,10 +87,12 @@ class BannerController extends Controller
             if (!empty($request->images)) {
                 $banner = Banner::where('id', $request->id)->first();
                 $banner = $request->url;
-                $images = $request->images;
-                $filename = "Banner-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
-                $images->storeAs('banner', $filename, "public");
-                $banner->image = "banner/" . $filename;
+                if(!empty($request->images)){
+                    $images = $request->images;
+                    $filename = "Banner-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
+                    $images->storeAs('banner', $filename, "public");
+                    $banner->image = "banner/" . $filename;
+                }
                 if (!$banner->save()) throw new Error("Banner Not added!");
             }
             DB::commit();
