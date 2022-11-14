@@ -86,6 +86,7 @@ class BannerController extends Controller
             DB::beginTransaction();
             // if (!empty($request->images)) {
                 $banner = Banner::where('id', $request->id)->first();
+                if (!$banner) throw new Error("Banner Not found!");
                 $banner = $request->url;
                 if(!empty($request->images)){
                     $images = $request->images;
