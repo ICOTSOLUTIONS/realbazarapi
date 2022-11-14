@@ -133,8 +133,8 @@ class HomePageImageController extends Controller
             if (!empty($request->images)) {
                 $homePageImage = HomePageImage::where('id', $request->id)->first();
                 $homePageImage->url = $request->url ?? '';
-                $images = $request->images;
                 if (!empty($request->images)) {
+                    $images = $request->images;
                     $filename = "homePageImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
                     $images->storeAs('homePageImage', $filename, "public");
                     $homePageImage->image = "homePageImage/" . $filename;
