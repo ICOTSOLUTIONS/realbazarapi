@@ -42,7 +42,7 @@ class BannerController extends Controller
     public function addBanner(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'images' => 'required',
+            'images' => 'required|array',
             'section' => 'required',
             'url' => 'required',
         ]);
@@ -52,9 +52,9 @@ class BannerController extends Controller
         }
         try {
             DB::beginTransaction();
-            if (empty($request->images)) throw new Error("Banner Image Not found!");
-            // foreach ($request->images as $value) {
-                $value = $request->images;
+            if (!count($request->images)) throw new Error("Banner Image Not found!");
+            foreach ($request->images as $value) {
+                // $value = $request->images;
                 $banner = new Banner();
                 $banner->url = $request->url;
                 if ($request->section == 'header') $banner->is_header = true;
@@ -64,7 +64,7 @@ class BannerController extends Controller
                 $value->storeAs('banner', $filename, "public");
                 $banner->image = "banner/" . $filename;
                 $banner->save();
-            // }
+            }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Banners Added Successfully'], 200);
         } catch (\Throwable $th) {

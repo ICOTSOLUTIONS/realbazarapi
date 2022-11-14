@@ -80,7 +80,7 @@ class HomePageImageController extends Controller
     public function addhomePageImage(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'images' => 'required',
+            'images' => 'required|array',
             'section' => 'required',
             'role' => 'required',
             'url' => 'required',
@@ -91,9 +91,9 @@ class HomePageImageController extends Controller
         }
         try {
             DB::beginTransaction();
-            if (empty($request->images)) throw new Error("Home Page Image Not found!");
-            // foreach ($request->images as $value) {
-            $value = $request->images;
+            if (!count($request->images)) throw new Error("Home Page Image Not found!");
+            foreach ($request->images as $value) {
+            // $value = $request->images;
             $homePageImage = new HomePageImage();
             // $homePageImage->title = $request->title ?? '';
             $homePageImage->url = $request->url ?? '';
@@ -110,7 +110,7 @@ class HomePageImageController extends Controller
             $value->storeAs('homePageImage', $filename, "public");
             $homePageImage->image = "homePageImage/" . $filename;
             if (!$homePageImage->save()) throw new Error("Home Page Image Not Added!");
-            // }
+            }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Home Page Image Added Successfully'], 200);
         } catch (\Throwable $th) {

@@ -46,7 +46,7 @@ class DemandProductController extends Controller
                 $demandImages->demand_product_id = $demand->id;
                 $filename = "DemandImages-" . time() . "-" . rand() . "." . $value->getClientOriginalExtension();
                 $value->storeAs('DemandImages', $filename, "public");
-                $demandImages->image = "demandImages/" . $filename;
+                $demandImages->images = "demandImages/" . $filename;
                 if (!$demandImages->save()) throw new Error("Home Page Image Not Added!");
             }
             DB::commit();
