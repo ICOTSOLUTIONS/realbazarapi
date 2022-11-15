@@ -26,7 +26,7 @@ class DemandProductController extends Controller
 
     public function completeDemandProduct()
     {
-        $demand = CompleteDemandProduct::with(['user', 'demand_product.demand_image'])->get();
+        $demand = CompleteDemandProduct::with(['user', 'demand_product.demand_image'])->where('user_id', auth()->user()->id)->get();
         if (count($demand)) return response()->json(['status' => true, 'Message' => 'Complete Demand Products found', 'completeDemand' => $demand ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Complete Demand Product not found', 'completeDemand' => $demand ?? []]);
     }
@@ -100,6 +100,7 @@ class DemandProductController extends Controller
             $completeDemand = new CompleteDemandProduct();
             $completeDemand->user_id = auth()->user()->id;
             $completeDemand->demand_product_id = $request->demand_product_id;
+            $completeDemand->timer = date('Y-m-d H:i:s', strtotime(Carbon::now()));
             if (!$completeDemand->save()) throw new Error('Complete Demand not saved');
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Complete Demand Request Successfully'], 200);
