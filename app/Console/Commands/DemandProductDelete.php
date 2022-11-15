@@ -30,11 +30,11 @@ class DemandProductDelete extends Command
      */
     public function handle()
     {
-        $demadProducts = DemandProduct::where('timer', '>=', Carbon::now()->subDay())->get();
+        $demadProducts = DemandProduct::where('created_at', '<=', Carbon::now()->subDay())->get();
         foreach ($demadProducts as  $demadProduct) {
             $demadProduct->delete();
         }
-        $completeDemadProducts = CompleteDemandProduct::where('timer', '>=', Carbon::now()->subDay())->get();
+        $completeDemadProducts = CompleteDemandProduct::where('created_at', '<=', Carbon::now()->subDay())->get();
         foreach ($completeDemadProducts as  $completeDemadProduct) {
             $completeDemadProduct->delete();
         }
