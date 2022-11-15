@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return DemandProduct::where('created_at', '>', Carbon::now()->subDay())->get();
+    return DemandProduct::where('created_at', '<=', Carbon::now()->subDay())->get();
     // return Carbon::now()->subDay();
 });
