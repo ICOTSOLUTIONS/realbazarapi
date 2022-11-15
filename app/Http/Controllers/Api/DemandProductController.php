@@ -19,14 +19,14 @@ class DemandProductController extends Controller
 {
     public function demandProduct()
     {
-        $demand = DemandProduct::with('demand_image')->where('status', false)->get();
+        $demand = DemandProduct::with(['user','demand_image'])->where('status', false)->get();
         if (count($demand)) return response()->json(['status' => true, 'Message' => 'Demand Products found', 'demand' => $demand ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Demand Product not found', 'demand' => $demand ?? []]);
     }
 
     public function completeDemandProduct()
     {
-        $demand = CompleteDemandProduct::with(['user', 'demand_product.demand_image'])->where('user_id', auth()->user()->id)->get();
+        $demand = CompleteDemandProduct::with(['shop', 'demand_product.user','demand_product.demand_image'])->where('user_id', auth()->user()->id)->get();
         if (count($demand)) return response()->json(['status' => true, 'Message' => 'Complete Demand Products found', 'completeDemand' => $demand ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Complete Demand Product not found', 'completeDemand' => $demand ?? []]);
     }
@@ -46,6 +46,7 @@ class DemandProductController extends Controller
         try {
             DB::beginTransaction();
             $demand = new DemandProduct();
+            $demand->user_id = auth()->user()->id;
             $demand->name = $request->name;
             $demand->detail = $request->detail;
             $demand->qty = $request->qty;

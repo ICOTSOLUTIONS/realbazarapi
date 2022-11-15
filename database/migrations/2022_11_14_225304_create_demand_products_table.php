@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('demand_products', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name')->nullable();
             $table->text('detail')->nullable();
             $table->string('qty')->nullable();
             $table->dateTime('timer')->nullable();
             $table->boolean('status')->default(false);
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
