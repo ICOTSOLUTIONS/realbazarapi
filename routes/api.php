@@ -113,6 +113,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/demand/products', [Api\DemandProductController::class, 'demandProduct']);
     Route::post('/complete/demand', [Api\DemandProductController::class, 'completeDemand']);
     Route::get('/complete/demand/products', [Api\DemandProductController::class, 'completeDemandProduct']);
+    Route::get('/user/pending/demand/products', [Api\DemandProductController::class, 'userPendingDemandProduct']);
+    Route::get('/user/active/demand/products', [Api\DemandProductController::class, 'userActiveDemandProduct']);
 });
 //users
 Route::post('wholesalers', [Api\AuthController::class, 'wholesaler']);
