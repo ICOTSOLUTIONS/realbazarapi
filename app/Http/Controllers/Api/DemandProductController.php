@@ -96,6 +96,7 @@ class DemandProductController extends Controller
             $demand = DemandProduct::where('id', $request->demand_product_id)->first();
             if (empty($demand)) throw new Error('Demand Product not found');
             $demand->status = true;
+            $demand->timer = date('Y-m-d H:i:s', strtotime(Carbon::now()));
             if (!$demand->save()) throw new Error('Demand status not update');
             $completeDemand = new CompleteDemandProduct();
             $completeDemand->user_id = auth()->user()->id;
