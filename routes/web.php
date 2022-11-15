@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\DemandProduct;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return DemandProduct::where('created_at', '<=', Carbon::now()->subDay())->get();
-    // return Carbon::now()->subDay();
+    return view('welcome');
 });
