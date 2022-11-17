@@ -203,7 +203,7 @@ class AuthController extends Controller
             // $user->address =  $request->address;
             // $user->last_name =  $request->last_name;
             if ($request->role == 'retailer' || $request->role == 'wholesaler') {
-                $referr_code = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
+                // $referr_code = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
                 $user->email = $request->email;
                 $user->phone = $request->phone;
                 $user->business_name = $request->business_name;
@@ -213,18 +213,11 @@ class AuthController extends Controller
                 $user->shop_number = $request->shop_number;
                 $user->market_name = $request->market_name;
                 $user->cnic_number = $request->cnic_number;
-                if (!empty($referr_code)) $user->referral_code = $referr_code;
                 if (!empty($request->hasFile('bill_image'))) {
                     $image = $request->file('bill_image');
                     $filename = "BillImage-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
                     $image->storeAs('bill', $filename, "public");
                     $user->bill_image = "bill/" . $filename;
-                }
-                if (!empty($request->referral_code)) {
-                    $referr_user = User::where('referral_code', $request->referral_code)->first();
-                    if (empty($referr_user)) throw new Error('Referral Code not valid');
-                    $referr_user->referral_count += 1;
-                    if (!$referr_user->save()) throw new Error('User not Register to this Referral Code');
                 }
             } else {
                 if (is_numeric($request->get('emailphone'))) {
