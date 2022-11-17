@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Api\NotiSend;
+use App\Models\ReferralUser;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -178,7 +179,7 @@ class AuthController extends Controller
             $rules['country'] = 'required';
             $rules['shop_number'] = 'nullable';
             $rules['market_name'] = 'nullable';
-            $rules['cnic_number'] = 'required|digits:13';
+            $rules['cnic_number'] = 'required|digits:13|unique:users,cnic_number';
             $rules['cnic_image'] = 'required|array';
             $rules['bill_image'] = 'required|image';
         } else {
@@ -203,7 +204,6 @@ class AuthController extends Controller
             // $user->address =  $request->address;
             // $user->last_name =  $request->last_name;
             if ($request->role == 'retailer' || $request->role == 'wholesaler') {
-                // $referr_code = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
                 $user->email = $request->email;
                 $user->phone = $request->phone;
                 $user->business_name = $request->business_name;
@@ -219,12 +219,12 @@ class AuthController extends Controller
                     $image->storeAs('bill', $filename, "public");
                     $user->bill_image = "bill/" . $filename;
                 }
-                // if (!empty($request->referral_code)) {
-                //     $referr_user = User::where('referral_code', $request->referral_code)->first();
-                //     if (empty($referr_user)) throw new Error('Referral Code not valid');
-                //     $referr_user->referral_count += 1;
-                //     if (!$referr_user->save()) throw new Error('User not Register to this Referral Code');
-                // }
+                if (!empty($request->referral_code)) {
+                    $referr_user = ReferralUser::where('referral_code', $request->referral_code)->first();
+                    if (empty($referr_user)) throw new Error('Referral Code not valid');
+                    $referr_user->referral_count += 1;
+                    if (!$referr_user->save()) throw new Error('User not Register to this Referral Code');
+                }
             } else {
                 if (is_numeric($request->get('emailphone'))) {
                     $user->phone = $request->emailphone;
@@ -423,7 +423,7 @@ class AuthController extends Controller
                 $rules['country'] = 'required';
                 $rules['shop_number'] = 'nullable';
                 $rules['market_name'] = 'nullable';
-                $rules['cnic_number'] = 'required|digits:13';
+                $rules['cnic_number'] = 'required|digits:13|unique:users,cnic_number,' . auth()->user()->id;
                 $rules['cnic_image'] = 'nullable|array';
                 $rules['bill_image'] = 'nullable|image';
             } else {

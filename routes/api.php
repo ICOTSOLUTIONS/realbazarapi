@@ -115,6 +115,13 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/complete/demand/products', [Api\DemandProductController::class, 'completeDemandProduct']);
     Route::get('/user/pending/demand/products', [Api\DemandProductController::class, 'userPendingDemandProduct']);
     Route::get('/user/active/demand/products', [Api\DemandProductController::class, 'userActiveDemandProduct']);
+
+    //referralUser
+    Route::get('/referralUser', [Api\ReferralController::class, 'referralUsers']);
+    Route::get('/referralUser/show/{id}', [Api\ReferralController::class, 'showReferralUsers']);
+    Route::post('/add/referralUser', [Api\ReferralController::class, 'addReferralUsers']);
+    Route::post('/update/referralUser', [Api\ReferralController::class, 'updateReferralUsers']);
+    Route::get('/delete/referralUser/{id}', [Api\ReferralController::class, 'deleteReferralUsers']);
 });
 //users
 Route::post('wholesalers', [Api\AuthController::class, 'wholesaler']);
