@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('business_address')->nullable();
             $table->string('province')->nullable();
             $table->string('country')->nullable();
+            $table->string('shop_number')->nullable();
+            $table->string('market_name')->nullable();
             $table->string('cnic_number')->nullable();
             $table->enum('account_type', ['facebook', 'google'])->nullable();
             $table->string('account_id')->nullable();
@@ -36,6 +38,8 @@ return new class extends Migration
             $table->mediumText('image')->nullable();
             $table->mediumText('bill_image')->nullable();
             $table->mediumText('token')->nullable();
+            $table->mediumText('referral_code')->nullable();
+            $table->bigInteger('referral_count')->nullable();
             $table->mediumText('device_token')->nullable();
             $table->boolean('is_active')->default(false);
             $table->boolean('is_block')->default(false);

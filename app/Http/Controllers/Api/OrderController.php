@@ -200,6 +200,15 @@ class OrderController extends Controller
                 $appnot->save();
                 NotiSend::sendNotif($user->device_token, $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
+            } elseif ($order->status == 'inprocess') {
+                $title = 'YOUR ORDER HAS BEEN In Process';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $request->message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $request->message);
+                return response()->json(["status" => true, 'Message' => 'Order Status Change to In Process Successfully'], 200);
             } elseif ($order->status == 'rejected') {
                 $title = 'YOUR ORDER HAS BEEN REJECTED';
                 $appnot = new AppNotification();

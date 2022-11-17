@@ -494,7 +494,7 @@ class ProductController extends Controller
                 $new_product->sub_category_id = $request->sub_category_id;
                 $new_product->title = $request->title;
                 $new_product->price = $request->price;
-                $new_product->discount_price = $request->discount;
+                $new_product->discount_price = $request->discount ?? 0;
                 $new_product->color = $request->color;
                 $new_product->tags = json_encode($request->tags);
                 $new_product->desc = $request->product_desc;
