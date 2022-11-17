@@ -58,11 +58,13 @@ class ReferralController extends Controller
 
     public function updateReferralUsers(Request $request)
     {
+        if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
+        $id = $request->referral_user_id;
         $valid = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email|unique:referral_users,email,' . auth()->user()->id,
-            'phone' => 'required|digits:11|unique:referral_users,phone,' . auth()->user()->id,
-            'cnic' => 'required|digits:13|unique:referral_users,cnic,' . auth()->user()->id,
+            'email' => 'required|email|unique:referral_users,email,' . $id,
+            'phone' => 'required|digits:11|unique:referral_users,phone,' . $id,
+            'cnic' => 'required|digits:13|unique:referral_users,cnic,' . $id,
         ]);
 
         if ($valid->fails()) {
@@ -70,7 +72,7 @@ class ReferralController extends Controller
         }
         try {
             DB::beginTransaction();
-            $referral_users = ReferralUser::where('id', auth()->user()->id)->first();
+            $referral_users = ReferralUser::where('id', $id)->first();
             if (empty($referral_users)) throw new Error('Referral User not found');
             $referral_users->name = $request->name;
             $referral_users->email = $request->email;
