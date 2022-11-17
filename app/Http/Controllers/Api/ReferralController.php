@@ -49,7 +49,7 @@ class ReferralController extends Controller
             $referral_users->referral_code = $referr_code;
             if (!$referral_users->save()) throw new Error("Referral User Not added!");
             DB::commit();
-            return response()->json(['status' => true, 'Message' => 'Referral User Added Successfully'], 200);
+            return response()->json(['status' => true, 'Message' => 'Referral User Added Successfully', 'referral_users' => $referral_users ?? []], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
@@ -78,7 +78,7 @@ class ReferralController extends Controller
             $referral_users->cnic = $request->cnic;
             if (!$referral_users->save()) throw new Error("Referral User Not added!");
             DB::commit();
-            return response()->json(['status' => true, 'Message' => 'Referral User Added Successfully'], 200);
+            return response()->json(['status' => true, 'Message' => 'Referral User Added Successfully', 'referral_users' => $referral_users ?? []], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
