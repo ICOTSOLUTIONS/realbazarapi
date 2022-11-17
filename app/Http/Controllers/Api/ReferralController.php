@@ -87,7 +87,7 @@ class ReferralController extends Controller
         }
     }
 
-    public function deleteReferralUsers()
+    public function deleteReferralUsers($id)
     {
         if (empty($id)) return response()->json(['status' => false, 'Message' => 'ID not found']);
         $referral_users = ReferralUser::where('id', $id)->first();
