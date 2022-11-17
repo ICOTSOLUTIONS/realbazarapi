@@ -118,7 +118,7 @@ Route::middleware('auth:api')->group(function () {
 
     //referralUser
     Route::get('/referralUser', [Api\ReferralController::class, 'referralUsers']);
-    Route::get('/referralUser/show/{id}', [Api\ReferralController::class, 'showReferralUsers']);
+    Route::get('/show/referralUser/{id}', [Api\ReferralController::class, 'showReferralUsers']);
     Route::post('/add/referralUser', [Api\ReferralController::class, 'addReferralUsers']);
     Route::post('/update/referralUser', [Api\ReferralController::class, 'updateReferralUsers']);
     Route::get('/delete/referralUser/{id}', [Api\ReferralController::class, 'deleteReferralUsers']);
