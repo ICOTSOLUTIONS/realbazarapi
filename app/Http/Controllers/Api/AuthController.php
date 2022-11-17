@@ -431,6 +431,7 @@ class AuthController extends Controller
                 $user->username = $request->username;
                 if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
                     $referr_code = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
+                    dd($referr_code);
                     $user->email = $request->email;
                     $user->phone = $request->phone;
                     $user->business_name = $request->business_name;
