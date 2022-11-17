@@ -222,9 +222,8 @@ class AuthController extends Controller
                 }
                 if (!empty($request->referral_code)) {
                     $referr_user = User::where('referral_code', $request->referral_code)->first();
-                    dd($referr_user);
                     if (empty($referr_user)) throw new Error('Referral Code not valid');
-                    $referr_user->referral_count += 1;
+                    $referr_user->referral_count = $referr_user->referral_count + 1;
                     if (!$referr_user->save()) throw new Error('User not Register to this Referral Code');
                 }
             } else {

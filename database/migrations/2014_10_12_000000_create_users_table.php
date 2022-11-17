@@ -39,7 +39,7 @@ return new class extends Migration
             $table->mediumText('bill_image')->nullable();
             $table->mediumText('token')->nullable();
             $table->mediumText('referral_code')->nullable();
-            $table->bigInteger('referral_count')->nullable();
+            $table->bigInteger('referral_count')->default(0);
             $table->mediumText('device_token')->nullable();
             $table->boolean('is_active')->default(false);
             $table->boolean('is_block')->default(false);
