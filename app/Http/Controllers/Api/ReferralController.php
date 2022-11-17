@@ -58,8 +58,8 @@ class ReferralController extends Controller
 
     public function updateReferralUsers(Request $request)
     {
-        if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
         $id = $request->referral_user_id;
+        if (empty($id)) return response()->json(['status' => false, 'Message' => 'Id not found']);
         $valid = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:referral_users,email,' . $id,
