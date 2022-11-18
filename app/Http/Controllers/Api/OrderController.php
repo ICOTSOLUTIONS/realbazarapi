@@ -202,9 +202,10 @@ class OrderController extends Controller
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
             } elseif ($order->status == 'inprocess') {
                 $title = 'YOUR ORDER HAS BEEN In Process';
+                $message = 'Dear ' . $user->username . ' your order has been InProcess from admin-The Real Bazaar';
                 $appnot = new AppNotification();
                 $appnot->user_id = $user->id;
-                $appnot->notification = $request->message;
+                $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
                 NotiSend::sendNotif($user->device_token, $title, $request->message);
