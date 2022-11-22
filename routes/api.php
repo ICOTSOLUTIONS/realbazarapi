@@ -157,7 +157,7 @@ Route::get('/banners/{section}', [Api\BannerController::class, 'banners']);
 Route::get('/homePageImages/{section}', [Api\HomePageImageController::class, 'homePageImages']);
 
 //sales
-Route::get('/seller/top/sales', [Api\ProductController::class, 'seller_sales']);
+Route::get('/seller/top/sales', [Api\ProductController::class, 'seller_top_sales']);
 
 
 

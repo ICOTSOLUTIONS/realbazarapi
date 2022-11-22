@@ -964,12 +964,16 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function seller_sales()
+    public function seller_top_sales()
     {
-        $seller_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
-            ->with('seller')->groupBy('seller_id')->get();
-        $seller_sales = $seller_sales->sortByDesc('orders_count')->values();
-        return response()->json(["status" => true, 'seller_sales' => $seller_sales], 200);
+        $seller_top_sales = User::whereHas('role', function ($query) {
+            $query->where('name', 'seller');
+        })->withCount('sellers_orders.user_orders')->get();
+        // dd($seller_top_sales);
+        // $seller_top_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
+        //     ->with('seller')->groupBy('seller_id')->get();
+        // $seller_top_sales = $seller_top_sales->sortByDesc('orders_count')->values();
+        return response()->json(["status" => true, 'seller_top_sales' => $seller_top_sales], 200);
     }
 
     public function admin_customer_count()
