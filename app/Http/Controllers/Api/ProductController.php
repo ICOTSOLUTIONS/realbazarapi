@@ -968,7 +968,7 @@ class ProductController extends Controller
     {
         $seller_top_sales = User::whereHas('role', function ($query) {
             $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
-        })->with(['sellers_orders' => function ($query) {
+        })->withCount(['sellers_orders' => function ($query) {
             $query->withCount('user_orders');
         }])->get();
         // dd($seller_top_sales);
