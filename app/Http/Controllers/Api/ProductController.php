@@ -967,13 +967,16 @@ class ProductController extends Controller
     public function seller_top_sales()
     {
         $seller_top_customers = Order::selectRaw('user_id, SUM(net_amount) as total_amount')
-        ->groupBy('user_id')->get();
+            ->groupBy('user_id')->get();
 
         $seller_top_sales = User::whereHas('role', function ($query) {
             $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
         })->with(['sellers_orders' => function ($query) {
-            $query->selectRaw('seller_id, withCount(user_orders) as total_products')
-            ->groupBy('seller_id');
+            $query->selectRaw('seller_id, count(seller_id) as total_orders')
+                ->groupBy('seller_id')->with(['user_orders' => function ($query1) {
+                    $query1->selectRaw('order_id, count(order_id) as total_products')
+                        ->groupBy('order_id');
+                }]);
         }])->get();
         // dd($seller_top_sales);
         // $seller_top_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
