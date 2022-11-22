@@ -90,7 +90,7 @@ class DemandProductController extends Controller
                 NotiSend::sendNotif($user->device_token, $request->title, $request->message);
             }
             DB::commit();
-            return response()->json(['status' => true, 'Message' => 'Demand Product Request Successfully'], 200);
+            return response()->json(['status' => true, 'Message' => 'Demanded Product has been Successfully done'], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
@@ -119,7 +119,7 @@ class DemandProductController extends Controller
             $completeDemand->timer = date('Y-m-d H:i:s', strtotime(Carbon::now()));
             if (!$completeDemand->save()) throw new Error('Complete Demand not saved');
             DB::commit();
-            return response()->json(['status' => true, 'Message' => 'Complete Demand Request Successfully'], 200);
+            return response()->json(['status' => true, 'Message' => 'Demand Request has been Successfully Completed'], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);

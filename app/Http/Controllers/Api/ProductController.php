@@ -964,12 +964,12 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function admin_vendor_sales()
+    public function seller_sales()
     {
-        $admin_vendor_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
+        $seller_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
             ->with('seller')->groupBy('seller_id')->get();
-        $admin_vendor_sales = $admin_vendor_sales->sortByDesc('orders_count')->values();
-        return response()->json(["status" => true, 'admin_vendor_sales' => $admin_vendor_sales], 200);
+        $seller_sales = $seller_sales->sortByDesc('orders_count')->values();
+        return response()->json(["status" => true, 'seller_sales' => $seller_sales], 200);
     }
 
     public function admin_customer_count()
