@@ -968,11 +968,13 @@ class ProductController extends Controller
     {
         $seller_top_sales = User::whereHas('role', function ($query) {
             $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
-        })->withCount('sellers_orders')->get();
+        })->whereHas('sellers_orders', function ($query) {
+            $query->withCount('user_orders')->sortByDesc('user_orders_count');
+        })->get();
         // dd($seller_top_sales);
         // $seller_top_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
         //     ->with('seller')->groupBy('seller_id')->get();
-        $seller_top_sales = $seller_top_sales->sortByDesc('orders_count')->values();
+        // $seller_top_sales = $seller_top_sales->sortByDesc('orders_count')->values();
         return response()->json(["status" => true, 'seller_top_sales' => $seller_top_sales], 200);
     }
 
