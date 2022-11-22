@@ -970,7 +970,7 @@ class ProductController extends Controller
             $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
         })->with(['sellers_orders' => function ($query) {
             $query->selectRaw('id, seller_id')
-                ->groupBy('seller_id')->with(['user_orders' => function ($query1) {
+                ->groupBy('seller_id','id')->with(['user_orders' => function ($query1) {
                     $query1->selectRaw('order_id, count(order_id) as total_products')
                         ->groupBy('order_id');
                 }]);
