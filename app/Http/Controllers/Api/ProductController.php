@@ -974,7 +974,7 @@ class ProductController extends Controller
         // dd($seller_top_sales);
         // $seller_top_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
         //     ->with('seller')->groupBy('seller_id')->get();
-        // $seller_top_sales = $seller_top_sales->sortByDesc('orders_count')->values();
+        $seller_top_sales = $seller_top_sales->sortByDesc('sellers_orders.user_orders_count')->values();
         return response()->json(["status" => true, 'seller_top_sales' => $seller_top_sales], 200);
     }
 
