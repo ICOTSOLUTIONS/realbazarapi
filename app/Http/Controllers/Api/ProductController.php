@@ -968,8 +968,8 @@ class ProductController extends Controller
     {
         $seller_top_sales = User::whereHas('role', function ($query) {
             $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
-        })->with(['sellers_orders' => function ($query) {
-            $query->selectRaw('count(user_orders.order_id) as products');
+        })->with(['sellers_orders.user_orders' => function ($query) {
+            $query->selectRaw('count(order_id) as products');
         }])->get();
         // dd($seller_top_sales);
         // $seller_top_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
