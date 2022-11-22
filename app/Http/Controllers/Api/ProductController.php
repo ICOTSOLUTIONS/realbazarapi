@@ -969,7 +969,7 @@ class ProductController extends Controller
         $seller_top_sales = User::whereHas('role', function ($query) {
             $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
         })->with(['sellers_orders' => function ($query) {
-            $query->selectRaw('seller_id,order_id, count(seller_id) as total_orders')
+            $query->selectRaw('seller_id,id, count(seller_id) as total_orders')
                 ->groupBy('seller_id')->with(['user_orders' => function ($query1) {
                     $query1->selectRaw('order_id, count(order_id) as total_products')
                         ->groupBy('order_id');
