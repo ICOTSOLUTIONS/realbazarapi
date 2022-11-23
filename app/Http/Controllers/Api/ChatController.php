@@ -23,7 +23,7 @@ class ChatController extends Controller
             $q->where('sender_id', $user_id);
         })->orWhere(function ($q) use ($user_id) {
             $q->where('receiver_id', $user_id);
-        })->get();
+        })->orderBy('id','DESC')->get();
         if (count($chat)) return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
         else return response()->json(['status' => false, 'Message' => "Chat not Found", 'chat' => $chat]);
     }
@@ -35,7 +35,7 @@ class ChatController extends Controller
             $q->where('sender_id', $user_id);
         })->orWhere(function ($q) use ($user_id) {
             $q->where('receiver_id', $user_id);
-        })->get();
+        })->orderBy('id','DESC')->get();
         if (count($chat)) return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
         else return response()->json(['status' => false, 'Message' => "Chat not Found", 'chat' => $chat]);
     }
