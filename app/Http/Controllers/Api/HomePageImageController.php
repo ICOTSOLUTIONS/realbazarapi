@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\Validator;
 
 class HomePageImageController extends Controller
 {
-    public function homePageImage($section, $role = null)
+    public function homePageImage($section, $is_app, $role = null)
     {
         if (empty($section)) return response()->json(['status' => false, 'Message' => 'Section not found']);
+        if (empty($is_app)) return response()->json(['status' => false, 'Message' => 'App option not found']);
         $discount = false;
         $featured = false;
         $new_arrival = false;
@@ -37,6 +38,12 @@ class HomePageImageController extends Controller
             ->where('is_just_for_you', $just_for_you)
             ->where('is_trending', $trending)
             ->where('is_best_seller', $bestSeller);
+        if ($is_app == 'app') {
+            $homePageImage->where('is_app', true);
+        }
+        if ($is_app == 'web') {
+            $homePageImage->where('is_app', false);
+        }
         if ($role == 'retailer') {
             $homePageImage->where('is_retailer', true);
         }
@@ -101,7 +108,10 @@ class HomePageImageController extends Controller
                 if ($request->section == 'featured') $homePageImage->is_featured = true;
                 if ($request->section == 'newArrival') $homePageImage->is_new_arrival = true;
                 if ($request->section == 'topRating') $homePageImage->is_top_rating = true;
-                if ($request->section == 'justForYou') $homePageImage->is_just_for_you = true;
+                if ($request->section == 'justForYou') {
+                    $homePageImage->is_just_for_you = true;
+                    if ($request->is_app == 'app') $homePageImage->is_app = true;
+                }
                 if ($request->section == 'trending') $homePageImage->is_trending = true;
                 if ($request->section == 'bestSeller') $homePageImage->is_best_seller = true;
                 if ($request->role == 'retailer') $homePageImage->is_retailer = true;
@@ -131,16 +141,16 @@ class HomePageImageController extends Controller
         try {
             DB::beginTransaction();
             // if (!empty($request->images)) {
-                $homePageImage = HomePageImage::where('id', $request->id)->first();
-                if(!$homePageImage) throw new Error('Promotion not found');
-                $homePageImage->url = $request->url ?? '';
-                if (!empty($request->images)) {
-                    $images = $request->images;
-                    $filename = "homePageImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
-                    $images->storeAs('homePageImage', $filename, "public");
-                    $homePageImage->image = "homePageImage/" . $filename;
-                }
-                if (!$homePageImage->save()) throw new Error("Home Page Image Not Updated!");
+            $homePageImage = HomePageImage::where('id', $request->id)->first();
+            if (!$homePageImage) throw new Error('Promotion not found');
+            $homePageImage->url = $request->url ?? '';
+            if (!empty($request->images)) {
+                $images = $request->images;
+                $filename = "homePageImage-" . time() . "-" . rand() . "." . $images->getClientOriginalExtension();
+                $images->storeAs('homePageImage', $filename, "public");
+                $homePageImage->image = "homePageImage/" . $filename;
+            }
+            if (!$homePageImage->save()) throw new Error("Home Page Image Not Updated!");
             // }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Home Page Image Updated Successfully'], 200);

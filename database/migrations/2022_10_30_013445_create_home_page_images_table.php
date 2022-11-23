@@ -27,6 +27,7 @@ return new class extends Migration
             $table->boolean('is_best_seller')->default(false);
             $table->boolean('is_retailer')->default(false);
             $table->boolean('is_wholesaler')->default(false);
+            $table->boolean('is_app')->default(false);
             $table->timestamps();
         });
     }
