@@ -966,16 +966,12 @@ class ProductController extends Controller
 
     public function seller_top_sales()
     {
-        $seller_top_sales = User::whereHas('role', function ($query) {
+        $seller_top_sales = User::withCount('sellers_orders_products')->whereHas('role', function ($query) {
             $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
-        })->with(['sellers_orders' => function ($query) {
-            $query->with('user_orders')->withCount('user_orders');
-        }])->get();
-        // dd($seller_top_sales);
-        // $seller_top_sales = Order::selectRaw('seller_id, SUM(net_amount) as total_amount')
-        //     ->with('seller')->groupBy('seller_id')->get();
-        // $seller_top_sales = $seller_top_sales->sortByDesc('orders_count')->values();
-        return response()->json(["status" => true, 'seller_top_sales' => $seller_top_sales], 200);
+        })->get();
+        $seller_top_sales = $seller_top_sales->sortByDesc('sellers_orders_products_count')->values();
+        if (count($seller_top_sales)) return response()->json(["status" => true, 'seller_top_sales' => $seller_top_sales ?? []], 200);
+        else return response()->json(["status" => false, 'seller_top_sales' => $seller_top_sales ?? []]);
     }
 
     public function admin_customer_count()
