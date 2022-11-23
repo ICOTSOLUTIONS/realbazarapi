@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique()->nullable();
-            $table->mediumText('cnic')->unique()->nullable();
-            $table->mediumText('referral_code')->unique()->nullable();
+            $table->string('cnic')->unique()->nullable();
+            $table->string('referral_code')->unique()->nullable();
             $table->bigInteger('referral_count')->default(0);
             $table->timestamps();
         });
