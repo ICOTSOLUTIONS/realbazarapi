@@ -69,8 +69,31 @@ class AuthController extends Controller
         }
         $wholesalers = $wholesaler->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $wholesaler_counts = $wholesaler_count->count();
-        if (count($wholesalers)) return response()->json(['status' => true, 'Message' => 'Wholesalers found', 'wholesalers' => $wholesalers ?? [], 'wholesalersCount' => $wholesaler_counts ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'Wholesalers not found', 'wholesalers' => $wholesalers ?? [], 'wholesalersCount' => $wholesaler_counts ?? []]);
+        $total_wholesaler_count = User::with('role')->where('role_id', 4)->count();
+        $block_wholesaler_count = User::with('role')->where('role_id', 4)->where('is_block', true)->count();
+        $unblock_wholesaler_count = User::with('role')->where('role_id', 4)->where('is_block', false)->count();
+
+        if (count($wholesalers)) return response()->json(
+            [
+                'status' => true, 'Message' => 'Wholesalers found',
+                'wholesalers' => $wholesalers ?? [],
+                'wholesalersCount' => $wholesaler_counts ?? [],
+                'totalWholesalersCount' => $total_wholesaler_count ?? [],
+                'blockWholesalersCount' => $block_wholesaler_count ?? [],
+                'unblockWholesalersCount' => $unblock_wholesaler_count ?? [],
+            ],
+            200
+        );
+        return response()->json(
+            [
+                'status' => false, 'Message' => 'Wholesalers not found',
+                'wholesalers' => $wholesalers ?? [],
+                'wholesalersCount' => $wholesaler_counts ?? [],
+                'totalWholesalersCount' => $total_wholesaler_count ?? [],
+                'blockWholesalersCount' => $block_wholesaler_count ?? [],
+                'unblockWholesalersCount' => $unblock_wholesaler_count ?? [],
+            ]
+        );
     }
 
     public function user(Request $request)
@@ -109,8 +132,31 @@ class AuthController extends Controller
         }
         $users = $user->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $user_counts = $user_count->count();
-        if (count($users)) return response()->json(['status' => true, 'Message' => 'Users found', 'users' => $users ?? [], 'usersCount' => $user_counts ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'Users not found', 'users' => $users ?? [], 'usersCount' => $user_counts ?? []]);
+        $total_users_count = User::with('role')->where('role_id', 3)->count();
+        $block_users_count = User::with('role')->where('role_id', 3)->where('is_block', true)->count();
+        $unblock_users_count = User::with('role')->where('role_id', 3)->where('is_block', false)->count();
+
+        if (count($users)) return response()->json(
+            [
+                'status' => true, 'Message' => 'Users found',
+                'users' => $users ?? [],
+                'usersCount' => $user_counts ?? [],
+                'totalUsersCount' => $total_users_count ?? [],
+                'blockUsersCount' => $block_users_count ?? [],
+                'unblockUsersCount' => $unblock_users_count ?? [],
+            ],
+            200
+        );
+        return response()->json(
+            [
+                'status' => false, 'Message' => 'Users not found',
+                'users' => $users ?? [],
+                'usersCount' => $user_counts ?? [],
+                'totalUsersCount' => $total_users_count ?? [],
+                'blockUsersCount' => $block_users_count ?? [],
+                'unblockUsersCount' => $unblock_users_count ?? [],
+            ]
+        );
     }
 
     public function retailer(Request $request)
@@ -159,8 +205,33 @@ class AuthController extends Controller
         }
         $retailers = $retailer->skip($skip)->take($take)->orderBy('id', 'DESC')->get();
         $retailer_counts = $retailer_count->count();
-        if (count($retailers)) return response()->json(['status' => true, 'Message' => 'Retailers found', 'retailers' => $retailers ?? [], 'retailersCount' => $retailer_counts ?? []], 200);
-        return response()->json(['status' => false, 'Message' => 'Retailers not found', 'retailers' => $retailers ?? [], 'retailersCount' => $retailer_counts ?? []]);
+        $total_retailers_count = User::with('role')->where('role_id', 5)->count();
+        $block_retailers_count = User::with('role')->where('role_id', 5)->where('is_block', true)->count();
+        $unblock_retailers_count = User::with('role')->where('role_id', 5)->where('is_block', false)->count();
+
+        if (count($retailers)) return response()->json(
+            [
+                'status' => true,
+                'Message' => 'Retailers found',
+                'retailers' => $retailers ?? [],
+                'retailersCount' => $retailer_counts ?? [],
+                'totalRetailersCount' => $total_retailers_count ?? [],
+                'blockRetailersCount' => $block_retailers_count ?? [],
+                'unblockRetailersCount' => $unblock_retailers_count ?? [],
+            ],
+            200
+        );
+        return response()->json(
+            [
+                'status' => false, 'Message' => 'Retailers not found',
+                'retailers' => $retailers ?? [],
+                'retailersCount' => $retailer_counts ?? [],
+                'retailersCount' => $retailer_counts ?? [],
+                'totalRetailersCount' => $total_retailers_count ?? [],
+                'blockRetailersCount' => $block_retailers_count ?? [],
+                'unblockRetailersCount' => $unblock_retailers_count ?? [],
+            ]
+        );
     }
 
     public function signup(Request $request)
