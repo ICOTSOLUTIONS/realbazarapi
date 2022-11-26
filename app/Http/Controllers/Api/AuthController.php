@@ -241,6 +241,14 @@ class AuthController extends Controller
             'name' => 'required',
             'password' => 'required',
         ];
+        $messages = [
+            'required' => 'This :attribute Field is Required',
+        ];
+        $attributes = [
+            'role' => 'Role',
+            'name' => 'Username',
+            'password' => 'Password',
+        ];
         if ($request->role == 'retailer' || $request->role == 'wholesaler') {
             $rules['email'] = 'required|email|unique:users,email';
             $rules['phone'] = 'required|digits:11|unique:users,phone';
@@ -253,14 +261,28 @@ class AuthController extends Controller
             $rules['cnic_number'] = 'required|digits:13|unique:users,cnic_number';
             $rules['cnic_image'] = 'required|array';
             $rules['bill_image'] = 'required|image';
+
+            $attributes['email'] = 'Email';
+            $attributes['phone'] = 'Phone';
+            $attributes['business_name'] = 'Business Name';
+            $attributes['business_address'] = 'Business Address';
+            $attributes['province'] = 'Province';
+            $attributes['country'] = 'Country';
+            $attributes['shop_number'] = 'Shop Number';
+            $attributes['market_name'] = 'Market Name';
+            $attributes['cnic_number'] = 'CNIC Number';
+            $attributes['cnic_image'] = 'CNIC Image';
+            $attributes['bill_image'] = 'Bill Image';
         } else {
             if (is_numeric($request->get('emailphone'))) {
                 $rules['emailphone'] = 'required|digits:11|unique:users,email';
+                $attributes['emailphone'] = 'Phone';
             } else {
                 $rules['emailphone'] = 'required|email|unique:users,email';
+                $attributes['emailphone'] = 'Email';
             }
         }
-        $valid = Validator::make($request->all(), $rules);
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
@@ -347,12 +369,20 @@ class AuthController extends Controller
             'password' => 'required',
             // 'role' => 'required',
         ];
+        $messages = [
+            'required' => 'This :attribute Field is Required',
+        ];
+        $attributes = [
+            'password' => 'Password',
+        ];
         if (is_numeric($request->get('emailphone'))) {
             $rules['emailphone'] = 'required|digits:11|exists:users,phone';
+            $attributes['emailphone'] = 'Phone';
         } else {
             $rules['emailphone'] = 'required|email|exists:users,email';
+            $attributes['emailphone'] = 'Email';
         }
-        $valid = Validator::make($request->all(), $rules);
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
 
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
@@ -412,10 +442,13 @@ class AuthController extends Controller
     public function forgot(Request $request)
     {
         $rules = [];
+        $attributes = [];
         if (is_numeric($request->get('emailphone'))) {
             $rules['emailphone'] = 'required|digits:11|exists:users,phone';
+            $attributes['emailphone'] = 'Phone';
         } else {
             $rules['emailphone'] = 'required|email|exists:users,email';
+            $attributes['emailphone'] = 'Email';
         }
         $valid = Validator::make($request->all(), $rules);
 
@@ -449,12 +482,22 @@ class AuthController extends Controller
             'password' => 'required',
             'c_password' => 'required|same:password',
         ];
+        $messages = [
+            'required' => 'This :attribute Field is Required',
+        ];
+        $attributes = [
+            'token' => 'Token',
+            'password' => 'Password',
+            'c_password' => 'Confirm Password',
+        ];
         if (is_numeric($request->get('emailphone'))) {
             $rules['emailphone'] = 'required|digits:11|exists:users,phone';
+            $rules['emailphone'] = 'Phone';
         } else {
             $rules['emailphone'] = 'required|email|exists:users,email';
+            $rules['emailphone'] = 'Email';
         }
-        $valid = Validator::make($request->all(), $rules);
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
@@ -485,6 +528,9 @@ class AuthController extends Controller
             $rules = [
                 'username' => 'required',
             ];
+            $attributes = [
+                'username' => 'Username',
+            ];
             if ($user->role->name == 'retailer' || $user->role->name == 'wholesaler') {
                 $rules['email'] = 'required|email|unique:users,email,' . auth()->user()->id;
                 $rules['phone'] = 'required|digits:11|unique:users,phone,' . auth()->user()->id;
@@ -497,14 +543,28 @@ class AuthController extends Controller
                 $rules['cnic_number'] = 'required|digits:13|unique:users,cnic_number,' . auth()->user()->id;
                 $rules['cnic_image'] = 'nullable|array';
                 $rules['bill_image'] = 'nullable|image';
+
+                $attributes['email'] = 'Email';
+                $attributes['phone'] = 'Phone';
+                $attributes['business_name'] = 'Business Name';
+                $attributes['business_address'] = 'Business Address';
+                $attributes['province'] = 'Province';
+                $attributes['country'] = 'Country';
+                $attributes['shop_number'] = 'Shop Number';
+                $attributes['market_name'] = 'Market Name';
+                $attributes['cnic_number'] = 'CNIC Number';
+                $attributes['cnic_image'] = 'CNIC Image';
+                $attributes['bill_image'] = 'Bill Image';
             } else {
                 if (is_numeric($request->get('emailphone'))) {
                     $rules['emailphone'] = 'required|digits:11|unique:users,phone,' . auth()->user()->id;
+                    $attributes['emailphone'] = 'Phone';
                 } else {
                     $rules['emailphone'] = 'required|email|unique:users,email,' . auth()->user()->id;
+                    $attributes['emailphone'] = 'Email';
                 }
             }
-            $valid = Validator::make($request->all(), $rules);
+            $valid = Validator::make($request->all(), $rules, $attributes);
             if ($valid->fails()) {
                 return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
             }
