@@ -442,6 +442,9 @@ class AuthController extends Controller
     public function forgot(Request $request)
     {
         $rules = [];
+        $messages = [
+            'required' => 'This :attribute Field is Required',
+        ];
         $attributes = [];
         if (is_numeric($request->get('emailphone'))) {
             $rules['emailphone'] = 'required|digits:11|exists:users,phone';
@@ -450,7 +453,7 @@ class AuthController extends Controller
             $rules['emailphone'] = 'required|email|exists:users,email';
             $attributes['emailphone'] = 'Email';
         }
-        $valid = Validator::make($request->all(), $rules);
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
 
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
@@ -528,6 +531,9 @@ class AuthController extends Controller
             $rules = [
                 'username' => 'required',
             ];
+            $messages = [
+                'required' => 'This :attribute Field is Required',
+            ];
             $attributes = [
                 'username' => 'Username',
             ];
@@ -564,7 +570,7 @@ class AuthController extends Controller
                     $attributes['emailphone'] = 'Email';
                 }
             }
-            $valid = Validator::make($request->all(), $rules, $attributes);
+            $valid = Validator::make($request->all(), $rules, $messages, $attributes);
             if ($valid->fails()) {
                 return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
             }
