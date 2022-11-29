@@ -237,9 +237,9 @@ class OrderController extends Controller
     {
         if (!empty($request->pp_ResponseCode)) {
             if ($request->pp_ResponseCode == 000) {
-                return ('https://real-bazar-web.vercel.app/?response_code='.$request->pp_ResponseCode);
+                return redirect('https://real-bazar-web.vercel.app/?response_code='.$request->pp_ResponseCode);
             }else{
-                return ('https://real-bazar-web.vercel.app/?response_code='.$request->pp_ResponseCode);
+                return redirect('https://real-bazar-web.vercel.app/?response_code='.$request->pp_ResponseCode);
 
             }
         }
