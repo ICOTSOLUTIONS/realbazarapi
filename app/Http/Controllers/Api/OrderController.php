@@ -238,9 +238,9 @@ class OrderController extends Controller
         if (!empty($request->pp_ResponseCode)) {
             $url = 'https://real-bazar-web.vercel.app/?response_code=';
             if ($request->pp_ResponseCode == 000) {
-                return redirect($url + $request->pp_ResponseCode);
+                return redirect($url . $request->pp_ResponseCode);
             } else {
-                return redirect($url + $request->pp_ResponseCode);
+                return redirect($url . $request->pp_ResponseCode);
             }
         }
     }
