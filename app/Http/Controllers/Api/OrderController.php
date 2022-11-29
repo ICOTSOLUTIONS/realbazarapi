@@ -232,4 +232,15 @@ class OrderController extends Controller
             }
         } else return response()->json(["status" => false, 'Message' => 'Order Status Change not Successfully']);
     }
+
+    public function paymentStatus(Request $request)
+    {
+        if (!empty($request->pp_ResponseCode)) {
+            if ($request->pp_ResponseCode == 000) {
+                return 'https://real-bazar-web.vercel.app/?response_code='.$request->pp_ResponseCode;
+            }else{
+                return 'https://real-bazar-web.vercel.app/?response_code='.$request->pp_ResponseCode;
+            }
+        }
+    }
 }
