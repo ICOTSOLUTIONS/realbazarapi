@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\NotiSend;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 
 class OrderController extends Controller
 {
@@ -231,6 +232,84 @@ class OrderController extends Controller
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Pending Successfully'], 200);
             }
         } else return response()->json(["status" => false, 'Message' => 'Order Status Change not Successfully']);
+    }
+
+    public function jazzcashCheckout(Request $request)
+    {
+        $data = $request->all();
+
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        //1.
+        //get formatted price. remove period(.) from the price
+        $pp_Amount     = 1000;
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        //2.
+        //get the current date and time
+        //be careful set TimeZone in config/app.php
+        $DateTime         = Carbon::now();
+        $pp_TxnDateTime = $DateTime->format('YmdHis');
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        //3.
+        //to make expiry date and time add one hour to current date and time
+        $ExpiryDateTime = $DateTime;
+        $ExpiryDateTime->modify('+' . 1 . ' hours');
+        $pp_TxnExpiryDateTime = $ExpiryDateTime->format('YmdHis');
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        //4.
+        //make unique transaction id using current date
+        $pp_TxnRefNo = 'T' . $pp_TxnDateTime;
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
+        //--------------------------------------------------------------------------------
+        $post_data =  array(
+            "pp_Version"             => Config::get('constants.jazzcash.VERSION'),
+            "pp_TxnType"             => "",
+            "pp_Language"             => Config::get('constants.jazzcash.LANGUAGE'),
+            "pp_MerchantID"         => Config::get('constants.jazzcash.MERCHANT_ID'),
+            "pp_SubMerchantID"         => "",
+            "pp_Password"             => Config::get('constants.jazzcash.PASSWORD'),
+            "pp_BankID"             => "TBANK",
+            "pp_TxnRefNo"             => $pp_TxnRefNo,
+            "pp_Amount"             => $pp_Amount,
+            "pp_TxnCurrency"         => Config::get('constants.jazzcash.CURRENCY_CODE'),
+            "pp_TxnDateTime"         => $pp_TxnDateTime,
+            "pp_BillReference"         => "billRef",
+            "pp_Description"         => "Description of transaction",
+            "pp_TxnExpiryDateTime"     => $pp_TxnExpiryDateTime,
+            "pp_ReturnURL"             => Config::get('constants.jazzcash.RETURN_URL'),
+            "pp_SecureHash"         => "",
+            "ppmpf_1"                 => "1",
+            "ppmpf_2"                 => "2",
+            "ppmpf_3"                 => "3",
+            "ppmpf_4"                 => "4",
+            "ppmpf_5"                 => "5",
+        );
+
+        $pp_SecureHash = $this->get_SecureHash($post_data);
+
+        $post_data['pp_SecureHash'] = $pp_SecureHash;
+        return view('do_checkout_v', ['post_data' => $post_data]);
+    }
+
+    private function get_SecureHash($data_array)
+    {
+        ksort($data_array);
+        $str = '';
+        foreach ($data_array as $key => $value) {
+            if (!empty($value)) {
+                $str = $str . '&' . $value;
+            }
+        }
+        $str = Config::get('constants.jazzcash.INTEGERITY_SALT') . $str;
+        $pp_SecureHash = hash_hmac('sha256', $str, Config::get('constants.jazzcash.INTEGERITY_SALT'));
+
+        return $pp_SecureHash;
     }
 
     public function paymentStatus(Request $request)
