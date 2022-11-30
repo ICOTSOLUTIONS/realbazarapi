@@ -236,13 +236,20 @@ class OrderController extends Controller
 
     public function jazzcashCheckout(Request $request)
     {
-        $data = $request->all();
+        $valid = Validator::make($request->all(), [
+            'price' => 'required|gt:0',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        $price = $request->price ?? 0;
 
         //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         //1.
         //get formatted price. remove period(.) from the price
-        $pp_Amount     = 1000;
-        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        $pp_Amount     = $price * 100;
 
         //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         //2.
@@ -250,7 +257,6 @@ class OrderController extends Controller
         //be careful set TimeZone in config/app.php
         $DateTime         = Carbon::now();
         $pp_TxnDateTime = $DateTime->format('YmdHis');
-        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
         //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         //3.
@@ -258,15 +264,15 @@ class OrderController extends Controller
         $ExpiryDateTime = $DateTime;
         $ExpiryDateTime->modify('+' . 1 . ' hours');
         $pp_TxnExpiryDateTime = $ExpiryDateTime->format('YmdHis');
-        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
         //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         //4.
         //make unique transaction id using current date
         $pp_TxnRefNo = 'T' . $pp_TxnDateTime;
-        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
 
         //--------------------------------------------------------------------------------
+        //postData
         $post_data =  array(
             "pp_Version"             => Config::get('constants.jazzcash.VERSION'),
             "pp_TxnType"             => "",
@@ -294,11 +300,8 @@ class OrderController extends Controller
         $pp_SecureHash = $this->get_SecureHash($post_data);
 
         $post_data['pp_SecureHash'] = $pp_SecureHash;
-        return response()->json(['status' => true, 'Message' => 'Order not found', 'url' => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/' ?? [], 'data' => $post_data ?? []]);
-
-        // return redirect('https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/');
-
-        // return view('jazzcash_checkout_form', ['post_data' => $post_data]);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/' ?? [], 'data' => $post_data ?? []], 200);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     private function get_SecureHash($data_array)
@@ -319,9 +322,9 @@ class OrderController extends Controller
     public function paymentStatus(Request $request)
     {
         if (!empty($request->pp_ResponseCode)) {
-            $url = 'https://real-bazar-web.vercel.app/?response_code=';
+            $url = 'https://real-bazar-web.vercel.app/account/payment/';
             if ($request->pp_ResponseCode == 000) {
-                return redirect($url . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
+                return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
             } else {
                 return redirect($url . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
             }
