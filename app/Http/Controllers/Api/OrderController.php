@@ -322,8 +322,8 @@ class OrderController extends Controller
     public function paymentStatus(Request $request)
     {
         if (!empty($request->pp_ResponseCode)) {
-            // $url = 'https://real-bazar-web.vercel.app/account/payment/';
-            $url = 'http://localhost:3000/account/payment/';
+            $url = 'https://real-bazar-web.vercel.app/account/payment/';
+            // $url = 'http://localhost:3000/account/payment/';
             if ($request->pp_ResponseCode == 000) {
                 return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
             } else {
