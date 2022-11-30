@@ -294,7 +294,9 @@ class OrderController extends Controller
         $pp_SecureHash = $this->get_SecureHash($post_data);
 
         $post_data['pp_SecureHash'] = $pp_SecureHash;
-        return view('jazzcash_checkout_form', ['post_data' => $post_data]);
+        return redirect()->away('https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/')->with($post_data);
+
+        // return view('jazzcash_checkout_form', ['post_data' => $post_data]);
     }
 
     private function get_SecureHash($data_array)
