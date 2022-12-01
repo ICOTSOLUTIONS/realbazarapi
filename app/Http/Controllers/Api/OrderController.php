@@ -274,21 +274,21 @@ class OrderController extends Controller
         //--------------------------------------------------------------------------------
         //postData
         $post_data =  array(
-            "pp_Version"             => Config::get('constants.jazzcash.VERSION'),
+            "pp_Version"             => Config::get('jazzcashCheckout.jazzcash.VERSION'),
             "pp_TxnType"             => "",
-            "pp_Language"             => Config::get('constants.jazzcash.LANGUAGE'),
-            "pp_MerchantID"         => Config::get('constants.jazzcash.MERCHANT_ID'),
+            "pp_Language"             => Config::get('jazzcashCheckout.jazzcash.LANGUAGE'),
+            "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
             "pp_SubMerchantID"         => "",
-            "pp_Password"             => Config::get('constants.jazzcash.PASSWORD'),
+            "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
             "pp_BankID"             => "TBANK",
             "pp_TxnRefNo"             => $pp_TxnRefNo,
             "pp_Amount"             => $pp_Amount,
-            "pp_TxnCurrency"         => Config::get('constants.jazzcash.CURRENCY_CODE'),
+            "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
             "pp_TxnDateTime"         => $pp_TxnDateTime,
             "pp_BillReference"         => "billRef",
             "pp_Description"         => "Description of transaction",
             "pp_TxnExpiryDateTime"     => $pp_TxnExpiryDateTime,
-            "pp_ReturnURL"             => Config::get('constants.jazzcash.RETURN_URL'),
+            "pp_ReturnURL"             => Config::get('jazzcashCheckout.jazzcash.RETURN_URL'),
             "pp_SecureHash"         => "",
             "ppmpf_1"                 => "1",
             "ppmpf_2"                 => "2",
@@ -313,10 +313,70 @@ class OrderController extends Controller
                 $str = $str . '&' . $value;
             }
         }
-        $str = Config::get('constants.jazzcash.INTEGERITY_SALT') . $str;
-        $pp_SecureHash = hash_hmac('sha256', $str, Config::get('constants.jazzcash.INTEGERITY_SALT'));
+        $str = Config::get('jazzcashCheckout.jazzcash.INTEGERITY_SALT') . $str;
+        $pp_SecureHash = hash_hmac('sha256', $str, Config::get('jazzcashCheckout.jazzcash.INTEGERITY_SALT'));
 
         return $pp_SecureHash;
+    }
+
+    public function easypaisaCheckout(Request $request)
+    {
+        // $valid = Validator::make($request->all(), [
+        //     'price' => 'required|gt:0',
+        // ]);
+
+        // if ($valid->fails()) {
+        //     return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        // }
+
+        // $price = $request->price ?? 0;
+
+        // $amount     = $price * 100;
+        $amount     = 10.0;
+
+        $DateTime         = Carbon::now();
+        $dateTime = $DateTime->format('Ys');
+        $orderRefNum = $dateTime;
+
+        $timestampDateTime = $DateTime;
+        $timestamp = $timestampDateTime->format('Y-m-d\TH:i:s');
+
+        //postData
+        $post_data =  array(
+            "storeId"             => "21121",
+            "orderId"             => "1225",
+            "transactionAmount"             => $amount,
+            "mobileAccountNo"             => "",
+            "emailAddress"             => "",
+            "transactionType"             => 'InitialRequest',
+            "tokenExpiry"             => "",
+            "bankIdentificationNumber"             => "",
+            "encryptedHashRequest"         => "",
+            "merchantPaymentMethod"             => "",
+            "postBackURL"             => 'https://real-bazar-web.vercel.app/',
+            "signature"             => "",
+        );
+
+        //encryptedHash
+        // $encryptedHash =  array(
+        //     "amount"             =>             $amount,
+        //     "paymentMethod"             => 'InitialRequest',
+        //     "orderRefNum"             => $orderRefNum,
+        //     "storeId"             => "21121",
+        //     "timeStamp"             => $timestamp,
+        //     "postBackURL"             => 'https://real-bazar-web.vercel.app',
+        // );
+
+        // // $encryptedHashRequest = $this->get_EncryptedHash($encryptedHash);
+        $str = "amount=" . $amount . "&orderRefNum=1225&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel./&storeId=21121&timeStamp=" . $timestamp;
+        $hashKey = 'O81PIDOAT6E8XCOH';
+        $cipher = "aes-128-ecb";
+        $crypttext = openssl_encrypt($str, $cipher, $hashKey, OPENSSL_RAW_DATA);
+        $encryptedHashRequest = Base64_encode($crypttext);
+        $post_data['encryptedHashRequest'] = $encryptedHashRequest;
+        return view('checkout', ['post_data' => $post_data]);
+        // if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/' ?? [], 'data' => $post_data ?? []], 200);
+        // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     public function paymentStatus(Request $request)

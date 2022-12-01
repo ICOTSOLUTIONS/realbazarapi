@@ -122,9 +122,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/add/referralUser', [Api\ReferralController::class, 'addReferralUsers']);
     Route::post('/update/referralUser', [Api\ReferralController::class, 'updateReferralUsers']);
     Route::get('/delete/referralUser/{id}', [Api\ReferralController::class, 'deleteReferralUsers']);
-    
-    Route::post('jazzcash/checkout', [Api\OrderController::class, "jazzcashCheckout"]);
+
 });
+Route::post('jazzcash/checkout', [Api\OrderController::class, "jazzcashCheckout"]);
+Route::post('easypaisa/checkout', [Api\OrderController::class, "easypaisaCheckout"]);
 //users
 Route::post('wholesalers', [Api\AuthController::class, 'wholesaler']);
 Route::post('users', [Api\AuthController::class, 'user']);
