@@ -336,11 +336,13 @@ class OrderController extends Controller
 
         $DateTime         = Carbon::now();
         $dateTime = $DateTime->format('dms');
-        $orderRefNum = $dateTime;
+        $orderRefNum = "1225";
 
         $timestampDateTime = $DateTime;
         $timestamp = $timestampDateTime->format('Y-m-d\TH:i:s');
+        // dd($timestamp);
         //postData
+        $postbackurl = urlencode('https://real-bazar-web.vercel.app');
         $post_data =  array(
             "storeId"             => "21121",
             "orderId"             => $orderRefNum,
@@ -352,12 +354,12 @@ class OrderController extends Controller
             "bankIdentificationNumber"             => "",
             "encryptedHashRequest"         => "",
             "merchantPaymentMethod"             => "",
-            "postBackURL"             => 'https://real-bazar-web.vercel.app/',
+            "postBackURL"             => $postbackurl,
             "signature"             => "",
         );
 
 
-        $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel./&storeId=21121&timeStamp=" . $timestamp;
+        $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel.app&storeId=21121&timeStamp=" . $timestamp;
         $hashKey = 'O81PIDOAT6E8XCOH';
         $cipher = "aes-128-ecb";
         $crypttext = openssl_encrypt($str, $cipher, $hashKey, OPENSSL_RAW_DATA);
@@ -366,6 +368,7 @@ class OrderController extends Controller
         $post_data['encryptedHashRequest'] = $encryptedHashRequest;
         $param = '';
         $i = 1;
+
         foreach ($post_data as $key => $value) {
             if (!empty($key)) {
                 if ($i == 1) $param = $key . '=' . $value;
@@ -375,10 +378,11 @@ class OrderController extends Controller
             }
             $i++;
         }
-        // return 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param;
+        // $param = 'https://easypaystg.easypaisa.com.pk/tpg/?storeId=21121&orderId=1225&transactionAmount=10.0&mobileAccountNo=&emailAddress=&transactionType=InitialRequest&tokenExpiry=&bankIdentificationNumber=&encryptedHashRequest=' . $encryptedHashRequest . '&merchantPaymentMethod=&postBackURL=https%3A%2F%2Freal-bazar-web.vercel.app&signature=';
+        // return redirect($param);
         return redirect('https://easypaystg.easypaisa.com.pk/tpg/?' . $param);
-        if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param], 200);
-        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+        // if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param], 200);
+        // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     public function paymentStatus(Request $request)
