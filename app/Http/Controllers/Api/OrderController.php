@@ -332,19 +332,18 @@ class OrderController extends Controller
         // $price = $request->price ?? 0;
 
         // $amount     = $price * 100;
-        $amount     = 10.0;
+        $amount     = sprintf("%.1f", 10);
 
         $DateTime         = Carbon::now();
-        $dateTime = $DateTime->format('Ys');
+        $dateTime = $DateTime->format('dms');
         $orderRefNum = $dateTime;
 
         $timestampDateTime = $DateTime;
         $timestamp = $timestampDateTime->format('Y-m-d\TH:i:s');
-
         //postData
         $post_data =  array(
             "storeId"             => "21121",
-            "orderId"             => "1225",
+            "orderId"             => $orderRefNum,
             "transactionAmount"             => $amount,
             "mobileAccountNo"             => "",
             "emailAddress"             => "",
@@ -357,26 +356,29 @@ class OrderController extends Controller
             "signature"             => "",
         );
 
-        //encryptedHash
-        // $encryptedHash =  array(
-        //     "amount"             =>             $amount,
-        //     "paymentMethod"             => 'InitialRequest',
-        //     "orderRefNum"             => $orderRefNum,
-        //     "storeId"             => "21121",
-        //     "timeStamp"             => $timestamp,
-        //     "postBackURL"             => 'https://real-bazar-web.vercel.app',
-        // );
 
-        // // $encryptedHashRequest = $this->get_EncryptedHash($encryptedHash);
-        $str = "amount=" . $amount . "&orderRefNum=1225&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel./&storeId=21121&timeStamp=" . $timestamp;
+        $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel./&storeId=21121&timeStamp=" . $timestamp;
         $hashKey = 'O81PIDOAT6E8XCOH';
         $cipher = "aes-128-ecb";
         $crypttext = openssl_encrypt($str, $cipher, $hashKey, OPENSSL_RAW_DATA);
-        $encryptedHashRequest = Base64_encode($crypttext);
+        $encryptedHashRequest = base64_encode($crypttext);
+        // $encryptedHashRequest = substr($encryptedHashRequest, 0, -2);
         $post_data['encryptedHashRequest'] = $encryptedHashRequest;
-        return view('checkout', ['post_data' => $post_data]);
-        // if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/' ?? [], 'data' => $post_data ?? []], 200);
-        // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+        $param = '';
+        $i = 1;
+        foreach ($post_data as $key => $value) {
+            if (!empty($key)) {
+                if ($i == 1) $param = $key . '=' . $value;
+                else {
+                    $param = $param . '&' . $key . '=' . $value;
+                }
+            }
+            $i++;
+        }
+        // return 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param;
+        return redirect('https://easypaystg.easypaisa.com.pk/tpg/?' . $param);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param], 200);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     public function paymentStatus(Request $request)
