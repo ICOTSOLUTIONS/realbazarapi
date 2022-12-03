@@ -24,16 +24,22 @@ class NotificationController extends Controller
         $noti = AppNotification::orderBy('id', 'DESC')->where('user_id', auth()->user()->id)->where('status', '0')->get();
         $notifications_count = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->count();
         if (count($noti)) return response()->json(['status' => true, 'Message' => "Notifications found", 'Notifications' => $noti ?? [], "notifications_count" => $notifications_count ?? []], 200);
-        else return response()->json(['status' => false, 'Message' => "Notifications not found"]);
+        else return response()->json(['status' => false, 'Message' => "Notifications not found", 'Notifications' => $noti ?? [], "notifications_count" => $notifications_count ?? []]);
     }
 
-    public function notification_change()
+    public function notification_change($id = null)
     {
-        $noti = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->get();
-        if (!count($noti)) return response()->json(['status' => false, 'Message' => "Notifications not found"]);
-        foreach ($noti as $key => $value) {
-            $value->status = 1;
-            $value->save();
+        if (!empty($id)) {
+            $noti = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->where('id', $id)->first();
+            $noti->status = 1;
+            $noti->save();
+        } else {
+            $noti = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->get();
+            if (!count($noti)) return response()->json(['status' => false, 'Message' => "Notifications not found"]);
+            foreach ($noti as $key => $value) {
+                $value->status = 1;
+                $value->save();
+            }
         }
         $notifications_count = AppNotification::where('user_id', auth()->user()->id)->where('status', '0')->count();
         return response()->json(['status' => true, 'Message' => "Notifications found", 'Notifications' => $noti ?? [], "notifications_count" => $notifications_count ?? []], 200);
