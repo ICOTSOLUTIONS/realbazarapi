@@ -321,15 +321,15 @@ class OrderController extends Controller
 
     public function easypaisaCheckout(Request $request)
     {
-        // $valid = Validator::make($request->all(), [
-        //     'price' => 'required|gt:0',
-        // ]);
+        $valid = Validator::make($request->all(), [
+            'price' => 'required|gt:0',
+        ]);
 
-        // if ($valid->fails()) {
-        //     return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
-        // }
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
 
-        $price = 100;
+        $price = $request->price;
 
         $amount     = $price * 100;
         $amount     = 10;
@@ -357,13 +357,12 @@ class OrderController extends Controller
             "signature"             => "",
         );
 
-
         $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel.app&storeId=21121&timeStamp=" . $timestamp;
         $hashKey = 'O81PIDOAT6E8XCOH';
         $cipher = "aes-128-ecb";
         $crypttext = openssl_encrypt($str, $cipher, $hashKey, OPENSSL_RAW_DATA);
         $encryptedHashRequest = base64_encode($crypttext);
-        $encryptedHashRequest =urlencode($encryptedHashRequest);
+        $encryptedHashRequest = urlencode($encryptedHashRequest);
         $post_data['encryptedHashRequest'] = $encryptedHashRequest;
         $param = '';
         $i = 1;

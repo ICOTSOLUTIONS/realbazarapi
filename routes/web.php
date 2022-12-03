@@ -17,5 +17,3 @@ use App\Http\Controllers\{Api};
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('easypaisa/checkout', [Api\OrderController::class, "easypaisaCheckout"]);
-
