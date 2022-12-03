@@ -377,7 +377,7 @@ class OrderController extends Controller
             $i++;
         }
 
-        if (count($post_data)) return redirect('https://easypaystg.easypaisa.com.pk/tpg/?' . $param);
+        if (count($post_data)) return response()->json(['status' => true, 'url' => 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param], 200);
         else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
