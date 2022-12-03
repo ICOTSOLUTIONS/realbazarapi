@@ -341,7 +341,7 @@ class OrderController extends Controller
         $timestampDateTime = $DateTime;
         $timestamp = $timestampDateTime->format('Y-m-d\TH:i:s');
         //postData
-        $postbackurl = urlencode('https://real-bazar-web.vercel.app');
+        $postbackurl = urlencode('https://real-bazar-web.vercel.app/account/payment');
         $post_data =  array(
             "storeId"             => "21121",
             "orderId"             => $orderRefNum,
@@ -357,7 +357,7 @@ class OrderController extends Controller
             "signature"             => "",
         );
 
-        $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel.app&storeId=21121&timeStamp=" . $timestamp;
+        $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel.app/account/payment&storeId=21121&timeStamp=" . $timestamp;
         $hashKey = 'O81PIDOAT6E8XCOH';
         $cipher = "aes-128-ecb";
         $crypttext = openssl_encrypt($str, $cipher, $hashKey, OPENSSL_RAW_DATA);
