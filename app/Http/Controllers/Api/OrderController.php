@@ -329,18 +329,17 @@ class OrderController extends Controller
         //     return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         // }
 
-        // $price = $request->price ?? 0;
+        $price = 100;
 
-        // $amount     = $price * 100;
-        $amount     = sprintf("%.1f", 10);
+        $amount     = $price * 100;
+        $amount     = 10;
 
         $DateTime         = Carbon::now();
         $dateTime = $DateTime->format('dms');
-        $orderRefNum = "1225";
+        $orderRefNum = $dateTime;
 
         $timestampDateTime = $DateTime;
         $timestamp = $timestampDateTime->format('Y-m-d\TH:i:s');
-        // dd($timestamp);
         //postData
         $postbackurl = urlencode('https://real-bazar-web.vercel.app');
         $post_data =  array(
@@ -364,7 +363,7 @@ class OrderController extends Controller
         $cipher = "aes-128-ecb";
         $crypttext = openssl_encrypt($str, $cipher, $hashKey, OPENSSL_RAW_DATA);
         $encryptedHashRequest = base64_encode($crypttext);
-        // $encryptedHashRequest = substr($encryptedHashRequest, 0, -2);
+        $encryptedHashRequest =urlencode($encryptedHashRequest);
         $post_data['encryptedHashRequest'] = $encryptedHashRequest;
         $param = '';
         $i = 1;
@@ -378,11 +377,9 @@ class OrderController extends Controller
             }
             $i++;
         }
-        // $param = 'https://easypaystg.easypaisa.com.pk/tpg/?storeId=21121&orderId=1225&transactionAmount=10.0&mobileAccountNo=&emailAddress=&transactionType=InitialRequest&tokenExpiry=&bankIdentificationNumber=&encryptedHashRequest=' . $encryptedHashRequest . '&merchantPaymentMethod=&postBackURL=https%3A%2F%2Freal-bazar-web.vercel.app&signature=';
-        // return redirect($param);
-        return redirect('https://easypaystg.easypaisa.com.pk/tpg/?' . $param);
-        // if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param], 200);
-        // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+
+        if (count($post_data)) return redirect('https://easypaystg.easypaisa.com.pk/tpg/?' . $param);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     public function paymentStatus(Request $request)
