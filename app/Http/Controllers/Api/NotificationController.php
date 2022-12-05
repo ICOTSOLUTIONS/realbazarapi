@@ -27,7 +27,6 @@ class NotificationController extends Controller
         }
         // if ($skip && $take) {
             $not->skip($skip)->take($take);
-            $not_count->skip($skip)->take($take);
         // }
         $noti = $not->orderBy('id', 'DESC')->get();
         $noti_count = $not_count->count();
