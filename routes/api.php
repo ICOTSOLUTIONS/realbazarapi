@@ -124,8 +124,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/delete/referralUser/{id}', [Api\ReferralController::class, 'deleteReferralUsers']);
 
 });
-Route::post('jazzcash/checkout', [Api\OrderController::class, "jazzcashCheckout"]);
-Route::post('easypaisa/checkout', [Api\OrderController::class, "easypaisaCheckout"]);
+
 //users
 Route::post('wholesalers', [Api\AuthController::class, 'wholesaler']);
 Route::post('users', [Api\AuthController::class, 'user']);
@@ -168,4 +167,8 @@ Route::get('/seller/top/sales', [Api\ProductController::class, 'seller_top_sales
 Route::post('google/login', [Api\SocialLoginController::class, "googleLogin"]);
 Route::post('facebook/login', [Api\SocialLoginController::class, "facebookLogin"]);
 
+//payment
+Route::post('jazzcash/checkout', [Api\OrderController::class, "jazzcashCheckout"]);
+Route::post('jazzcash/card/refund', [Api\OrderController::class, "jazzcashCardRefund"]);
+Route::post('easypaisa/checkout', [Api\OrderController::class, "easypaisaCheckout"]);
 Route::post('payment/status', [Api\OrderController::class, "jazzcashPaymentStatus"]);

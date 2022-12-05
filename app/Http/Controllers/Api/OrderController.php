@@ -304,6 +304,63 @@ class OrderController extends Controller
         else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
+    public function jazzcashCardRefund(Request $request)
+    {
+        // $valid = Validator::make($request->all(), [
+        //     'price' => 'required|gt:0',
+        // ]);
+
+        // if ($valid->fails()) {
+        //     return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        // }
+
+        // $price = $request->price ?? 0;
+        $price = 100;
+
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        //1.
+        //get formatted price. remove period(.) from the price
+        $pp_Amount     = $price * 100;
+
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        //2.
+        //get the current date and time
+        //be careful set TimeZone in config/app.php
+        $DateTime         = Carbon::now();
+        $pp_TxnDateTime = $DateTime->format('YmdHis');
+
+        // //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        // //3.
+        // //to make expiry date and time add one hour to current date and time
+        // $ExpiryDateTime = $DateTime;
+        // $ExpiryDateTime->modify('+' . 1 . ' hours');
+        // $pp_TxnExpiryDateTime = $ExpiryDateTime->format('YmdHis');
+
+        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+        //4.
+        //make unique transaction id using current date
+        $pp_TxnRefNo = 'T' . $pp_TxnDateTime;
+
+
+        //--------------------------------------------------------------------------------
+        //postData
+        $post_data =  array(
+            "pp_TxnRefNo"             => $pp_TxnRefNo,
+            "pp_Amount"             => $pp_Amount,
+            "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
+            "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
+            "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
+            "pp_SecureHash"         => "",
+        );
+
+        $pp_SecureHash = $this->get_SecureHash($post_data);
+
+        $post_data['pp_SecureHash'] = $pp_SecureHash;
+        // return view('do_checkout_v', ['post_data' => $post_data]);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.TRANSACTION_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+    }
+
     private function get_SecureHash($data_array)
     {
         ksort($data_array);
@@ -317,6 +374,20 @@ class OrderController extends Controller
         $pp_SecureHash = hash_hmac('sha256', $str, Config::get('jazzcashCheckout.jazzcash.INTEGERITY_SALT'));
 
         return $pp_SecureHash;
+    }
+
+    public function jazzcashPaymentStatus(Request $request)
+    {
+        $url = Config::get('jazzcashCheckout.jazzcash.WEB_RETURN_URL');
+        if (!empty($request->pp_ResponseCode)) {
+            if ($request->pp_ResponseCode == 000) {
+                return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
+            } else {
+                return redirect($url . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
+            }
+        } else {
+            return redirect($url);
+        }
     }
 
     public function easypaisaCheckout(Request $request)
@@ -379,19 +450,5 @@ class OrderController extends Controller
 
         if (count($post_data)) return response()->json(['status' => true, 'url' => Config::get('easypaisaCheckout.easypaisa.TRANSACTION_POST_URL') . $param], 200);
         else return response()->json(['status' => false,  'Message' => 'Request Failed']);
-    }
-
-    public function jazzcashPaymentStatus(Request $request)
-    {
-        $url = Config::get('jazzcashCheckout.jazzcash.WEB_RETURN_URL');
-        if (!empty($request->pp_ResponseCode)) {
-            if ($request->pp_ResponseCode == 000) {
-                return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
-            } else {
-                return redirect($url . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
-            }
-        } else {
-            return redirect($url);
-        }
     }
 }

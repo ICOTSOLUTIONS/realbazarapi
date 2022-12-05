@@ -11,7 +11,8 @@ return [
 
         'WEB_RETURN_URL'  => 'https://real-bazar-web.vercel.app/account/payment/',
         'RETURN_URL'  => 'https://realbazarapi.icotsolutions.com/api/payment/status',
-        'TRANSACTION_POST_URL'  => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/'
-
+        'TRANSACTION_POST_URL'  => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/',
+        'MOBILE_REFUND_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Purchase/domwalletrefundtransaction/',
+        'CARD_REFUND_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/authorize/Refund',
     ]
 ];
