@@ -350,11 +350,11 @@ class OrderController extends Controller
             "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
             "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
             "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
+            "pp_MerchantMPIN"             => Config::get('jazzcashCheckout.jazzcash.MerchantMPIN'),
             "pp_SecureHash"         => "",
         );
 
         $pp_SecureHash = $this->get_SecureHash($post_data);
-
         $post_data['pp_SecureHash'] = $pp_SecureHash;
         // return view('do_checkout_v', ['post_data' => $post_data]);
         if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.CARD_REFUND_POST_URL') ?? [], 'data' => $post_data ?? []], 200);

@@ -8,6 +8,7 @@ return [
         'CURRENCY_CODE'  => 'PKR',
         'VERSION'         => '1.1',
         'LANGUAGE'       => 'EN',
+        'MerchantMPIN'       => '0000',
 
         'WEB_RETURN_URL'  => 'https://real-bazar-web.vercel.app/account/payment/',
         'RETURN_URL'  => 'https://realbazarapi.icotsolutions.com/api/payment/status',

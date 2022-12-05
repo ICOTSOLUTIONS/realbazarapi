@@ -93,7 +93,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/delete/homePageImage', [Api\HomePageImageController::class, 'deletehomePageImage']);
 
     //notification
-    Route::get('/allNotification', [Api\NotificationController::class, 'allNotification']);
+    Route::get('/allNotification/{skip}/{take}/{status}', [Api\NotificationController::class, 'allNotification']);
     Route::get('/showNotification', [Api\NotificationController::class, 'notification']);
     Route::get('/changeNotification/{id?}', [Api\NotificationController::class, 'notification_change']);
     Route::post('/sendAllNotification', [Api\NotificationController::class, 'sendAllNotification']);
@@ -122,7 +122,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/add/referralUser', [Api\ReferralController::class, 'addReferralUsers']);
     Route::post('/update/referralUser', [Api\ReferralController::class, 'updateReferralUsers']);
     Route::get('/delete/referralUser/{id}', [Api\ReferralController::class, 'deleteReferralUsers']);
-
 });
 
 //users

@@ -12,11 +12,25 @@ use Illuminate\Support\Facades\DB;
 
 class NotificationController extends Controller
 {
-    public function allNotification()
+    public function allNotification($skip, $take, $status)
     {
-        $noti = AppNotification::orderBy('id', 'DESC')->with('user')->get();
-        if (count($noti)) return response()->json(['status' => true, 'Message' => 'Notification Found', 'notifications' => $noti], 200);
-        else return response()->json(['status' => false, 'Message' => 'Notification not Found']);
+        $not = AppNotification::with('user');
+        $not_count = AppNotification::query();
+
+        if ($status == '1') {
+            $not->where('status', 1);
+        }
+        if ($status == '0') {
+            $not->where('status', 0);
+        }
+        if ($skip && $take) {
+            $not->take($take)->skip($skip);
+        }
+        $noti = $not->orderBy('id', 'DESC')->get();
+        $noti_count = $not_count->count();
+        $total_noti_count = AppNotification::count();
+        if (count($noti)) return response()->json(['status' => true, 'Message' => 'Notification Found', 'notifications' => $noti ?? [], 'notifications_count' => $noti_count ?? [], 'total_notifications_count' => $total_noti_count ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Notification not Found', 'notifications' => $noti ?? [], 'notifications_count' => $noti_count ?? [], 'total_notifications_count' => $total_noti_count ?? []]);
     }
 
     public function notification()

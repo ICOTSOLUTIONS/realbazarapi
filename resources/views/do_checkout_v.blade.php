@@ -4,9 +4,8 @@
     }
 </script>
 </head>
-{{-- @dd($post_data) --}}
 <body onload="closethisasap();">
-    <form name="redirectpost" method="POST" action="{{ Config::get('jazzcashCheckout.jazzcash.CARD_REFUND_POST_URL') }}">
+    <form name="redirectpost" method="POST" action="{{ Config::get('jazzcashCheckout.jazzcash.MOBILE_REFUND_POST_URL') }}">
         @foreach ($post_data as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
         @endforeach
