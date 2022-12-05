@@ -300,7 +300,7 @@ class OrderController extends Controller
         $pp_SecureHash = $this->get_SecureHash($post_data);
 
         $post_data['pp_SecureHash'] = $pp_SecureHash;
-        if (count($post_data)) return response()->json(['status' => true,  'url' => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/' ?? [], 'data' => $post_data ?? []], 200);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.TRANSACTION_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
         else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
@@ -341,14 +341,14 @@ class OrderController extends Controller
         $timestampDateTime = $DateTime;
         $timestamp = $timestampDateTime->format('Y-m-d\TH:i:s');
         //postData
-        $postbackurl = urlencode('https://real-bazar-web.vercel.app/account/payment');
+        $postbackurl = urlencode(Config::get('easypaisaCheckout.easypaisa.POST_BACK_URL'));
         $post_data =  array(
-            "storeId"             => "21121",
+            "storeId"             => Config::get('easypaisaCheckout.easypaisa.STORE_ID'),
             "orderId"             => $orderRefNum,
             "transactionAmount"             => $amount,
             "mobileAccountNo"             => "",
             "emailAddress"             => "",
-            "transactionType"             => 'InitialRequest',
+            "transactionType"             => Config::get('easypaisaCheckout.easypaisa.TransactionType'),
             "tokenExpiry"             => "",
             "bankIdentificationNumber"             => "",
             "encryptedHashRequest"         => "",
@@ -357,8 +357,8 @@ class OrderController extends Controller
             "signature"             => "",
         );
 
-        $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=InitialRequest&postBackURL=https://real-bazar-web.vercel.app/account/payment&storeId=21121&timeStamp=" . $timestamp;
-        $hashKey = 'O81PIDOAT6E8XCOH';
+        $str = "amount=" . $amount . "&orderRefNum=" . $orderRefNum . "&paymentMethod=" . Config::get('easypaisaCheckout.easypaisa.TransactionType') . "&postBackURL=" . Config::get('easypaisaCheckout.easypaisa.POST_BACK_URL') . "&storeId=" . Config::get('easypaisaCheckout.easypaisa.STORE_ID') . "&timeStamp=" . $timestamp;
+        $hashKey = Config::get('easypaisaCheckout.easypaisa.HASH_KEY');
         $cipher = "aes-128-ecb";
         $crypttext = openssl_encrypt($str, $cipher, $hashKey, OPENSSL_RAW_DATA);
         $encryptedHashRequest = base64_encode($crypttext);
@@ -377,20 +377,21 @@ class OrderController extends Controller
             $i++;
         }
 
-        if (count($post_data)) return response()->json(['status' => true, 'url' => 'https://easypaystg.easypaisa.com.pk/tpg/?' . $param], 200);
+        if (count($post_data)) return response()->json(['status' => true, 'url' => Config::get('easypaisaCheckout.easypaisa.TRANSACTION_POST_URL') . $param], 200);
         else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
-    public function paymentStatus(Request $request)
+    public function jazzcashPaymentStatus(Request $request)
     {
+        $url = Config::get('jazzcashCheckout.jazzcash.WEB_RETURN_URL');
         if (!empty($request->pp_ResponseCode)) {
-            $url = 'https://real-bazar-web.vercel.app/account/payment/';
-            // $url = 'http://localhost:3000/account/payment/';
             if ($request->pp_ResponseCode == 000) {
                 return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
             } else {
                 return redirect($url . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
             }
+        } else {
+            return redirect($url);
         }
     }
 }

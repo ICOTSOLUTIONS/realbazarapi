@@ -168,4 +168,4 @@ Route::get('/seller/top/sales', [Api\ProductController::class, 'seller_top_sales
 Route::post('google/login', [Api\SocialLoginController::class, "googleLogin"]);
 Route::post('facebook/login', [Api\SocialLoginController::class, "facebookLogin"]);
 
-Route::post('payment/status', [Api\OrderController::class, "paymentStatus"]);
+Route::post('payment/status', [Api\OrderController::class, "jazzcashPaymentStatus"]);
