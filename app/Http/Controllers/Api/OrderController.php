@@ -356,9 +356,9 @@ class OrderController extends Controller
         $pp_SecureHash = $this->get_SecureHash($post_data);
 
         $post_data['pp_SecureHash'] = $pp_SecureHash;
-        // return view('do_checkout_v', ['post_data' => $post_data]);
-        if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.TRANSACTION_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
-        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+        return view('do_checkout_v', ['post_data' => $post_data]);
+        // if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.TRANSACTION_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
+        // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     private function get_SecureHash($data_array)
