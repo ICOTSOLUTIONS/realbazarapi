@@ -23,9 +23,9 @@ class NotificationController extends Controller
         if ($status == '0') {
             $not->where('status', 0);
         }
-        if ($skip && $take) {
-            $not->take($take)->skip($skip);
-        }
+        // if ($skip && $take) {
+            $not->skip($skip)->take($take);
+        // }
         $noti = $not->orderBy('id', 'DESC')->get();
         $noti_count = $not_count->count();
         $total_noti_count = AppNotification::count();
