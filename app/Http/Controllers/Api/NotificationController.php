@@ -19,12 +19,15 @@ class NotificationController extends Controller
 
         if ($status == '1') {
             $not->where('status', 1);
+            $not_count->where('status', 1);
         }
         if ($status == '0') {
             $not->where('status', 0);
+            $not_count->where('status', 0);
         }
         // if ($skip && $take) {
             $not->skip($skip)->take($take);
+            $not_count->skip($skip)->take($take);
         // }
         $noti = $not->orderBy('id', 'DESC')->get();
         $noti_count = $not_count->count();
