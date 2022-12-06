@@ -266,8 +266,7 @@ class AuthController extends Controller
             'business_address' => 'required',
             'province' => 'required',
             'country' => 'required',
-            'shop_number' => 'required',
-            'market_name' => 'required',
+
             'cnic_number' => 'required|digits:13|unique:users,cnic_number',
         ];
 
@@ -280,8 +279,6 @@ class AuthController extends Controller
             'business_address' => 'Business Address',
             'province' => 'Province',
             'country' => 'Country',
-            'shop_number' => 'Shop Number',
-            'market_name' => 'Market Name',
             'cnic_number' => 'CNIC Number',
         ];
         $valid = Validator::make($request->all(), $rules, $messages, $attributes);
@@ -305,7 +302,7 @@ class AuthController extends Controller
         ];
 
         $attributes = [
-            'Password' => 'CNIC Image',
+            'password' => 'Password',
             'cnic_image' => 'CNIC Image',
             'bill_image' => 'Bill Image',
         ];
