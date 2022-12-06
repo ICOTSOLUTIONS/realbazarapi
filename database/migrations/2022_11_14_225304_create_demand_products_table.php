@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->text('detail')->nullable();
             $table->string('qty')->nullable();
+            $table->string('phone')->nullable();
             $table->dateTime('timer')->nullable();
             $table->boolean('status')->default(false);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

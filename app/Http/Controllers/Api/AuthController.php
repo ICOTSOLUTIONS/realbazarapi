@@ -234,6 +234,89 @@ class AuthController extends Controller
         );
     }
 
+    public function signupValidPage1(Request $request)
+    {
+        $rules = [
+            'name' => 'required',
+            'email' =>  'required|email|unique:users,email',
+            'phone' => 'required|digits:11|unique:users,phone',
+        ];
+
+        $messages = [
+            'required' => 'This :attribute field is Required',
+        ];
+
+        $attributes = [
+            'name' => 'Username',
+            'email' => 'Email',
+            'phone' => 'Phone',
+        ];
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        } else {
+            return response()->json(['status' => true, 'Message' => 'Validation success'], 200);
+        }
+    }
+
+    public function signupValidPage2(Request $request)
+    {
+        $rules = [
+            'business_name' => 'required',
+            'business_address' => 'required',
+            'province' => 'required',
+            'country' => 'required',
+            'shop_number' => 'required',
+            'market_name' => 'required',
+            'cnic_number' => 'required|digits:13|unique:users,cnic_number',
+        ];
+
+        $messages = [
+            'required' => 'This :attribute field is Required',
+        ];
+
+        $attributes = [
+            'business_name' => 'Username',
+            'business_address' => 'Business Address',
+            'province' => 'Province',
+            'country' => 'Country',
+            'shop_number' => 'Shop Number',
+            'market_name' => 'Market Name',
+            'cnic_number' => 'CNIC Number',
+        ];
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        } else {
+            return response()->json(['status' => true, 'Message' => 'Validation success'], 200);
+        }
+    }
+
+    public function signupValidPage3(Request $request)
+    {
+        $rules = [
+            'password' =>  'required',
+            'cnic_image' =>  'required|array',
+            'bill_image' => 'required|image',
+        ];
+
+        $messages = [
+            'required' => 'This :attribute field is Required',
+        ];
+
+        $attributes = [
+            'Password' => 'CNIC Image',
+            'cnic_image' => 'CNIC Image',
+            'bill_image' => 'Bill Image',
+        ];
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        } else {
+            return response()->json(['status' => true, 'Message' => 'Validation success'], 200);
+        }
+    }
+
     public function signup(Request $request)
     {
         $rules = [

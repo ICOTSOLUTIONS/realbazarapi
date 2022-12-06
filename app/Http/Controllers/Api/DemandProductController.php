@@ -51,6 +51,7 @@ class DemandProductController extends Controller
             'name' => 'required',
             'detail' => 'required',
             'qty' => 'required',
+            'phone' => 'required',
             'images' => 'required|array',
         ]);
 
@@ -64,6 +65,7 @@ class DemandProductController extends Controller
             $demand->name = $request->name;
             $demand->detail = $request->detail;
             $demand->qty = $request->qty;
+            $demand->phone = $request->phone;
             $demand->timer = date('Y-m-d H:i:s', strtotime(Carbon::now()));
             if (!$demand->save()) throw new Error('Demand Product not save');
             if (!count($request->images)) throw new Error("Image Not found!");
