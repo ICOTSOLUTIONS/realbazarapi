@@ -266,7 +266,6 @@ class AuthController extends Controller
             'business_address' => 'required',
             'province' => 'required',
             'country' => 'required',
-
             'cnic_number' => 'required|digits:13|unique:users,cnic_number',
         ];
 
@@ -275,7 +274,7 @@ class AuthController extends Controller
         ];
 
         $attributes = [
-            'business_name' => 'Username',
+            'business_name' => 'Business Name',
             'business_address' => 'Business Address',
             'province' => 'Province',
             'country' => 'Country',
