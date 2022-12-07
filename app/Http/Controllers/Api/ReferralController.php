@@ -33,6 +33,7 @@ class ReferralController extends Controller
             'email' => 'required|email|unique:referral_users,email',
             'phone' => 'required|digits:11|unique:referral_users,phone',
             'cnic' => 'required|digits:13|unique:referral_users,cnic',
+            'referral_code' => 'required|unique:referral_users,referral_code',
         ]);
 
         if ($valid->fails()) {
@@ -40,13 +41,13 @@ class ReferralController extends Controller
         }
         try {
             DB::beginTransaction();
-            $referr_code = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
+            // $referr_code = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
             $referral_users = new ReferralUser();
             $referral_users->name = $request->name;
             $referral_users->email = $request->email;
             $referral_users->phone = $request->phone;
             $referral_users->cnic = $request->cnic;
-            $referral_users->referral_code = $referr_code;
+            $referral_users->referral_code = $request->referral_code;
             if (!$referral_users->save()) throw new Error("Referral User Not added!");
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Referral User Added Successfully', 'referral_users' => $referral_users ?? []], 200);
@@ -65,6 +66,7 @@ class ReferralController extends Controller
             'email' => 'required|email|unique:referral_users,email,' . $id,
             'phone' => 'required|digits:11|unique:referral_users,phone,' . $id,
             'cnic' => 'required|digits:13|unique:referral_users,cnic,' . $id,
+            // 'referral_code' => 'required|unique:referral_users,referral_code' . $id,
         ]);
 
         if ($valid->fails()) {
@@ -78,6 +80,7 @@ class ReferralController extends Controller
             $referral_users->email = $request->email;
             $referral_users->phone = $request->phone;
             $referral_users->cnic = $request->cnic;
+            // $referral_users->referral_code = $request->referral_code;
             if (!$referral_users->save()) throw new Error("Referral User Not added!");
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Referral User Added Successfully', 'referral_users' => $referral_users ?? []], 200);
