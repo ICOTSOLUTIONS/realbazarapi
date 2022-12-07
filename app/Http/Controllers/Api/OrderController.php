@@ -350,7 +350,7 @@ class OrderController extends Controller
             "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
             "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
             "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
-            "pp_MerchantMPIN"             => Config::get('jazzcashCheckout.jazzcash.MerchantMPIN'),
+            // "pp_MerchantMPIN"             => Config::get('jazzcashCheckout.jazzcash.MerchantMPIN'),
             "pp_SecureHash"         => "",
         );
 
