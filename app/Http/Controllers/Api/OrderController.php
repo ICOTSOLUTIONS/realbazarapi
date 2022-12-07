@@ -20,10 +20,6 @@ use Illuminate\Support\Facades\Config;
 
 class OrderController extends Controller
 {
-    public function ref()
-    {
-        dd(session()->all());
-    }
     public function show(Request $request)
     {
         $valid = Validator::make($request->all(), [
@@ -240,15 +236,15 @@ class OrderController extends Controller
 
     public function jazzcashCheckout(Request $request)
     {
-        // $valid = Validator::make($request->all(), [
-        //     'price' => 'required|gt:0',
-        // ]);
+        $valid = Validator::make($request->all(), [
+            'price' => 'required|gt:0',
+        ]);
 
-        // if ($valid->fails()) {
-        //     return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
-        // }
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
 
-        $price = 100;
+        $price = $request->price ?? 0;
 
         //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         //1.
@@ -304,10 +300,8 @@ class OrderController extends Controller
         $pp_SecureHash = $this->get_SecureHash($post_data);
 
         $post_data['pp_SecureHash'] = $pp_SecureHash;
-        session()->put('ref_no', $pp_TxnRefNo);
-        return view('do_checkout_v', ['post_data' => $post_data]);
-        // if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.TRANSACTION_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
-        // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.TRANSACTION_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     public function jazzcashCardRefund(Request $request)
