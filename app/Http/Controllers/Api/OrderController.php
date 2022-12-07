@@ -327,7 +327,7 @@ class OrderController extends Controller
         //get the current date and time
         //be careful set TimeZone in config/app.php
         $DateTime         = Carbon::now();
-        $pp_TxnDateTime = $DateTime->format('YmdHis');
+        $pp_TxnDateTime = $DateTime->format('YmdH');
 
         // //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         // //3.
