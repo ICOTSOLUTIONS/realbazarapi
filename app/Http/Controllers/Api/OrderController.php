@@ -240,15 +240,15 @@ class OrderController extends Controller
 
     public function jazzcashCheckout(Request $request)
     {
-        $valid = Validator::make($request->all(), [
-            'price' => 'required|gt:0',
-        ]);
+        // $valid = Validator::make($request->all(), [
+        //     'price' => 'required|gt:0',
+        // ]);
 
-        if ($valid->fails()) {
-            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
-        }
+        // if ($valid->fails()) {
+        //     return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        // }
 
-        $price = $request->price ?? 0;
+        $price = 100;
 
         //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         //1.
