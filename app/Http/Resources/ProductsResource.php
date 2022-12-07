@@ -37,7 +37,7 @@ class ProductsResource extends JsonResource
             'sub_category' => $this->subCategories,
             'followers' => $this->user->follow,
             'likes' => $this->likes,
-            'reviews' => $this->reviews,
+            'reviews' => $this->reviews->sortByDesc('id')->values(),
             'rating' => $this->reviews->sum('stars') / 5,
             'totalReviews' => $this->reviews->count(),
             'positiveReviews' =>($this->threeStar != 0) ? ($this->threeStar / $this->reviews->count()) * (100) : 0,
