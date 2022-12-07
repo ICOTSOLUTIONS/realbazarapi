@@ -10,6 +10,8 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = ['category', 'status'];
+    protected $appends = ["threeStar"];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -76,5 +78,11 @@ class Product extends Model
                     ->whereRelation('user', 'is_active', true);
             });
         }
+    }
+    protected function getThreeStarAttribute()
+    {
+        $three_star = 0;
+        $three_star = ProductReview::where('star','>=',3)->count();
+        return $three_star;
     }
 }
