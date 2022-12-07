@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('stripe_id')->nullable();
+            // $table->string('stripe_id')->nullable();
             $table->string('total')->nullable();
-            $table->string('brand')->nullable();
-            $table->string('card')->nullable();
+            // $table->string('brand')->nullable();
+            $table->string('txt_refno')->nullable();
             $table->enum('payment_method', ['easypaisa', 'jazzcash', 'cash on delivery'])->default('cash on delivery');
             $table->timestamps();
         });

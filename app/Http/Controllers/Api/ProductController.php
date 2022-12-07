@@ -460,7 +460,7 @@ class ProductController extends Controller
     {
         $valid = Validator::make($request->all(), [
             'title' => 'required',
-            'price' => 'required',
+            'price' => 'nullable',
             'discount' => 'nullable',
             'product_desc' => 'required',
             'product_image' => 'required|array',
@@ -493,7 +493,7 @@ class ProductController extends Controller
                 $new_product->user_id = $user->id;
                 $new_product->sub_category_id = $request->sub_category_id;
                 $new_product->title = $request->title;
-                $new_product->price = $request->price;
+                $new_product->price = $request->price ?? 0;
                 $new_product->discount_price = $request->discount ?? 0;
                 $new_product->color = $request->color;
                 $new_product->tags = json_encode($request->tags);
@@ -545,7 +545,7 @@ class ProductController extends Controller
         $valid = Validator::make($request->all(), [
             'id' => 'required',
             'title' => 'required',
-            'price' => 'required',
+            'price' => 'nullable',
             'discount' => 'nullable',
             'product_desc' => 'required',
             // 'product_image' => 'required|array',
@@ -850,7 +850,11 @@ class ProductController extends Controller
         $review->product_id = $request->product_id;
         $review->stars = $request->stars;
         $review->comments = $request->comments;
-        if ($review->save()) return response()->json(['status' => true, 'Message' => "Review Successfully"], 200);
+        if ($review->save()) {
+            $products = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->where('id', $request->product_id)->first();
+
+            return response()->json(['status' => true, 'Message' => "Review Successfully", 'Products' => new ProductsResource($products) ?? []], 200);
+        }
         return response()->json(['status' => false, 'Message' => "Review not Successfull"]);
     }
 
