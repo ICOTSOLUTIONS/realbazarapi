@@ -304,7 +304,7 @@ class OrderController extends Controller
         $pp_SecureHash = $this->get_SecureHash($post_data);
 
         $post_data['pp_SecureHash'] = $pp_SecureHash;
-        session()->put('ref_no',$pp_TxnRefNo);
+        session()->put('ref_no', $pp_TxnRefNo);
         return view('do_checkout_v', ['post_data' => $post_data]);
         // if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.TRANSACTION_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
         // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
@@ -387,9 +387,9 @@ class OrderController extends Controller
         $url = Config::get('jazzcashCheckout.jazzcash.WEB_RETURN_URL');
         if (!empty($request->pp_ResponseCode)) {
             if ($request->pp_ResponseCode == 000) {
-                return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
+                return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage . '&pp_TxnRefNo=' . $request->pp_TxnRefNo);
             } else {
-                return redirect($url . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage);
+                return redirect($url . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage . '&pp_TxnRefNo=' . $request->pp_TxnRefNo);
             }
         } else {
             return redirect($url);
