@@ -82,7 +82,7 @@ class Product extends Model
     protected function getThreeStarAttribute()
     {
         $three_star = 0;
-        $three_star = ProductReview::where('star','>=',3)->count();
+        $three_star = ProductReview::where('stars','>=',3)->count();
         return $three_star;
     }
 }
