@@ -40,7 +40,7 @@ class ProductsResource extends JsonResource
             'reviews' => $this->reviews,
             'rating' => $this->reviews->sum('stars') / 5,
             'totalReviews' => $this->reviews->count(),
-            'positiveReviews' => $this->threeStar,
+            'positiveReviews' => ($this->threeStar / $this->reviews->count()) * (100),
             'totalLikes' => $this->likes->count(),
             'totalFollowers' => $this->user->follow->count(),
         ];
