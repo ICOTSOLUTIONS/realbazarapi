@@ -34,6 +34,12 @@ class ReferralController extends Controller
             'phone' => 'required|digits:11|unique:referral_users,phone',
             'cnic' => 'required|digits:13|unique:referral_users,cnic',
             'referral_code' => 'required|unique:referral_users,referral_code',
+        ], [], [
+            'name' => 'Name',
+            'email' => 'Email',
+            'phone' => 'Phone',
+            'cnic' => 'CNIC',
+            'referral_code' => 'Referral Code',
         ]);
 
         if ($valid->fails()) {
@@ -66,7 +72,13 @@ class ReferralController extends Controller
             'email' => 'required|email|unique:referral_users,email,' . $id,
             'phone' => 'required|digits:11|unique:referral_users,phone,' . $id,
             'cnic' => 'required|digits:13|unique:referral_users,cnic,' . $id,
-            // 'referral_code' => 'required|unique:referral_users,referral_code' . $id,
+            // 'referral_code' => 'required|unique:referral_users,referral_code,' . $id,
+        ], [], [
+            'name' => 'Name',
+            'email' => 'Email',
+            'phone' => 'Phone',
+            'cnic' => 'CNIC',
+            // 'referral_code' => 'Referral Code',
         ]);
 
         if ($valid->fails()) {
