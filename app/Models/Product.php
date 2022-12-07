@@ -10,8 +10,6 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = ['category', 'status'];
-    protected $appends = ["threeStar"];
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -64,7 +62,9 @@ class Product extends Model
                 });
             } else {
                 static::addGlobalScope('active', function ($builder) {
-                    $builder->orderBy('id', 'DESC')->whereRelation('user', 'is_block', false)->where('is_delete', false);
+                    $builder->orderBy('id', 'DESC')->
+                    whereRelation('user', 'is_block', false)->
+                    where('is_delete', false);
                 });
             }
         } else {
@@ -76,11 +76,5 @@ class Product extends Model
                     ->whereRelation('user', 'is_active', true);
             });
         }
-    }
-    protected function getThreeStarAttribute()
-    {
-        $three_star = 0;
-        $three_star = ProductReview::where('id', $this->id)->where('stars',5)->count();
-        return $three_star;
     }
 }
