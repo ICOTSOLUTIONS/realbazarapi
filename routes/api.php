@@ -66,6 +66,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('users/order/{status?}', [Api\OrderController::class, 'userOrder']);
     Route::get('sellers/order/{status?}', [Api\OrderController::class, 'sellerOrder']);
     Route::post('status/change/order', [Api\OrderController::class, 'orderStatusChange']);
+    Route::get('get/refund/order', [Api\OrderController::class, 'orderRefundGet']);
+    Route::post('refund/order', [Api\OrderController::class, 'orderRefund']);
 
     //package
     Route::get('/package', [Api\PackageController::class, 'show']);
@@ -161,7 +163,7 @@ Route::get('/banners/{section}', [Api\BannerController::class, 'banners']);
 Route::get('/homePageImages/{section}', [Api\HomePageImageController::class, 'homePageImages']);
 
 //sales
-Route::get('/seller/top/sales', [Api\ProductController::class, 'seller_top_sales']);
+Route::get('/seller/top/sales/{role?}', [Api\ProductController::class, 'seller_top_sales']);
 
 
 
@@ -172,5 +174,6 @@ Route::post('facebook/login', [Api\SocialLoginController::class, "facebookLogin"
 //payment
 Route::post('jazzcash/checkout', [Api\OrderController::class, "jazzcashCheckout"]);
 Route::post('jazzcash/card/refund', [Api\OrderController::class, "jazzcashCardRefund"]);
+Route::post('jazzcash/mobile/refund', [Api\OrderController::class, "jazzcashMobileRefund"]);
 Route::post('easypaisa/checkout', [Api\OrderController::class, "easypaisaCheckout"]);
 Route::post('payment/status', [Api\OrderController::class, "jazzcashPaymentStatus"]);

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\NotiSend;
+use App\Models\orderRefund;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 
@@ -92,6 +93,13 @@ class OrderController extends Controller
         }
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
+    }
+
+    function orderRefundGet()
+    {
+        $orderRefund = orderRefund::with('orders')->get();
+        if (count($orderRefund)) return response()->json(['status' => true, 'Message' => 'Refund Order found', 'orderRefund' => $orderRefund ?? []], 200);
+        else return response()->json(['status' => false, 'Message' => 'Refund Order not found', 'orderRefund' => $orderRefund ?? []]);
     }
 
     public function order(Request $request)
@@ -295,40 +303,18 @@ class OrderController extends Controller
 
     public function jazzcashCardRefund(Request $request)
     {
-        // $valid = Validator::make($request->all(), [
-        //     'price' => 'required|gt:0',
-        // ]);
+        $valid = Validator::make($request->all(), [
+            'price' => 'required|gt:0',
+            'pp_TxnRefNo' => 'required',
+        ]);
 
-        // if ($valid->fails()) {
-        //     return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
-        // }
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
 
-        // $price = $request->price ?? 0;
-        $price = 100;
-
-        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-        //1.
-        //get formatted price. remove period(.) from the price
+        $price = $request->price ?? 0;
         $pp_Amount     = $price * 100;
-
-        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-        //2.
-        //get the current date and time
-        //be careful set TimeZone in config/app.php
-        $DateTime         = Carbon::now();
-        $pp_TxnDateTime = $DateTime->format('YmdH');
-
-        // //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-        // //3.
-        // //to make expiry date and time add one hour to current date and time
-        // $ExpiryDateTime = $DateTime;
-        // $ExpiryDateTime->modify('+' . 1 . ' hours');
-        // $pp_TxnExpiryDateTime = $ExpiryDateTime->format('YmdHis');
-
-        //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-        //4.
-        //make unique transaction id using current date
-        $pp_TxnRefNo = 'T' . $pp_TxnDateTime;
+        $pp_TxnRefNo = $request->pp_TxnRefNo;
 
 
         //--------------------------------------------------------------------------------
@@ -339,15 +325,48 @@ class OrderController extends Controller
             "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
             "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
             "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
-            // "pp_MerchantMPIN"             => Config::get('jazzcashCheckout.jazzcash.MerchantMPIN'),
             "pp_SecureHash"         => "",
         );
 
         $pp_SecureHash = $this->get_SecureHash($post_data);
         $post_data['pp_SecureHash'] = $pp_SecureHash;
-        return view('do_checkout_v', ['post_data' => $post_data]);
-        // if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.CARD_REFUND_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
-        // else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+        // return view('do_checkout_v', ['post_data' => $post_data]);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.CARD_REFUND_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+    }
+
+    public function jazzcashMobileRefund(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'price' => 'required|gt:0',
+            'pp_TxnRefNo' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        $price = $request->price ?? 0;
+        $pp_Amount     = $price * 100;
+        $pp_TxnRefNo = $request->pp_TxnRefNo;
+
+
+        //--------------------------------------------------------------------------------
+        //postData
+        $post_data =  array(
+            "pp_TxnRefNo"             => $pp_TxnRefNo,
+            "pp_Amount"             => $pp_Amount,
+            "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
+            "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
+            "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
+            "pp_SecureHash"         => "",
+        );
+
+        $pp_SecureHash = $this->get_SecureHash($post_data);
+        $post_data['pp_SecureHash'] = $pp_SecureHash;
+        // return view('do_checkout_v', ['post_data' => $post_data]);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.MOBILE_REFUND_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
     private function get_SecureHash($data_array)
@@ -439,5 +458,23 @@ class OrderController extends Controller
 
         if (count($post_data)) return response()->json(['status' => true, 'url' => Config::get('easypaisaCheckout.easypaisa.TRANSACTION_POST_URL') . $param], 200);
         else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+    }
+
+    function orderRefund(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'order_id' => 'required',
+        ], [], [
+            'order_id' => 'Order Id',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        $refundOrder = new orderRefund();
+        $refundOrder->order_id = $request->order_id;
+        if ($refundOrder->save())  return response()->json(['status' => true, 'Message' => 'Order Refund Request Successfull', 'refundOrder' => $refundOrder ?? []], 200);
+        else  return response()->json(['status' => false, 'Message' => 'Order Refund Request Failed', 'refundOrder' => $refundOrder ?? []]);
     }
 }
