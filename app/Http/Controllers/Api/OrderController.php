@@ -135,6 +135,7 @@ class OrderController extends Controller
                         foreach ($orders['product'] as $key => $product) {
                             if (is_object($product)) $product = $product->toArray();
                             $product_price = Product::where('id', $product['id'])->first();
+                            dd($product_price->discount_price);
                             $order_product = new OrderProduct();
                             $order_product->order_id = $order->id;
                             $order_product->product_id = $product['id'];
