@@ -247,7 +247,6 @@ class OrderController extends Controller
         if ($refundOrder->save()) {
             $order = Order::where('id', $refundOrder->order_id)->first();
             $user = $order->users;
-            dd($user);
             if ($refundOrder->status == 'Complete') {
                 $title = 'YOUR REFUND REQUEST HAS BEEN COMPLETED';
                 $message = 'Dear ' . $user->username . ' your refund has been completed from admin-The Real Bazaar';
