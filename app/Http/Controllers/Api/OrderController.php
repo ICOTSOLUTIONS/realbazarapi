@@ -511,7 +511,7 @@ class OrderController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
-        $refundOrder = new OrderRefund();
+        $refundOrder = new RefundOrder();
         $refundOrder->order_id = $request->order_id;
         if ($refundOrder->save())  return response()->json(['status' => true, 'Message' => 'Order Refund Request Successfull', 'refundOrder' => $refundOrder ?? []], 200);
         else  return response()->json(['status' => false, 'Message' => 'Order Refund Request Failed', 'refundOrder' => $refundOrder ?? []]);
