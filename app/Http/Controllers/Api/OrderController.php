@@ -381,6 +381,7 @@ class OrderController extends Controller
         $valid = Validator::make($request->all(), [
             'price' => 'required|gt:0',
             'pp_TxnRefNo' => 'required',
+            'mpin' => 'required',
         ]);
 
         if ($valid->fails()) {
@@ -390,6 +391,7 @@ class OrderController extends Controller
         $price = $request->price ?? 0;
         $pp_Amount     = $price * 100;
         $pp_TxnRefNo = $request->pp_TxnRefNo;
+        $pp_MerchantMPIN = $request->mpin;
 
 
         //--------------------------------------------------------------------------------
@@ -400,6 +402,7 @@ class OrderController extends Controller
             "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
             "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
             "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
+            "pp_MerchantMPIN"             => $pp_MerchantMPIN,
             "pp_SecureHash"         => "",
         );
 
