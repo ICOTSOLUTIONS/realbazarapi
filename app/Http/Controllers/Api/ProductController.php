@@ -970,19 +970,21 @@ class ProductController extends Controller
 
     public function seller_top_sales($role = null)
     {
-        $seller_top_sales = User::withCount('sellers_orders_products');
         if ($role == 'wholesaler') {
-            $seller_top_sales->whereHas('role', function ($query) {
-                $query->where('name', 'wholesaler');
-            })->get();
+            $seller_top_sales = User::withCount('sellers_orders_products')
+                ->whereHas('role', function ($query) {
+                    $query->where('name', 'wholesaler');
+                })->get();
         } elseif ($role == 'retailer') {
-            $seller_top_sales->whereHas('role', function ($query) {
-                $query->where('name', 'retailer');
-            })->get();
+            $seller_top_sales = User::withCount('sellers_orders_products')
+                ->whereHas('role', function ($query) {
+                    $query->where('name', 'retailer');
+                })->get();
         } else {
-            $seller_top_sales->whereHas('role', function ($query) {
-                $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
-            })->get();
+            $seller_top_sales = User::withCount('sellers_orders_products')
+                ->whereHas('role', function ($query) {
+                    $query->where('name', 'retailer')->orWhere('name', 'wholesaler');
+                })->get();
         }
         $seller_top_sales = $seller_top_sales->sortByDesc('sellers_orders_products_count')->take(10)->values();
         if (count($seller_top_sales)) return response()->json(["status" => true, 'seller_top_sales' => $seller_top_sales ?? []], 200);
