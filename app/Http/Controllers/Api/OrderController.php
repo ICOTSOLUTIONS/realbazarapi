@@ -240,14 +240,15 @@ class OrderController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $order = RefundOrder::where('id', $request->id)->first();
+        $refundOrder = RefundOrder::where('id', $request->id)->first();
         if ($request->status == 'success') $status = 'Complete';
         else $status = 'Pending';
-        $order->status = $status;
-        if ($order->save()) {
-            $user = $order->orders();
+        $refundOrder->status = $status;
+        if ($refundOrder->save()) {
+            $order = Order::where('id', $refundOrder->order_id)->first();
+            $user = $order->users;
             dd($user);
-            if ($order->status == 'Complete') {
+            if ($refundOrder->status == 'Complete') {
                 $title = 'YOUR REFUND REQUEST HAS BEEN COMPLETED';
                 $message = 'Dear ' . $user->username . ' your refund has been completed from admin-The Real Bazaar';
                 $appnot = new AppNotification();
