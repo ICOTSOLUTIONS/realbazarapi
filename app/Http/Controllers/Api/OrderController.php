@@ -235,6 +235,7 @@ class OrderController extends Controller
     {
         $valid = Validator::make($request->all(), [
             'id' => 'required',
+            'status' => 'required',
         ]);
 
         if ($valid->fails()) {
