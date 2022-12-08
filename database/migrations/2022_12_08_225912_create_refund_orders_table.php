@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('order_refunds', function (Blueprint $table) {
+        Schema::create('refund_orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->enum('status', ['Processing', 'Pending', 'Complete'])->default('Processing');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_refunds');
+        Schema::dropIfExists('refund_orders');
     }
 };

@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\NotiSend;
-use App\Models\OrderRefund;
+use App\Models\RefundOrder;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 
@@ -97,7 +97,7 @@ class OrderController extends Controller
 
     function orderRefundGet()
     {
-        $orderRefund = OrderRefund::with('orders.user_payments.payments')->orderBy('id', 'DESC')->get();
+        $orderRefund = RefundOrder::with('orders.user_payments.payments')->orderBy('id', 'DESC')->get();
         if (count($orderRefund)) return response()->json(['status' => true, 'Message' => 'Refund Order found', 'orderRefund' => $orderRefund ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Refund Order not found', 'orderRefund' => $orderRefund ?? []]);
     }
@@ -240,7 +240,7 @@ class OrderController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $order = OrderRefund::where('id', $request->id)->first();
+        $order = RefundOrder::where('id', $request->id)->first();
         if ($request->status == 'success') $status = 'Complete';
         else $status = 'Pending';
         $order->status = $status;

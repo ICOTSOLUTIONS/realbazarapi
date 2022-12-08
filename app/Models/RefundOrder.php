@@ -5,10 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderRefund extends Model
+class RefundOrder extends Model
 {
     use HasFactory;
-
     public function orders()
     {
         return $this->belongsTo(User::class, 'order_id', 'id');
