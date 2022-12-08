@@ -11,6 +11,6 @@ class orderRefund extends Model
 
     public function orders()
     {
-        return $this->belongsTo(Order::class, 'id', 'order_id');
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }
