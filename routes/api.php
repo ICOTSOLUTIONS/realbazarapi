@@ -68,6 +68,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('status/change/order', [Api\OrderController::class, 'orderStatusChange']);
     Route::get('get/refund/order', [Api\OrderController::class, 'orderRefundGet']);
     Route::post('refund/order', [Api\OrderController::class, 'orderRefund']);
+    Route::post('status/change/refund/order', [Api\OrderController::class, 'orderRefundStatusChange']);
 
     //package
     Route::get('/package', [Api\PackageController::class, 'show']);

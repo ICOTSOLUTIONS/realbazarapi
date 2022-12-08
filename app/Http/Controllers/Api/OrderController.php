@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\NotiSend;
-use App\Models\orderRefund;
+use App\Models\OrderRefund;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 
@@ -97,7 +97,7 @@ class OrderController extends Controller
 
     function orderRefundGet()
     {
-        $orderRefund = orderRefund::with('orders.user_payments.payments')->orderBy('id', 'DESC')->get();
+        $orderRefund = OrderRefund::with('orders.user_payments.payments')->orderBy('id', 'DESC')->get();
         if (count($orderRefund)) return response()->json(['status' => true, 'Message' => 'Refund Order found', 'orderRefund' => $orderRefund ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Refund Order not found', 'orderRefund' => $orderRefund ?? []]);
     }
@@ -229,6 +229,45 @@ class OrderController extends Controller
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Pending Successfully'], 200);
             }
         } else return response()->json(["status" => false, 'Message' => 'Order Status Change not Successfully']);
+    }
+
+    public function orderRefundStatusChange(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'id' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        $order = OrderRefund::where('id', $request->id)->first();
+        if ($request->status == 'success') $status = 'Complete';
+        else $status = 'Pending';
+        $order->status = $status;
+        if ($order->save()) {
+            $user = $order->orders()->users;
+            if ($order->status == 'Complete') {
+                $title = 'YOUR REFUND REQUEST HAS BEEN COMPLETED';
+                $message = 'Dear ' . $user->username . ' your refund has been completed from admin-The Real Bazaar';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
+                return response()->json(["status" => true, 'Message' => 'Order Refund Status Change to Completed'], 200);
+            } else {
+                $title = 'YOUR REFUND REQUEST HAS BEEN PENDING';
+                $message = 'Dear ' . $user->username . ' your refund request has been pending please contact with admin-The Real Bazaar';
+                $appnot = new AppNotification();
+                $appnot->user_id = $user->id;
+                $appnot->notification = $message;
+                $appnot->navigation = $title;
+                $appnot->save();
+                NotiSend::sendNotif($user->device_token, $title, $message);
+                return response()->json(["status" => true, 'Message' => 'Order Refund Status Change to Pending'], 200);
+            }
+        } else return response()->json(["status" => false, 'Message' => 'Order Refund Status Change not Successfully']);
     }
 
     public function jazzcashCheckout(Request $request)
@@ -472,7 +511,7 @@ class OrderController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
-        $refundOrder = new orderRefund();
+        $refundOrder = new OrderRefund();
         $refundOrder->order_id = $request->order_id;
         if ($refundOrder->save())  return response()->json(['status' => true, 'Message' => 'Order Refund Request Successfull', 'refundOrder' => $refundOrder ?? []], 200);
         else  return response()->json(['status' => false, 'Message' => 'Order Refund Request Failed', 'refundOrder' => $refundOrder ?? []]);
