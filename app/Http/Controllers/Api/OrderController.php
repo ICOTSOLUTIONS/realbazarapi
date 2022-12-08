@@ -97,7 +97,7 @@ class OrderController extends Controller
 
     function orderRefundGet()
     {
-        $orderRefund = orderRefund::with('orders')->get();
+        $orderRefund = orderRefund::with('orders.user_payments')->get();
         if (count($orderRefund)) return response()->json(['status' => true, 'Message' => 'Refund Order found', 'orderRefund' => $orderRefund ?? []], 200);
         else return response()->json(['status' => false, 'Message' => 'Refund Order not found', 'orderRefund' => $orderRefund ?? []]);
     }
