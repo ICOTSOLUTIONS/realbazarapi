@@ -10,6 +10,6 @@ class RefundOrder extends Model
     use HasFactory;
     public function orders()
     {
-        return $this->belongsTo(User::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }
