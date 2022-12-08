@@ -245,7 +245,8 @@ class OrderController extends Controller
         else $status = 'Pending';
         $order->status = $status;
         if ($order->save()) {
-            $user = $order->orders()->users();
+            $user = $order->orders();
+            dd($user);
             if ($order->status == 'Complete') {
                 $title = 'YOUR REFUND REQUEST HAS BEEN COMPLETED';
                 $message = 'Dear ' . $user->username . ' your refund has been completed from admin-The Real Bazaar';
