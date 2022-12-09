@@ -152,7 +152,7 @@ class OrderController extends Controller
                 $payment = new Payment();
                 $payment->payment_method = $request->payment_method;
                 $payment->total = $total;
-                if ($request->payment_method == 'jazzcash') $payment->txt_refno = $request->txt_refno;
+                $payment->txt_refno = $request->txt_refno;
                 $payment->save();
                 $payment->orders()->sync($order_ids);
                 $user = User::whereRelation('role', 'name', 'admin')->first();
