@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class SocialLoginController extends Controller
@@ -48,7 +49,13 @@ class SocialLoginController extends Controller
         $socailLogin->last_name =  request()->last_name;
         $socailLogin->username =  request()->name;
         if (isset(request()->phone)) $socailLogin->phone =  request()->phone;
-        if (isset(request()->photo)) $socailLogin->image =  request()->photo;
+        if (isset(request()->photo)) {
+            $url = request()->photo;
+            $contents = file_get_contents($url);
+            $name = substr($url, strrpos($url, '/') + 1);
+            Storage::disk('public')->put('image/' . $name, $contents);
+            $socailLogin->image =  'image/' . $name;
+        }
         if ($socailLogin->save()) {
             if (auth()->loginUsingId($socailLogin->id)) {
                 $user = auth()->user()->load('role');
@@ -100,8 +107,14 @@ class SocialLoginController extends Controller
         $socailLogin->first_name =  request()->first_name;
         $socailLogin->last_name =  request()->last_name;
         $socailLogin->username =  request()->name;
-        if (isset(request()->photo)) $socailLogin->image =  request()->photo;
         if (isset(request()->phone)) $socailLogin->phone =  request()->phone;
+        if (isset(request()->photo)) {
+            $url = request()->photo;
+            $contents = file_get_contents($url);
+            $name = substr($url, strrpos($url, '/') + 1);
+            Storage::disk('public')->put('image/' . $name, $contents);
+            $socailLogin->image =  'image/' . $name;
+        }
         if ($socailLogin->save()) {
             if (auth()->loginUsingId($socailLogin->id)) {
                 $user = auth()->user()->load('role');

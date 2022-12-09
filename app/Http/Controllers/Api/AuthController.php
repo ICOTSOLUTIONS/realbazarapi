@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Api\NotiSend;
 use App\Models\ReferralUser;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -516,6 +517,19 @@ class AuthController extends Controller
         } else {
             return response()->json(['status' => false, 'Message' => 'Invalid Credentials']);
         }
+    }
+
+    public function logout()
+    {
+        $user = User::where('id', auth()->user()->id)->first();
+        if (!empty($user)) {
+            $user->device_token = null;
+            if ($user->save()) {
+                // if (Auth::logout())
+                return response()->json(['status' => true, 'Message' => 'Logout Successfully'], 200);
+                // else return response()->json(['status' => false, 'Message' => 'Logout Failed']);
+            } else return response()->json(['status' => false, 'Message' => 'Logout Failed']);
+        } else return response()->json(['status' => false, 'Message' => 'User not Found']);
     }
 
     public function forgot(Request $request)
