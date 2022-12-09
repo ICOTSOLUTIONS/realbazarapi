@@ -15,6 +15,6 @@ return [
         'TRANSACTION_POST_URL'  => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/',
         'MOBILE_REFUND_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Purchase/domwalletrefundtransaction/',
         'CARD_REFUND_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/authorize/Refund',
-        'STATUS_INQUIRY_POST_URL'  => 'https://payments.jazzcash.com.pk/ApplicationAPI/API/PaymentInquiry/Inquire',
+        'STATUS_INQUIRY_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/PaymentInquiry/Inquire',
     ]
 ];
