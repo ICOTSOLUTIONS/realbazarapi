@@ -176,5 +176,6 @@ Route::post('facebook/login', [Api\SocialLoginController::class, "facebookLogin"
 Route::post('jazzcash/checkout', [Api\OrderController::class, "jazzcashCheckout"]);
 Route::post('jazzcash/card/refund', [Api\OrderController::class, "jazzcashCardRefund"]);
 Route::post('jazzcash/mobile/refund', [Api\OrderController::class, "jazzcashMobileRefund"]);
+Route::post('jazzcash/status/inquiry', [Api\OrderController::class, "jazzcashStatusInquiry"]);
 Route::post('easypaisa/checkout', [Api\OrderController::class, "easypaisaCheckout"]);
 Route::post('payment/status', [Api\OrderController::class, "jazzcashPaymentStatus"]);

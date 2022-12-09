@@ -413,6 +413,34 @@ class OrderController extends Controller
         else return response()->json(['status' => false,  'Message' => 'Request Failed']);
     }
 
+    public function jazzcashStatusInquiry(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'price' => 'required|gt:0',
+            'pp_TxnRefNo' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        $pp_TxnRefNo = $request->pp_TxnRefNo;
+        //--------------------------------------------------------------------------------
+        //postData
+        $post_data =  array(
+            "pp_TxnRefNo"             => $pp_TxnRefNo,
+            "pp_MerchantID"         => Config::get('jazzcashCheckout.jazzcash.MERCHANT_ID'),
+            "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
+            "pp_SecureHash"         => "",
+        );
+
+        $pp_SecureHash = $this->get_SecureHash($post_data);
+        $post_data['pp_SecureHash'] = $pp_SecureHash;
+        // return view('do_checkout_v', ['post_data' => $post_data]);
+        if (count($post_data)) return response()->json(['status' => true,  'url' => Config::get('jazzcashCheckout.jazzcash.STATUS_INQUIRY_POST_URL') ?? [], 'data' => $post_data ?? []], 200);
+        else return response()->json(['status' => false,  'Message' => 'Request Failed']);
+    }
+
     private function get_SecureHash($data_array)
     {
         ksort($data_array);
