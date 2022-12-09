@@ -417,7 +417,7 @@ class OrderController extends Controller
     public function jazzcashStatusInquiry(Request $request)
     {
         $valid = Validator::make($request->all(), [
-            'price' => 'required|gt:0',
+            // 'price' => 'required|gt:0',
             'pp_TxnRefNo' => 'required',
         ]);
 
