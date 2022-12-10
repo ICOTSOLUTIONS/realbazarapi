@@ -52,9 +52,9 @@ class SocialLoginController extends Controller
         if (isset(request()->photo)) {
             $url = request()->photo;
             $contents = file_get_contents($url);
-            $name = substr($url, strrpos($url, '/') + 1);
-            Storage::disk('public')->put('image/' . $name, $contents);
-            $socailLogin->image =  'image/' . $name;
+            $name = 'image/Image-'. time() . "-" . rand() . ".png";
+            Storage::disk('public')->put($name, $contents);
+            $socailLogin->image =  $name;
         }
         if ($socailLogin->save()) {
             if (auth()->loginUsingId($socailLogin->id)) {
@@ -111,9 +111,9 @@ class SocialLoginController extends Controller
         if (isset(request()->photo)) {
             $url = request()->photo;
             $contents = file_get_contents($url);
-            $name = substr($url, strrpos($url, '/') + 1);
-            Storage::disk('public')->put('image/' . $name, $contents);
-            $socailLogin->image =  'image/' . $name;
+            $name = 'image/Image-'. time() . "-" . rand() . ".png";
+            Storage::disk('public')->put($name, $contents);
+            $socailLogin->image =  $name;
         }
         if ($socailLogin->save()) {
             if (auth()->loginUsingId($socailLogin->id)) {
