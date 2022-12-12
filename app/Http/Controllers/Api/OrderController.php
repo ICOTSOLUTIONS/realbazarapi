@@ -355,7 +355,7 @@ class OrderController extends Controller
         }
 
         $price = $request->price ?? 0;
-        $pp_Amount     = $price * 100;
+        $pp_Amount     = $price;
         $pp_TxnRefNo = $request->pp_TxnRefNo;
 
 
@@ -390,7 +390,7 @@ class OrderController extends Controller
         }
 
         $price = $request->price ?? 0;
-        $pp_Amount     = $price * 100;
+        $pp_Amount     = $price;
         $pp_TxnRefNo = $request->pp_TxnRefNo;
         $pp_MerchantMPIN = $request->mpin;
 
