@@ -10,7 +10,7 @@ return [
         'LANGUAGE'       => 'EN',
         'MerchantMPIN'       => '0000',
 
-        'WEB_RETURN_URL'  => 'https://real-bazar-web.vercel.app/account/payment/',
+        'WEB_RETURN_URL'  => 'https://realbazar.pk/account/payment/',
         'RETURN_URL'  => 'https://realbazarapi.icotsolutions.com/api/payment/status',
         'TRANSACTION_POST_URL'  => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/',
         'MOBILE_REFUND_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Purchase/domwalletrefundtransaction/',
