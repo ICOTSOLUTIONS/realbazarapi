@@ -14,7 +14,6 @@ use App\Http\Controllers\{Api};
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-Route::get('/', [Api\OrderController::class, "jazzcashCardRefund"]);
+Route::get('/', function () {
+    return view('welcome');
+});
