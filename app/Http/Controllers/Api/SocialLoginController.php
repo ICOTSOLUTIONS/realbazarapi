@@ -31,6 +31,13 @@ class SocialLoginController extends Controller
                 $user = auth()->user()->load('role');
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
+                if (isset(request()->photo)) {
+                    $url = request()->photo;
+                    $contents = file_get_contents($url);
+                    $name = 'image/Image-'. time() . "-" . rand() . ".png";
+                    Storage::disk('public')->put($name, $contents);
+                    $user->image =  $name;
+                }
                 $user->save();
                 return response()->json(["status" => true, "Message" => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             } else {
@@ -90,6 +97,13 @@ class SocialLoginController extends Controller
                 $user = auth()->user()->load('role');
                 $token = $user->createToken('token')->accessToken;
                 $user->device_token = request()->token;
+                if (isset(request()->photo)) {
+                    $url = request()->photo;
+                    $contents = file_get_contents($url);
+                    $name = 'image/Image-'. time() . "-" . rand() . ".png";
+                    Storage::disk('public')->put($name, $contents);
+                    $user->image =  $name;
+                }
                 $user->save();
                 return response()->json(["status" => true, "Message" => 'Login Successfull', 'token' => $token, 'user' => $user], 200);
             } else {
