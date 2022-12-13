@@ -837,7 +837,7 @@ class ProductController extends Controller
     {
         $valid = Validator::make($request->all(), [
             'product_id' => 'required',
-            'stars' => 'required',
+            'stars' => 'required|lt:6',
             'comments' => 'required',
         ]);
 
