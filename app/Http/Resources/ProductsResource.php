@@ -38,7 +38,7 @@ class ProductsResource extends JsonResource
             'followers' => $this->user->follow->sortByDesc('id')->values(),
             'likes' => $this->likes->sortByDesc('id')->values(),
             'reviews' => $this->reviews->sortByDesc('id')->values(),
-            'rating' => round($this->reviews->avg('stars'),0) ,
+            'rating' => round($this->reviews->avg('stars'),1) ,
             'totalReviews' => $this->reviews->count(),
             'positiveReviews' =>($this->threeStar != 0) ? ($this->threeStar / $this->reviews->count()) * (100) : 0,
             'totalLikes' => $this->likes->count(),
