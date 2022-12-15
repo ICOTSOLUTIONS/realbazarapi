@@ -484,7 +484,7 @@ class OrderController extends Controller
         $price = $request->price;
 
         $amount     = $price * 100;
-        $amount     = 10;
+        // $amount     = 10;
 
         $DateTime         = Carbon::now();
         $dateTime = $DateTime->format('dms');
