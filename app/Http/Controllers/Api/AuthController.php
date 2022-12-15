@@ -722,7 +722,7 @@ class AuthController extends Controller
                 }
                 $updatedUser = User::with(['role', 'cnic_image'])->where('id', $user->id)->first();
                 DB::commit();
-                return response()->json(['status' => true, 'Message' => "User Successfully Updated", 'user' => $updatedUser,], 200);
+                return response()->json(['status' => true, 'Message' => "Profile Update Successfully", 'user' => $updatedUser,], 200);
             } catch (\Throwable $th) {
                 DB::rollBack();
                 return response()->json(['status' => false, 'Message' => $th->getMessage()]);
