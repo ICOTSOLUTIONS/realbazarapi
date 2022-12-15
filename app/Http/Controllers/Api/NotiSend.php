@@ -10,6 +10,7 @@ static  function sendNotif($token,$title,$msg){
               (
                 'body'  => "$msg",
                 'title' => "$title",
+                'android_channel_id' => "realbazar",
                 'receiver' => ' ',
                 'icon'  => "https://image.flaticon.com/icons/png/512/270/270014.png",/*Default Icon*/
                 'sound' => 'mySound'/*Default sound*/
