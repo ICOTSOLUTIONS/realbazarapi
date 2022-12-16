@@ -2,9 +2,9 @@
 
 return [
     'jazzcash' => [
-        'MERCHANT_ID'      => 'MC51355',
-        'PASSWORD'          => 'z70s61hue2',
-        'INTEGERITY_SALT' => '0yyx9u5uw1',
+        'MERCHANT_ID'      => '99335955',
+        'PASSWORD'          => 'xz5z30e245',
+        'INTEGERITY_SALT' => '2xy91y8d9w',
         'CURRENCY_CODE'  => 'PKR',
         'VERSION'         => '1.1',
         'LANGUAGE'       => 'EN',
@@ -12,9 +12,9 @@ return [
 
         'WEB_RETURN_URL'  => 'https://realbazar.pk/account/payment/',
         'RETURN_URL'  => 'https://realbazarapi.icotsolutions.com/api/payment/status',
-        'TRANSACTION_POST_URL'  => 'https://sandbox.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/',
-        'MOBILE_REFUND_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Purchase/domwalletrefundtransaction/',
-        'CARD_REFUND_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/authorize/Refund',
-        'STATUS_INQUIRY_POST_URL'  => 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/PaymentInquiry/Inquire',
+        'TRANSACTION_POST_URL'  => 'https://payments.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/',
+        'MOBILE_REFUND_POST_URL'  => 'https://payments.jazzcash.com.pk/ApplicationAPI/API/Purchase/domwalletrefundtransaction/',
+        'CARD_REFUND_POST_URL'  => 'https://payments.jazzcash.com.pk/ApplicationAPI/API/authorize/Refund',
+        'STATUS_INQUIRY_POST_URL'  => 'https://payments.jazzcash.com.pk/ApplicationAPI/API/PaymentInquiry/Inquire',
     ]
 ];
