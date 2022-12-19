@@ -11,7 +11,7 @@ return [
         'MerchantMPIN'       => '0000',
 
         'WEB_RETURN_URL'  => 'https://realbazar.pk/account/payment/',
-        'RETURN_URL'  => 'https://realbazarapi.icotsolutions.com/api/payment/status',
+        'RETURN_URL'  => 'https://api.realbazar.pk/api/payment/status',
         'TRANSACTION_POST_URL'  => 'https://payments.jazzcash.com.pk/CustomerPortal/transactionmanagement/merchantform/',
         'MOBILE_REFUND_POST_URL'  => 'https://payments.jazzcash.com.pk/ApplicationAPI/API/Purchase/domwalletrefundtransaction/',
         'CARD_REFUND_POST_URL'  => 'https://payments.jazzcash.com.pk/ApplicationAPI/API/authorize/Refund',
