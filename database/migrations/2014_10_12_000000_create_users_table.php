@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('shop_number')->nullable();
             $table->string('market_name')->nullable();
             $table->string('cnic_number')->nullable();
-            $table->enum('account_type', ['facebook', 'google'])->nullable();
+            $table->enum('account_type', ['facebook', 'google','apple'])->nullable();
             $table->string('account_id')->nullable();
             $table->string('family_name')->nullable();
             $table->string('given_name')->nullable();
