@@ -27,7 +27,7 @@ class ReportController extends Controller
         $take = $request->take;
         $search = $request->search;
         $report = Report::orderBy('id', 'DESC')->with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
-        $report_count = Report::selectRaw('user_id,count(user_id) AS total')->groupBy('user_id');
+        $report_count = Report::with('users:id,username')->selectRaw('user_id,count(user_id) AS total')->groupBy('user_id');
         if (!empty($search)) {
             $report->whereHas('users', function ($q) use ($search) {
                 $q->where('username', 'like', '%' . $search . '%');
