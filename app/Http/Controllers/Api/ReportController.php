@@ -26,7 +26,7 @@ class ReportController extends Controller
         $skip = $request->skip;
         $take = $request->take;
         $search = $request->search;
-        $report = Report::orderBy('id', 'DESC')->with('users:id,username')->has('users')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
+        $report = Report::orderBy('id', 'DESC')->with('users:id,username')->selectRaw('user_id, count(user_id) AS total')->groupBy('user_id');
         $report_count = Report::selectRaw('user_id,count(user_id) AS total')->groupBy('user_id');
         if (!empty($search)) {
             $report->whereHas('users', function ($q) use ($search) {
