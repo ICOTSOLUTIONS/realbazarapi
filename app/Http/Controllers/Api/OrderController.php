@@ -329,7 +329,7 @@ class OrderController extends Controller
             "pp_TxnExpiryDateTime"     => $pp_TxnExpiryDateTime,
             "pp_ReturnURL"             => Config::get('jazzcashCheckout.jazzcash.RETURN_URL'),
             "pp_SecureHash"         => "",
-            "pp_IsRegisteredCutsomer" => "yes",
+            "pp_IsRegisteredCustomer" => "yes",
             "ppmpf_1"                 => "1",
             "ppmpf_2"                 => "2",
             "ppmpf_3"                 => "3",
