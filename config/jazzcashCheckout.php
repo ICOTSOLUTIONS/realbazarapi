@@ -6,7 +6,7 @@ return [
         'PASSWORD'          => 'xz5z30e245',
         'INTEGERITY_SALT' => '2xy91y8d9w',
         'CURRENCY_CODE'  => 'PKR',
-        'VERSION'         => '1.1',
+        'VERSION'         => '2.0',
         'LANGUAGE'       => 'EN',
         'MerchantMPIN'       => '0000',
 
