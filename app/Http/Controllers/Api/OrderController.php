@@ -320,7 +320,7 @@ class OrderController extends Controller
             "pp_SubMerchantID"         => "",
             "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
             "pp_BankID"             => "TBANK",
-            "pp_TxnRefNo"             => $pp_TxnRefNo,
+            "pp_TxnRefNo"             => \Str::random(15),
             "pp_Amount"             => $pp_Amount,
             "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
             "pp_TxnDateTime"         => $pp_TxnDateTime,
