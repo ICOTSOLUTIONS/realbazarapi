@@ -780,10 +780,9 @@ class AuthController extends Controller
         if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
     }
 
-    public function userDelete($id)
+    public function userDelete()
     {
-        if (empty($id)) return response()->json(['status' => false, 'Message' => 'User Id not found']);
-        $user = User::where('id', $id)->first();
+        $user = User::where('id', auth()->user()->id)->first();
         if (!$user) return response()->json(['status' => false, 'Message' => 'User not found']);
         if ($user->delete()) return response()->json(['status' => true, 'Message' => 'User Deleted Successfully'], 200);
         else return response()->json(['status' => false, 'Message' => 'User not Delete']);
