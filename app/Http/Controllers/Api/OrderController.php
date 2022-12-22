@@ -307,7 +307,7 @@ class OrderController extends Controller
         //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         //4.
         //make unique transaction id using current date
-        $pp_TxnRefNo = 'T' . $pp_TxnDateTime;
+        $pp_TxnRefNo = \Str::random(15);
 
 
         //--------------------------------------------------------------------------------
@@ -320,7 +320,7 @@ class OrderController extends Controller
             "pp_SubMerchantID"         => "",
             "pp_Password"             => Config::get('jazzcashCheckout.jazzcash.PASSWORD'),
             "pp_BankID"             => "TBANK",
-            "pp_TxnRefNo"             => \Str::random(15),
+            "pp_TxnRefNo"             => $pp_TxnRefNo,
             "pp_Amount"             => $pp_Amount,
             "pp_TxnCurrency"         => Config::get('jazzcashCheckout.jazzcash.CURRENCY_CODE'),
             "pp_TxnDateTime"         => $pp_TxnDateTime,
@@ -466,7 +466,7 @@ class OrderController extends Controller
                 return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage . '&pp_TxnRefNo=' . $request->pp_TxnRefNo);
             } else {
                 return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage . '&pp_TxnRefNo=' . $request->pp_TxnRefNo);
-                
+
             }
         } else {
             return redirect($url);
