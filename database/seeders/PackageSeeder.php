@@ -23,7 +23,7 @@ class PackageSeeder extends Seeder
             'time' => '1',
             'period' => 'month',
             'amount' => '0',
-            'product_qty' => '10',
+            'product_qty' => '25',
             'is_active' => false,
         ]);
     }

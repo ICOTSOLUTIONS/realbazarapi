@@ -485,7 +485,7 @@ class AuthController extends Controller
             //     //     return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
             //     // }
             // } else {
-            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Status has been Blocked']);
+            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Acoount Status has been Blocked']);
             $token = $user->createToken('token')->accessToken;
             $user->device_token = request()->token;
             $user->save();
@@ -508,7 +508,7 @@ class AuthController extends Controller
             //         return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
             //     }
             // } else {
-            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Status has been Blocked']);
+            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Account Status has been Blocked']);
             $token = $user->createToken('token')->accessToken;
             $user->device_token = request()->token;
             $user->save();
@@ -778,6 +778,14 @@ class AuthController extends Controller
             NotiSend::sendNotif($user->device_token, $title, $message);
         }
         if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
+    }
+
+    public function userDelete()
+    {
+        $user = User::where('id', auth()->user()->id)->first();
+        if (!$user) return response()->json(['status' => false, 'Message' => 'User not found']);
+        if ($user->delete()) return response()->json(['status' => true, 'Message' => 'User Deleted Successfully'], 200);
+        else return response()->json(['status' => false, 'Message' => 'User not Delete']);
     }
 
     public function show($id)

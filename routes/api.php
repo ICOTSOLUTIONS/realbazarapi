@@ -29,6 +29,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('profile/update', [Api\AuthController::class, 'update_profile']);
     Route::post('shop/followers', [Api\AuthController::class, 'shopFollow']);
     Route::get('user/block/{id}/{message?}', [Api\AuthController::class, 'userBlock']);
+    Route::get('user/delete', [Api\AuthController::class, 'userDelete']);
     Route::get('/logout', [Api\AuthController::class, 'logout']);
 
     //category
