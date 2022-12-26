@@ -485,7 +485,7 @@ class AuthController extends Controller
             //     //     return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
             //     // }
             // } else {
-            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Status has been Blocked']);
+            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Acoount Status has been Blocked']);
             $token = $user->createToken('token')->accessToken;
             $user->device_token = request()->token;
             $user->save();
@@ -508,7 +508,7 @@ class AuthController extends Controller
             //         return response()->json(['status' => false, 'Message' => 'Admin Approval required']);
             //     }
             // } else {
-            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Status has been Blocked']);
+            if ($user->is_block == true) return response()->json(['status' => false, 'Message' => 'Your Account Status has been Blocked']);
             $token = $user->createToken('token')->accessToken;
             $user->device_token = request()->token;
             $user->save();
