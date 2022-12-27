@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class UnpaidRegisterUser extends Model
 {
     use HasFactory;
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
 }
