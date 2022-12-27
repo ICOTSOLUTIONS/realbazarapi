@@ -812,15 +812,15 @@ class AuthController extends Controller
             'name' => 'Username',
             'password' => 'Password',
         ];
-        $rules['email'] = 'required|email|unique:users,email';
-        $rules['phone'] = 'required|digits:11|unique:users,phone';
+        $rules['email'] = 'required|email|unique:unpaid_register_users,email';
+        $rules['phone'] = 'required|digits:11|unique:unpaid_register_users,phone';
         $rules['business_name'] = 'required';
         $rules['business_address'] = 'required';
         $rules['province'] = 'required';
         $rules['country'] = 'required';
         $rules['shop_number'] = 'nullable';
         $rules['market_name'] = 'nullable';
-        $rules['cnic_number'] = 'required|digits:13|unique:users,cnic_number';
+        $rules['cnic_number'] = 'required|digits:13|unique:unpaid_register_users,cnic_number';
         $rules['bill_image'] = 'required|image';
 
         $attributes['email'] = 'Email';
