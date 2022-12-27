@@ -42,6 +42,10 @@ return new class extends Migration
             $table->boolean('is_active')->default(false);
             $table->boolean('is_block')->default(false);
             $table->boolean('is_user_app')->default(false);
+            $table->string('txt_refno')->nullable();
+            $table->string('response_code')->nullable();
+            $table->string('response_message')->nullable();
+            $table->enum('payment_method',['easypaisa','jazzcash'])->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

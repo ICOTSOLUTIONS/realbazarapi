@@ -387,6 +387,10 @@ class AuthController extends Controller
                 $user->shop_number = $request->shop_number;
                 $user->market_name = $request->market_name;
                 $user->cnic_number = $request->cnic_number;
+                $user->txt_refno = $request->txt_refno;
+                $user->response_code = $request->response_code;
+                $user->response_message = $request->response_message;
+                $user->payment_method = $request->payment_method;
                 if (!empty($request->hasFile('bill_image'))) {
                     $image = $request->file('bill_image');
                     $filename = "BillImage-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
@@ -821,7 +825,8 @@ class AuthController extends Controller
         $rules['shop_number'] = 'nullable';
         $rules['market_name'] = 'nullable';
         $rules['cnic_number'] = 'required|digits:13|unique:unpaid_register_users,cnic_number';
-        $rules['bill_image'] = 'required|image';
+        $rules['txt_refno'] = 'required';
+        $rules['payment_method'] = 'required';
 
         $attributes['email'] = 'Email';
         $attributes['phone'] = 'Phone';
@@ -832,7 +837,8 @@ class AuthController extends Controller
         $attributes['shop_number'] = 'Shop Number';
         $attributes['market_name'] = 'Market Name';
         $attributes['cnic_number'] = 'CNIC Number';
-        $attributes['bill_image'] = 'Bill Image';
+        $attributes['txt_refno'] = 'TXTREFNO';
+        $attributes['payment_method'] = 'Payment Method';
         $valid = Validator::make($request->all(), $rules, $messages, $attributes);
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
@@ -854,12 +860,10 @@ class AuthController extends Controller
             $user->shop_number = $request->shop_number;
             $user->market_name = $request->market_name;
             $user->cnic_number = $request->cnic_number;
-            if (!empty($request->hasFile('bill_image'))) {
-                $image = $request->file('bill_image');
-                $filename = "BillImage-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
-                $image->storeAs('bill', $filename, "public");
-                $user->bill_image = "bill/" . $filename;
-            }
+            $user->txt_refno = $request->txt_refno;
+            $user->response_code = $request->response_code;
+            $user->response_message = $request->response_message;
+            $user->payment_method = $request->payment_method;
             if (!$user->save()) throw new Error("User Not Added!");
             $client = UnpaidRegisterUser::with(['role'])->where('id', $user->id)->first();
             DB::commit();
