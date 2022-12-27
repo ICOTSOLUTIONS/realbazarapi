@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Api\NotiSend;
 use App\Models\ReferralUser;
+use App\Models\UnpaidRegisterUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -794,5 +795,78 @@ class AuthController extends Controller
         $user = User::with('role')->where('id', $id)->first();
         if (!empty($user)) return response()->json(['status' => true, 'Message' => 'User found', 'user' => $user ?? []], 200);
         else return response()->json(['status' => false, 'Message', 'User not found']);
+    }
+
+    public function signupDefaulter(Request $request)
+    {
+        $rules = [
+            'role' => 'required',
+            'name' => 'required',
+            'password' => 'required',
+        ];
+        $messages = [
+            'required' => 'This :attribute Field is Required',
+        ];
+        $attributes = [
+            'role' => 'Role',
+            'name' => 'Username',
+            'password' => 'Password',
+        ];
+        $rules['email'] = 'required|email|unique:users,email';
+        $rules['phone'] = 'required|digits:11|unique:users,phone';
+        $rules['business_name'] = 'required';
+        $rules['business_address'] = 'required';
+        $rules['province'] = 'required';
+        $rules['country'] = 'required';
+        $rules['shop_number'] = 'nullable';
+        $rules['market_name'] = 'nullable';
+        $rules['cnic_number'] = 'required|digits:13|unique:users,cnic_number';
+        $rules['bill_image'] = 'required|image';
+
+        $attributes['email'] = 'Email';
+        $attributes['phone'] = 'Phone';
+        $attributes['business_name'] = 'Business Name';
+        $attributes['business_address'] = 'Business Address';
+        $attributes['province'] = 'Province';
+        $attributes['country'] = 'Country';
+        $attributes['shop_number'] = 'Shop Number';
+        $attributes['market_name'] = 'Market Name';
+        $attributes['cnic_number'] = 'CNIC Number';
+        $attributes['bill_image'] = 'Bill Image';
+        $valid = Validator::make($request->all(), $rules, $messages, $attributes);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        try {
+            DB::beginTransaction();
+            $user = new UnpaidRegisterUser();
+            if ($request->role == 'user') $user->role_id = 3;
+            if ($request->role == 'wholesaler') $user->role_id = 4;
+            if ($request->role == 'retailer') $user->role_id = 5;
+            $user->username =  $request->name;
+            $user->password = Hash::make($request->password);
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->business_name = $request->business_name;
+            $user->business_address = $request->business_address;
+            $user->province = $request->province;
+            $user->country = $request->country;
+            $user->shop_number = $request->shop_number;
+            $user->market_name = $request->market_name;
+            $user->cnic_number = $request->cnic_number;
+            if (!empty($request->hasFile('bill_image'))) {
+                $image = $request->file('bill_image');
+                $filename = "BillImage-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
+                $image->storeAs('bill', $filename, "public");
+                $user->bill_image = "bill/" . $filename;
+            }
+            if (!$user->save()) throw new Error("User Not Added!");
+            $client = UnpaidRegisterUser::with(['role'])->where('id', $user->id)->first();
+            DB::commit();
+            return response()->json(['status' => true, 'Message' => "User Successfully Added", 'user' => $client,], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
+        }
     }
 }

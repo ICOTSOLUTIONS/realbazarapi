@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('total')->nullable();
             // $table->string('brand')->nullable();
             $table->string('txt_refno')->nullable();
+            $table->string('response_code')->nullable();
+            $table->string('response_message')->nullable();
             $table->enum('payment_method', ['easypaisa', 'jazzcash', 'cash on delivery']);
             $table->timestamps();
         });

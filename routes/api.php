@@ -19,6 +19,7 @@ Route::post('/signup', [Api\AuthController::class, 'signup']);
 Route::post('/signup/valid/page1', [Api\AuthController::class, 'signupValidPage1']);
 Route::post('/signup/valid/page2', [Api\AuthController::class, 'signupValidPage2']);
 Route::post('/signup/valid/page3', [Api\AuthController::class, 'signupValidPage3']);
+Route::post('/signup/defaulter', [Api\AuthController::class, 'signupDefaulter']);
 Route::post('/login', [Api\AuthController::class, 'login']);
 Route::post('/reset', [Api\AuthController::class, 'reset']);
 Route::post('/forgot', [Api\AuthController::class, 'forgot']);
@@ -71,6 +72,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('get/refund/order', [Api\OrderController::class, 'orderRefundGet']);
     Route::post('refund/order', [Api\OrderController::class, 'orderRefund']);
     Route::post('status/change/refund/order', [Api\OrderController::class, 'orderRefundStatusChange']);
+    Route::post('unpaid/process', [Api\OrderController::class, 'unpaidProcess']);
 
     //package
     Route::get('/package', [Api\PackageController::class, 'show']);
