@@ -23,6 +23,7 @@ class OrderResource extends JsonResource
             'delivery_address' => $this->delivery_address,
             'order_date' => $this->order_date,
             'status' => $this->status,
+            'pay_status' => $this->pay_status,
             'user' => $this->users,
             'seller' => $this->seller,
             'order_products' => $this->user_orders,
