@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('role_id')->nullable();
             $table->string('username')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
             $table->string('phone')->nullable();
@@ -29,8 +27,10 @@ return new class extends Migration
             $table->string('shop_number')->nullable();
             $table->string('market_name')->nullable();
             $table->string('cnic_number')->nullable();
-            $table->mediumText('image')->nullable();
-            $table->mediumText('bill_image')->nullable();
+            $table->string('txt_refno')->nullable();
+            $table->string('response_code')->nullable();
+            $table->string('response_message')->nullable();
+            $table->enum('payment_method',['easypaisa','jazzcash']);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
