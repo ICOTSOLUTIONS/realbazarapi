@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\NotiSend;
 use App\Models\RefundOrder;
+use App\Models\UnpaidRegisterUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -571,12 +572,12 @@ class OrderController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
+        $skip = $request->skip;
+        $take = $request->take;
+        $method = $request->method;
+        $role = $request->role;
+        $search = $request->search;
         if ($request->section == 'order') {
-            $skip = $request->skip;
-            $take = $request->take;
-            $role = $request->role;
-            $search = $request->search;
-            $method = $request->method;
             $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
             $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
             if (!empty($role)) {
@@ -617,7 +618,33 @@ class OrderController extends Controller
             $orders_counts = $order_count->count();
             if (count($orders)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($orders) ?? [], 'OrdersCount' => $orders_counts ?? []], 200);
             else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $orders ?? [], 'OrdersCount' => $orders_counts ?? []]);
-        } else {
+        } else if ($request->section == 'users') {
+            $user = UnpaidRegisterUser::orderBy('id', 'DESC')->with(['role']);
+            $user_count = UnpaidRegisterUser::with(['role']);
+            if (!empty($role)) {
+                $user->whereRelation('role', 'name', $role);
+                $user_count->whereRelation('role', 'name', $role);
+            }
+            if (!empty($method)) {
+                $user->where('payment_method', $method);
+                $user_count->where('payment_method', $method);
+            }
+            if (!empty($search)) {
+                $user->where(function ($q) use ($search) {
+                    $q->where('username', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%');
+                });
+                $user_count->where(function ($q) use ($search) {
+                    $q->where('username', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%');
+                });
+            }
+            $users = $user->skip($skip)->take($take)->get();
+            $users_counts = $user_count->count();
+            if (count($users)) return response()->json(['status' => true, 'Message' => 'User found', 'Users' => $users ?? [], 'UsersCount' => $users_counts ?? []], 200);
+            else return response()->json(['status' => false, 'Message' => 'User not found', 'Users' => $users ?? [], 'UsersCount' => $users_counts ?? []]);
         }
     }
 }
