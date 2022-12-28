@@ -19,7 +19,7 @@ class ProductsResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'tags' => str_replace('#','',$this->tag),
+            'tags' => preg_match("/[^A-Za-z0-9\,]/", "", $this->tag),
             'price' => $this->price,
             'discount' => $this->discount_price,
             'product_description' => $this->desc,
