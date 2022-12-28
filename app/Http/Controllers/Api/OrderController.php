@@ -576,14 +576,9 @@ class OrderController extends Controller
             $take = $request->take;
             $role = $request->role;
             $search = $request->search;
-            $status = $request->status;
             $method = $request->method;
             $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
             $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
-            if (!empty($status)) {
-                $order->where('status', $status);
-                $order_count->where('status', $status);
-            }
             if (!empty($role)) {
                 $order->whereHas('users', function ($q) use ($role) {
                     $q->whereRelation('role', 'name', $role);
@@ -594,10 +589,10 @@ class OrderController extends Controller
             }
             if (!empty($method)) {
                 $order->whereHas('user_payments', function ($q) use ($method) {
-                    $q->whereRelation('payment', 'payment_method', $method);
+                    $q->whereRelation('payments', 'payment_method', $method);
                 });
                 $order_count->whereHas('user_payments', function ($q) use ($method) {
-                    $q->whereRelation('payment', 'payment_method', $method);
+                    $q->whereRelation('payments', 'payment_method', $method);
                 });
             }
             if (!empty($search)) {
