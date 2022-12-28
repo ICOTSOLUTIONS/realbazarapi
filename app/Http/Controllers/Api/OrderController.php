@@ -577,7 +577,7 @@ class OrderController extends Controller
         $method = $request->method;
         $role = $request->role;
         $search = $request->search;
-        if ($request->section == 'order') {
+        if ($request->section == 'orders') {
             $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
             $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
             if (!empty($role)) {
@@ -645,6 +645,8 @@ class OrderController extends Controller
             $users_counts = $user_count->count();
             if (count($users)) return response()->json(['status' => true, 'Message' => 'User found', 'Users' => $users ?? [], 'UsersCount' => $users_counts ?? []], 200);
             else return response()->json(['status' => false, 'Message' => 'User not found', 'Users' => $users ?? [], 'UsersCount' => $users_counts ?? []]);
+        } else {
+            return response()->json(['status' => false, 'Message' => 'Section not match']);
         }
     }
 }
