@@ -120,6 +120,10 @@ class PackageController extends Controller
                 $exist_user->start_date = $date;
                 $exist_user->end_date = $end_date;
                 $exist_user->updated_product_qty = $package->product_qty;
+                $exist_user->txt_refno = $request->txt_refno;
+                $exist_user->response_code = $request->response_code;
+                $exist_user->response_message = $request->response_message;
+                $exist_user->payment_method = $request->payment_method;
                 if (!$exist_user->save()) throw new Error('Package not Buy');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
@@ -131,6 +135,10 @@ class PackageController extends Controller
                 $paymentPackage->start_date = $date;
                 $paymentPackage->end_date = $end_date;
                 $paymentPackage->updated_product_qty = $package->product_qty;
+                $paymentPackage->txt_refno = $request->txt_refno;
+                $paymentPackage->response_code = $request->response_code;
+                $paymentPackage->response_message = $request->response_message;
+                $paymentPackage->payment_method = $request->payment_method;
                 if (!$paymentPackage->save()) throw new Error('Package not Buy');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);

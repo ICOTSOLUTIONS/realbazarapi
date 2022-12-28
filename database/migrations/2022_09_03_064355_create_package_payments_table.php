@@ -20,6 +20,10 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->string('updated_product_qty')->nullable();
+            $table->string('txt_refno')->nullable();
+            $table->string('response_code')->nullable();
+            $table->string('response_message')->nullable();
+            $table->enum('payment_method', ['easypaisa', 'jazzcash'])->nullable();
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
