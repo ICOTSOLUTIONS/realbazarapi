@@ -11,6 +11,7 @@ class Kernel extends ConsoleKernel
         Commands\NewArrivalProductCommand::class,
         Commands\SellerStatusCheckCommand::class,
         Commands\DemandProductDelete::class,
+        Commands\PaymentFailedData::class,
     ];
     /**
      * Define the application's command schedule.
@@ -24,6 +25,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('seller:statusChange')->everyMinute();
         $schedule->command('productnewArrival:statusChange')->everyMinute();
         $schedule->command('demand:delete')->everyMinute();
+        $schedule->command('paymentFailed:delete')->everyMinute();
     }
 
     /**
