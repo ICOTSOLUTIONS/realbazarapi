@@ -10,7 +10,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = ['category', 'status'];
-    protected $appends = ["threeStar","tags"];
+    protected $appends = ["threeStar","tag"];
 
     public function user()
     {
@@ -83,7 +83,7 @@ class Product extends Model
         $three_star = ProductReview::where('product_id', $this->id)->where('stars','>=','3')->count();
         return $three_star;
     }
-    protected function getTagsAttribute()
+    protected function getTagAttribute()
     {
         return json_decode($this->tags);
     }
