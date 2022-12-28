@@ -83,6 +83,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('exist/package/payment', [Api\PackageController::class, 'existPayment']);
     Route::post('subscription/expired', [Api\PackageController::class, 'packageExpiredPeriod']);
     Route::get('package/expired/period', [Api\PackageController::class, 'subsPackageExpiredPeriod']);
+    Route::post('/package/defaulter', [Api\PackageController::class, 'packageDefaulter']);
 
     //chat
     Route::get('/allMessages', [Api\ChatController::class, 'allMessages']);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Package;
 use App\Models\PackagePayment;
 use App\Models\Product;
+use App\Models\UnpaidPackagePayment;
 use Carbon\Carbon;
 use Error;
 use Illuminate\Http\Request;
@@ -195,5 +196,32 @@ class PackageController extends Controller
         $remaining_product_count = $expirePeriod->updated_product_qty - $product;
         if (!empty($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [], 'ProductCount' => $product ?? 0, 'remainProductCount' => $remaining_product_count ?? 0]);
         else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
+    }
+    
+    public function packageDefaulter(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'package_id' => 'required',
+            'payment_method' => 'required',
+        ]);
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+        try {
+            DB::beginTransaction();
+            $unpaidPackagePayment = new UnpaidPackagePayment();
+            $unpaidPackagePayment->user_id = auth()->user()->id;
+            $unpaidPackagePayment->package_id = $request->package_id;
+            $unpaidPackagePayment->txt_refno = $request->txt_refno;
+            $unpaidPackagePayment->response_code = $request->response_code;
+            $unpaidPackagePayment->response_message = $request->response_message;
+            $unpaidPackagePayment->payment_method = $request->payment_method;
+            if (!$unpaidPackagePayment->save()) throw new Error('Unpaid Package Payment not save');
+            DB::commit();
+            return response()->json(['status' => true, 'Message' => 'Unpaid Package Payment Save successfully', 'unpaidPackagePayment' => $unpaidPackagePayment ?? []], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'Message' => $th->getMessage()]);
+        }
     }
 }

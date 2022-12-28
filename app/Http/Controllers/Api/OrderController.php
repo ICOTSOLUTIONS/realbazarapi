@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\NotiSend;
 use App\Models\RefundOrder;
+use App\Models\UnpaidPackagePayment;
 use App\Models\UnpaidRegisterUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
@@ -645,6 +646,37 @@ class OrderController extends Controller
             $users_counts = $user_count->count();
             if (count($users)) return response()->json(['status' => true, 'Message' => 'User found', 'Users' => $users ?? [], 'UsersCount' => $users_counts ?? []], 200);
             else return response()->json(['status' => false, 'Message' => 'User not found', 'Users' => $users ?? [], 'UsersCount' => $users_counts ?? []]);
+        } else if ($request->section == 'packages') {
+            $package = UnpaidPackagePayment::orderBy('id', 'DESC')->with(['user', 'package']);
+            $package_count = UnpaidPackagePayment::with(['user', 'package']);
+            if (!empty($role)) {
+                $package->whereHas('user', function ($q) use ($role) {
+                    $q->whereRelation('role', 'name', $role);
+                });
+                $package_count->whereHas('user', function ($q) use ($role) {
+                    $q->whereRelation('role', 'name', $role);
+                });
+            }
+            if (!empty($method)) {
+                $package->where('payment_method', $method);
+                $package_count->where('payment_method', $method);
+            }
+            if (!empty($search)) {
+                $package->whereHas('user', function ($q) use ($search) {
+                    $q->where('username', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%');
+                });
+                $package_count->whereHas('user', function ($q) use ($search) {
+                    $q->where('username', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%');
+                });
+            }
+            $packages = $package->skip($skip)->take($take)->get();
+            $packages_counts = $package_count->count();
+            if (count($packages)) return response()->json(['status' => true, 'Message' => 'Packages found', 'Packages' => $packages ?? [], 'PackagesCount' => $packages_counts ?? []], 200);
+            else return response()->json(['status' => false, 'Message' => 'Packages not found', 'Packages' => $packages ?? [], 'PackagesCount' => $packages_counts ?? []]);
         } else {
             return response()->json(['status' => false, 'Message' => 'Section not match']);
         }
