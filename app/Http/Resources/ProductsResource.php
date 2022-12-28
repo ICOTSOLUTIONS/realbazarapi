@@ -19,7 +19,7 @@ class ProductsResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'tags' => $this->tag,
+            'tags' => preg_match('/[^A-Za-z0-9\,]/', "", $this->tag),
             'price' => $this->price,
             'discount' => $this->discount_price,
             'product_description' => $this->desc,
@@ -38,9 +38,9 @@ class ProductsResource extends JsonResource
             'followers' => $this->user->follow->sortByDesc('id')->values(),
             'likes' => $this->likes->sortByDesc('id')->values(),
             'reviews' => $this->reviews->sortByDesc('id')->values(),
-            'rating' => round($this->reviews->avg('stars'),1) ,
+            'rating' => round($this->reviews->avg('stars'), 1),
             'totalReviews' => $this->reviews->count(),
-            'positiveReviews' =>($this->threeStar != 0) ? ($this->threeStar / $this->reviews->count()) * (100) : 0,
+            'positiveReviews' => ($this->threeStar != 0) ? ($this->threeStar / $this->reviews->count()) * (100) : 0,
             'totalLikes' => $this->likes->count(),
             'totalFollowers' => $this->user->follow->count(),
         ];
