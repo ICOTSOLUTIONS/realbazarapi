@@ -36,8 +36,8 @@ class OrderController extends Controller
         $role = $request->role;
         $search = $request->search;
         $status = $request->status;
-        $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status','paid');
-        $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status','paid');
+        $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'paid');
+        $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'paid');
         if (!empty($status)) {
             $order->where('status', $status);
             $order_count->where('status', $status);
@@ -77,9 +77,9 @@ class OrderController extends Controller
     public function userOrder($status = null)
     {
         if ($status == null) {
-            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->where('pay_status','paid')->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->where('pay_status', 'paid')->get();
         } else {
-            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->where('pay_status','paid')->where('status', $status)->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('user_id', auth()->user()->id)->where('pay_status', 'paid')->where('status', $status)->get();
         }
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
@@ -88,9 +88,9 @@ class OrderController extends Controller
     public function sellerOrder($status = null)
     {
         if ($status == null) {
-            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->where('pay_status','paid')->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->where('pay_status', 'paid')->get();
         } else {
-            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->where('pay_status','paid')->where('status', $status)->get();
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users', 'seller'])->where('seller_id', auth()->user()->id)->where('pay_status', 'paid')->where('status', $status)->get();
         }
         if (count($order)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($order)], 200);
         else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $order ?? []]);
@@ -125,7 +125,7 @@ class OrderController extends Controller
                     $order->phone = $orders['phone'];
                     $order->delivery_address = $orders['address'];
                     $order->order_date = Carbon::now();
-                    if($orders['pay_status'] && $orders['pay_status'] == 'unpaid') $order->pay_status = 'unpaid';
+                    if ($orders['pay_status'] && $orders['pay_status'] == 'unpaid') $order->pay_status = 'unpaid';
                     // $order->area = $orders['area'];
                     // $order->city = $orders['city'];
                     // $order->gross_amount = $orders['gross_amount'];
@@ -188,7 +188,7 @@ class OrderController extends Controller
         if ($valid->fails()) {
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
-        $order = Order::where('id', $request->id)->where('pay_status','paid')->first();
+        $order = Order::where('id', $request->id)->where('pay_status', 'paid')->first();
         $order->status = $request->status;
         if ($order->save()) {
             $user = $order->users;
@@ -469,7 +469,6 @@ class OrderController extends Controller
                 return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage . '&pp_TxnRefNo=' . $request->pp_TxnRefNo);
             } else {
                 return redirect($url . '?response_code=' . $request->pp_ResponseCode . '&response_message=' . $request->pp_ResponseMessage . '&pp_TxnRefNo=' . $request->pp_TxnRefNo);
-
             }
         } else {
             return redirect($url);
@@ -556,8 +555,74 @@ class OrderController extends Controller
         else  return response()->json(['status' => false, 'Message' => 'Order Refund Request Failed', 'refundOrder' => $refundOrder ?? []]);
     }
 
-    public function unpaidProcess(Request $request)
+    public function paymentInquiry(Request $request)
     {
-        # code...
+        $valid = Validator::make($request->all(), [
+            'method' => 'required',
+            'section' => 'required',
+            'skip' => 'required',
+            'take' => 'required',
+        ], [], [
+            'method' => 'Payment Method',
+            'section' => 'Payment Section',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
+        }
+
+        if ($request->section == 'order') {
+            $skip = $request->skip;
+            $take = $request->take;
+            $role = $request->role;
+            $search = $request->search;
+            $status = $request->status;
+            $method = $request->method;
+            $order = Order::orderBy('id', 'DESC')->with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
+            $order_count = Order::with(['user_orders.products.images', 'user_payments.payments', 'users.role', 'seller.role'])->where('pay_status', 'unpaid');
+            if (!empty($status)) {
+                $order->where('status', $status);
+                $order_count->where('status', $status);
+            }
+            if (!empty($role)) {
+                $order->whereHas('users', function ($q) use ($role) {
+                    $q->whereRelation('role', 'name', $role);
+                });
+                $order_count->whereHas('users', function ($q) use ($role) {
+                    $q->whereRelation('role', 'name', $role);
+                });
+            }
+            if (!empty($method)) {
+                $order->whereHas('user_payments', function ($q) use ($method) {
+                    $q->whereRelation('payment', 'payment_method', $method);
+                });
+                $order_count->whereHas('user_payments', function ($q) use ($method) {
+                    $q->whereRelation('payment', 'payment_method', $method);
+                });
+            }
+            if (!empty($search)) {
+                $order->where(function ($q) use ($search) {
+                    $q->where('order_number', 'like', '%' . $search . '%')
+                        ->orWhere('customer_name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%')
+                        ->orWhere('delivery_address', 'like', '%' . $search . '%')
+                        ->orWhere('order_date', 'like', '%' . $search . '%');
+                });
+                $order_count->where(function ($q) use ($search) {
+                    $q->where('order_number', 'like', '%' . $search . '%')
+                        ->orWhere('customer_name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%')
+                        ->orWhere('delivery_address', 'like', '%' . $search . '%')
+                        ->orWhere('order_date', 'like', '%' . $search . '%');
+                });
+            }
+            $orders = $order->skip($skip)->take($take)->get();
+            $orders_counts = $order_count->count();
+            if (count($orders)) return response()->json(['status' => true, 'Message' => 'Order found', 'Orders' => OrderResource::collection($orders) ?? [], 'OrdersCount' => $orders_counts ?? []], 200);
+            else return response()->json(['status' => false, 'Message' => 'Order not found', 'Orders' => $orders ?? [], 'OrdersCount' => $orders_counts ?? []]);
+        } else {
+        }
     }
 }

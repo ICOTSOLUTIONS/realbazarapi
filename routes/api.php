@@ -72,7 +72,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('get/refund/order', [Api\OrderController::class, 'orderRefundGet']);
     Route::post('refund/order', [Api\OrderController::class, 'orderRefund']);
     Route::post('status/change/refund/order', [Api\OrderController::class, 'orderRefundStatusChange']);
-    Route::post('unpaid/process', [Api\OrderController::class, 'unpaidProcess']);
+    Route::post('payment/inquiry', [Api\OrderController::class, 'paymentInquiry']);
 
     //package
     Route::get('/package', [Api\PackageController::class, 'show']);
