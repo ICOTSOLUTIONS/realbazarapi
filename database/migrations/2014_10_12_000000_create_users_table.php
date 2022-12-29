@@ -42,6 +42,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(false);
             $table->boolean('is_block')->default(false);
             $table->boolean('is_user_app')->default(false);
+            $table->string('price')->nullable();
             $table->string('txt_refno')->nullable();
             $table->string('response_code')->nullable();
             $table->string('response_message')->nullable();

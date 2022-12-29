@@ -394,6 +394,7 @@ class AuthController extends Controller
                 $user->shop_number = $request->shop_number;
                 $user->market_name = $request->market_name;
                 $user->cnic_number = $request->cnic_number;
+                $user->price = $request->price;
                 $user->txt_refno = $request->txt_refno;
                 $user->response_code = $request->response_code;
                 $user->response_message = $request->response_message;
@@ -867,6 +868,7 @@ class AuthController extends Controller
             $user->shop_number = $request->shop_number;
             $user->market_name = $request->market_name;
             $user->cnic_number = $request->cnic_number;
+            $user->price = $request->price;
             $user->txt_refno = $request->txt_refno;
             $user->response_code = $request->response_code;
             $user->response_message = $request->response_message;

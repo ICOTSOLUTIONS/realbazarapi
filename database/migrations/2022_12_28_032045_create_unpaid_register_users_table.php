@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('shop_number')->nullable();
             $table->string('market_name')->nullable();
             $table->string('cnic_number')->nullable();
+            $table->string('price')->nullable();
             $table->string('txt_refno')->nullable();
             $table->string('response_code')->nullable();
             $table->string('response_message')->nullable();
