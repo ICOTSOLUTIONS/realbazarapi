@@ -175,7 +175,7 @@ class OrderController extends Controller
                     return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
                 }else{
                     DB::commit();
-                    return response()->json(['status' => true, 'Message' => 'Order Failed!'], 200);
+                    return response()->json(['status' => false, 'Message' => 'Order Failed!']);
                 }
             } catch (\Throwable $th) {
                 DB::rollBack();
