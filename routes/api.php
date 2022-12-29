@@ -20,6 +20,7 @@ Route::post('/signup/valid/page1', [Api\AuthController::class, 'signupValidPage1
 Route::post('/signup/valid/page2', [Api\AuthController::class, 'signupValidPage2']);
 Route::post('/signup/valid/page3', [Api\AuthController::class, 'signupValidPage3']);
 Route::post('/signup/defaulter', [Api\AuthController::class, 'signupDefaulter']);
+Route::post('/check/referral', [Api\AuthController::class, 'checkReferral']);
 Route::post('/login', [Api\AuthController::class, 'login']);
 Route::post('/reset', [Api\AuthController::class, 'reset']);
 Route::post('/forgot', [Api\AuthController::class, 'forgot']);
