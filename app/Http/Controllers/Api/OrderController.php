@@ -161,17 +161,22 @@ class OrderController extends Controller
                 $payment->response_message = $request->response_message;
                 $payment->save();
                 $payment->orders()->sync($order_ids);
-                $user = User::whereRelation('role', 'name', 'admin')->first();
-                $title = 'NEW ORDER';
-                $message = 'You have recieved new order';
-                $appnot = new AppNotification();
-                $appnot->user_id = $user->id;
-                $appnot->notification = $message;
-                $appnot->navigation = $title;
-                $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
-                DB::commit();
-                return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
+                if($request->response_code == 000){
+                    $user = User::whereRelation('role', 'name', 'admin')->first();
+                    $title = 'NEW ORDER';
+                    $message = 'You have recieved new order';
+                    $appnot = new AppNotification();
+                    $appnot->user_id = $user->id;
+                    $appnot->notification = $message;
+                    $appnot->navigation = $title;
+                    $appnot->save();
+                    NotiSend::sendNotif($user->device_token, $title, $message);
+                    DB::commit();
+                    return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
+                }else{
+                    DB::commit();
+                    return response()->json(['status' => true, 'Message' => 'Order Failed!'], 200);
+                }
             } catch (\Throwable $th) {
                 DB::rollBack();
                 // throw $th;
