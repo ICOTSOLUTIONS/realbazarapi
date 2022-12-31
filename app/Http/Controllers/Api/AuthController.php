@@ -873,10 +873,10 @@ class AuthController extends Controller
             $user->response_code = $request->response_code;
             $user->response_message = $request->response_message;
             $user->payment_method = $request->payment_method;
-            if (!$user->save()) throw new Error("User Not Added!");
+            if (!$user->save()) throw new Error("Something went wrong");
             $client = UnpaidRegisterUser::with(['role'])->where('id', $user->id)->first();
             DB::commit();
-            return response()->json(['status' => true, 'Message' => "User Successfully Added", 'user' => $client,], 200);
+            return response()->json(['status' => true, 'Message' => "Something went wrong", 'user' => $client,], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['status' => false, 'Message' => $th->getMessage()]);
