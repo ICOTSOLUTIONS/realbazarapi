@@ -318,8 +318,8 @@ class AuthController extends Controller
     public function checkReferral(Request $request)
     {
         $referr_user = ReferralUser::where('referral_code', $request->referral_code)->first();
-        if (empty($referr_user)) return response()->json(['status' => false, 'Message' => 'Referral Code not valid', 'price' => 1000]);
-        else return response()->json(['status' => true, 'Message' => 'Referral Code valid', 'price' => 500], 200);
+        if (empty($referr_user)) return response()->json(['status' => false, 'Message' => 'Referral Code not valid', 'price' => 100]);
+        else return response()->json(['status' => true, 'Message' => 'Referral Code valid', 'price' => 50], 200);
     }
 
     public function signup(Request $request)
