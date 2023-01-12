@@ -2,7 +2,7 @@
 
 return [
     'easypaisa' => [
-        'STORE_ID'      => '393592',
+        'STORE_ID'      => '21121',
         'TransactionType'          => 'InitialRequest',
         'HASH_KEY' => 'O81PIDOAT6E8XCOH',
 
