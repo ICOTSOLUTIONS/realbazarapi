@@ -499,7 +499,7 @@ class OrderController extends Controller
 
         $DateTime         = Carbon::now();
         $dateTime = $DateTime->format('dms');
-        $orderRefNum = \Str::random(15);;
+        $orderRefNum = $dateTime;
 
         $timestampDateTime = $DateTime;
         $timestamp = $timestampDateTime->format('Y-m-d\TH:i:s');
