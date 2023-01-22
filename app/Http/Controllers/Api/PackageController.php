@@ -7,6 +7,7 @@ use App\Models\Package;
 use App\Models\PackagePayment;
 use App\Models\Product;
 use App\Models\UnpaidPackagePayment;
+use App\Models\User;
 use Carbon\Carbon;
 use Error;
 use Illuminate\Http\Request;
@@ -106,17 +107,18 @@ class PackageController extends Controller
         try {
             DB::beginTransaction();
             $date = Carbon::now();
-            $existing_package = PackagePayment::where('user_id', auth()->user()->id)
+            $user = auth()->user();
+            $existing_package = PackagePayment::where('user_id', $user->id)
                 ->where('package_id', $request->package_id)->first();
             if (!empty($existing_package)) {
                 if ($existing_package->end_date > $date) throw new Error('You already have active package and your Package expiry date is ' . $existing_package->end_date);
             }
             $package = Package::where('id', $request->package_id)->first();
-            $exist_user = PackagePayment::where('user_id', auth()->user()->id)->first();
+            $exist_user = PackagePayment::where('user_id', $user->id)->first();
             if (!empty($exist_user)) {
                 $date = Carbon::now();
                 if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
-                $exist_user->user_id = auth()->user()->id;
+                $exist_user->user_id = $user->id;
                 $exist_user->package_id = $request->package_id;
                 $exist_user->start_date = $date;
                 $exist_user->end_date = $end_date;
@@ -126,12 +128,15 @@ class PackageController extends Controller
                 $exist_user->response_message = $request->response_message;
                 $exist_user->payment_method = $request->payment_method;
                 if (!$exist_user->save()) throw new Error('Package not Buy');
+                $user_active = User::where('id', $user->id)->first();
+                $user_active->is_active = true;
+                if (!$user_active->save()) throw new Error('User not active');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
             } else {
                 $paymentPackage = new PackagePayment();
                 if ($package->period == 'month' || $package->period == 'Month') $end_date = Carbon::now()->addMonths($package->time);
-                $paymentPackage->user_id = auth()->user()->id;
+                $paymentPackage->user_id = $user->id;
                 $paymentPackage->package_id = $request->package_id;
                 $paymentPackage->start_date = $date;
                 $paymentPackage->end_date = $end_date;
@@ -141,6 +146,9 @@ class PackageController extends Controller
                 $paymentPackage->response_message = $request->response_message;
                 $paymentPackage->payment_method = $request->payment_method;
                 if (!$paymentPackage->save()) throw new Error('Package not Buy');
+                $user_active = User::where('id', $user->id)->first();
+                $user_active->is_active = true;
+                if (!$user_active->save()) throw new Error('User not active');
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Package Buy Successfully'], 200);
             }
@@ -197,7 +205,7 @@ class PackageController extends Controller
         if (!empty($expirePeriod)) return response()->json(['status' => true, 'Message' =>  'Expiry Period found', 'expiry' => $expirePeriod ?? [], 'ProductCount' => $product ?? 0, 'remainProductCount' => $remaining_product_count ?? 0]);
         else return response()->json(['status' => false, 'Message' =>  'Expiry Period not found']);
     }
-    
+
     public function packageDefaulter(Request $request)
     {
         $valid = Validator::make($request->all(), [
