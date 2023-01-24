@@ -779,6 +779,7 @@ class AuthController extends Controller
             $appnot->navigation = $title;
             $appnot->save();
             NotiSend::sendNotif($user->device_token, $title, $message);
+            if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
         } else {
             $user->is_block = false;
             $title = 'YOU HAVE BEEN UNBLOCKED';
@@ -789,8 +790,9 @@ class AuthController extends Controller
             $appnot->navigation = $title;
             $appnot->save();
             NotiSend::sendNotif($user->device_token, $title, $message);
+            if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Unblock Successfully', 'User' => $user ?? []]);
         }
-        if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
+        
     }
 
     public function userDelete()
