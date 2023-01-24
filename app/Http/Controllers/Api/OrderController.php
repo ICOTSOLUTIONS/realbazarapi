@@ -492,9 +492,7 @@ class OrderController extends Controller
             return response()->json(['status' => false, 'Message' => 'Validation errors', 'errors' => $valid->errors()]);
         }
 
-        $price = $request->price;
-
-        $amount     = $price * 100;
+        $amount = $request->price;
         // $amount     = 10;
 
         $DateTime         = Carbon::now();
