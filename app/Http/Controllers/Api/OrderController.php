@@ -127,7 +127,7 @@ class OrderController extends Controller
                     $order->phone = $orders['phone'];
                     $order->delivery_address = $orders['address'];
                     $order->order_date = Carbon::now();
-                    if ($orders['pay_status'] && $orders['pay_status'] == 'unpaid') $order->pay_status = 'unpaid';
+                    if (!empty($orders['pay_status']) && $orders['pay_status'] == 'unpaid') $order->pay_status = 'unpaid';
                     // $order->area = $orders['area'];
                     // $order->city = $orders['city'];
                     // $order->gross_amount = $orders['gross_amount'];
