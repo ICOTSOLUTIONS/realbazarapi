@@ -23,7 +23,7 @@ class ChatController extends Controller
             $q->where('sender_id', $user_id);
         })->orWhere(function ($q) use ($user_id) {
             $q->where('receiver_id', $user_id);
-        })->orderBy('id','DESC')->get();
+        })->orderBy('id', 'DESC')->get();
         if (count($chat)) return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
         else return response()->json(['status' => false, 'Message' => "Chat not Found", 'chat' => $chat]);
     }
@@ -35,7 +35,7 @@ class ChatController extends Controller
             $q->where('sender_id', $user_id);
         })->orWhere(function ($q) use ($user_id) {
             $q->where('receiver_id', $user_id);
-        })->orderBy('id','DESC')->get();
+        })->orderBy('id', 'DESC')->get();
         if (count($chat)) return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
         else return response()->json(['status' => false, 'Message' => "Chat not Found", 'chat' => $chat]);
     }
@@ -81,6 +81,7 @@ class ChatController extends Controller
             $user = auth()->user();
             $user_id = $user->id;
             $receiver_id = $request->receiver_id;
+            $receiver = User::where('id', $receiver_id)->first();
             $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
                 $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
             })->orWhere(function ($q) use ($receiver_id, $user_id) {
@@ -98,7 +99,7 @@ class ChatController extends Controller
             if (!empty($request->image)) {
                 $message->image = $request->image;
                 $message->title = $request->message;
-            }else $message->message = $request->message;
+            } else $message->message = $request->message;
             if (!$message->save()) throw new Error("Message not save!");
             $chat = Chat::with(['sender', 'receiver', 'messages'])->where(function ($q) use ($user_id, $receiver_id) {
                 $q->where('sender_id', $user_id)->where('receiver_id', $receiver_id);
@@ -108,6 +109,7 @@ class ChatController extends Controller
             $data = ['user_id' => $user_id, 'message' => $message];
             $pusher = new \Pusher\Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), array('cluster' => env('PUSHER_APP_CLUSTER')));
             if (!$pusher->trigger('chat-' . $chat->id, 'message', $data)) throw new Error("Message not send!");
+            NotiSend::sendNotif($receiver->device_token, 'You have a new message. Please respond.', $request->message);
             // event(new MessageEvent($request->message, $chat->id));
             DB::commit();
             return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);
