@@ -161,7 +161,7 @@ class OrderController extends Controller
                 $payment->response_message = $request->response_message;
                 $payment->save();
                 $payment->orders()->sync($order_ids);
-                if($request->response_code == 000){
+                if($request->response_code == 000 || $request->response_code == 0000){
                     $user = User::whereRelation('role', 'name', 'admin')->first();
                     $title = 'NEW ORDER';
                     $message = 'You have recieved new order';
