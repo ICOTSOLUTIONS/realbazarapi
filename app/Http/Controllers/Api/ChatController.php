@@ -109,7 +109,7 @@ class ChatController extends Controller
             $data = ['user_id' => $user_id, 'message' => $message];
             $pusher = new \Pusher\Pusher(env('PUSHER_APP_KEY'), env('PUSHER_APP_SECRET'), env('PUSHER_APP_ID'), array('cluster' => env('PUSHER_APP_CLUSTER')));
             if (!$pusher->trigger('chat-' . $chat->id, 'message', $data)) throw new Error("Message not send!");
-            NotiSend::sendNotif($receiver->device_token, 'You have a new message. Please respond.', $request->message);
+            NotiSend::sendNotif($receiver->device_token, $user_id, 'You have a new message. Please respond.', $request->message);
             // event(new MessageEvent($request->message, $chat->id));
             DB::commit();
             return response()->json(['status' => true, 'Message' => "Chat Found", 'chat' => $chat], 200);

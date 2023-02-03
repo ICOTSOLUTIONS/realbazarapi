@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Api;
 
   class NotiSend{
 
-static  function sendNotif($token,$title,$msg){
+static  function sendNotif($token,$receiver,$title,$msg){
 
             $from = "AAAAayC1I6Y:APA91bFn-cnEk32ja33fDKPqzFCJaYj14PRF_-WemUbbqyGCxhzdeP_AXvhjvIUGx_4-ET08TZjUselT6mz2827yAkHlCdr12MVkgpsu8YZJh6bwE6Vp4K1BJg4nmycj6o7bGNeJAF48";
             $msg = array
@@ -11,7 +11,7 @@ static  function sendNotif($token,$title,$msg){
                 'body'  => "$msg",
                 'title' => "$title",
                 'android_channel_id' => "realbazar",
-                'receiver' => ' ',
+                'receiver' => "$receiver",
                 'icon'  => "https://image.flaticon.com/icons/png/512/270/270014.png",/*Default Icon*/
                 'sound' => 'mySound'/*Default sound*/
               );
@@ -41,5 +41,3 @@ static  function sendNotif($token,$title,$msg){
 
     }
 }
-
-?>

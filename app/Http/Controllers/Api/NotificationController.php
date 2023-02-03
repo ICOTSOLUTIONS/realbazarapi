@@ -85,7 +85,7 @@ class NotificationController extends Controller
                 $appnot->notification = $request->message;
                 $appnot->navigation = $request->title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $request->title, $request->message);
+                NotiSend::sendNotif($user->device_token, '', $request->title, $request->message);
             }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Notification Send'], 200);
@@ -115,7 +115,7 @@ class NotificationController extends Controller
             $appnot->notification = $request->message;
             $appnot->navigation = $request->title;
             $appnot->save();
-            NotiSend::sendNotif($user->device_token, $request->title, $request->message);
+            NotiSend::sendNotif($user->device_token, '', $request->title, $request->message);
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Notification Send'], 200);
         } catch (\Throwable $th) {
@@ -148,7 +148,7 @@ class NotificationController extends Controller
                 $appnot->notification = $request->message;
                 $appnot->navigation = $request->title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $request->title, $request->message);
+                NotiSend::sendNotif($user->device_token, '', $request->title, $request->message);
             }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Notification Send'], 200);

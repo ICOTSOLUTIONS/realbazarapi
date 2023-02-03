@@ -531,7 +531,7 @@ class ProductController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
+                NotiSend::sendNotif($user->device_token, '', $title, $message);
                 DB::commit();
                 return response()->json(['status' => true, 'Message' => 'Product Added Successfully!', 'Products' => new ProductsResource($products) ?? []], 200);
             } else throw new Error("Authenticated User Required!");
@@ -766,7 +766,7 @@ class ProductController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
+                NotiSend::sendNotif($user->device_token, '', $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Product Status Change to Approved Successfully'], 200);
             } elseif ($product->status == 'rejected') {
                 $title = 'YOUR PRODUCT HAS BEEN REJECTED';
@@ -775,7 +775,7 @@ class ProductController extends Controller
                 $appnot->notification = $request->message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $request->message);
+                NotiSend::sendNotif($user->device_token, '', $title, $request->message);
                 return response()->json(["status" => true, 'Message' => 'Product Status Change to Rejected Successfully'], 200);
             } else {
                 $title = 'YOUR PRODUCT HAS BEEN PENDING';
@@ -785,7 +785,7 @@ class ProductController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
+                NotiSend::sendNotif($user->device_token, '', $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Product Status Change to Pending Successfully'], 200);
             }
         } else return response()->json(["status" => false, 'Message' => 'Product Status Change not Successfully']);

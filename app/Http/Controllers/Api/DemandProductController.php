@@ -89,7 +89,7 @@ class DemandProductController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $request->title, $request->message);
+                NotiSend::sendNotif($user->device_token, '', $request->title, $request->message);
             }
             DB::commit();
             return response()->json(['status' => true, 'Message' => 'Demanded Product has been Successfully done'], 200);

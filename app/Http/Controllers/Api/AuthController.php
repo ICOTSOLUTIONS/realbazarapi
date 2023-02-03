@@ -778,7 +778,7 @@ class AuthController extends Controller
             $appnot->notification = $message;
             $appnot->navigation = $title;
             $appnot->save();
-            NotiSend::sendNotif($user->device_token, $title, $message);
+            NotiSend::sendNotif($user->device_token, '', $title, $message);
             if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Block Successfully', 'User' => $user ?? []]);
         } else {
             $user->is_block = false;
@@ -789,10 +789,10 @@ class AuthController extends Controller
             $appnot->notification = $message;
             $appnot->navigation = $title;
             $appnot->save();
-            NotiSend::sendNotif($user->device_token, $title, $message);
+            NotiSend::sendNotif($user->device_token, '', $title, $message);
             if ($user->save()) return response()->json(['status' => true, 'Message' => 'User Unblock Successfully', 'User' => $user ?? []]);
         }
-        
+
     }
 
     public function userDelete()

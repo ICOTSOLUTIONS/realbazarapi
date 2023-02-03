@@ -170,7 +170,7 @@ class OrderController extends Controller
                     $appnot->notification = $message;
                     $appnot->navigation = $title;
                     $appnot->save();
-                    NotiSend::sendNotif($user->device_token, $title, $message);
+                    NotiSend::sendNotif($user->device_token, '', $title, $message);
                     DB::commit();
                     return response()->json(['status' => true, 'Message' => 'New Order Placed!'], 200);
                 }else{
@@ -207,7 +207,7 @@ class OrderController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
+                NotiSend::sendNotif($user->device_token, '', $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Delivered Successfully'], 200);
             } elseif ($order->status == 'inprocess') {
                 $title = 'YOUR ORDER HAS BEEN In Process';
@@ -217,7 +217,7 @@ class OrderController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $request->message);
+                NotiSend::sendNotif($user->device_token, '', $title, $request->message);
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to In Process Successfully'], 200);
             } elseif ($order->status == 'rejected') {
                 $title = 'YOUR ORDER HAS BEEN REJECTED';
@@ -226,7 +226,7 @@ class OrderController extends Controller
                 $appnot->notification = $request->message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $request->message);
+                NotiSend::sendNotif($user->device_token, '', $title, $request->message);
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Reject Successfully'], 200);
             } else {
                 $title = 'YOUR ORDER HAS BEEN PENDING';
@@ -236,7 +236,7 @@ class OrderController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
+                NotiSend::sendNotif($user->device_token, '', $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Order Status Change to Pending Successfully'], 200);
             }
         } else return response()->json(["status" => false, 'Message' => 'Order Status Change not Successfully']);
@@ -267,7 +267,7 @@ class OrderController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
+                NotiSend::sendNotif($user->device_token, '', $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Order Refund Status Change to Completed'], 200);
             } else {
                 $title = 'YOUR REFUND REQUEST HAS BEEN PENDING';
@@ -277,7 +277,7 @@ class OrderController extends Controller
                 $appnot->notification = $message;
                 $appnot->navigation = $title;
                 $appnot->save();
-                NotiSend::sendNotif($user->device_token, $title, $message);
+                NotiSend::sendNotif($user->device_token, '', $title, $message);
                 return response()->json(["status" => true, 'Message' => 'Order Refund Status Change to Pending'], 200);
             }
         } else return response()->json(["status" => false, 'Message' => 'Order Refund Status Change not Successfully']);
