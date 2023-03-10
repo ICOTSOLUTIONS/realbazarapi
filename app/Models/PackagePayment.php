@@ -64,7 +64,7 @@ class PackagePayment extends Model
     protected function getCounterAttribute()
     {
         $counter = 0;
-        $days = now()->diffInDays(Carbon::parse($this->end_date));
+        $days = now()->diffInDays(Carbon::parse($this->end_date), false);
         if ($days > 0) {
             $counter = $counter . $days . ' days ';
         }
