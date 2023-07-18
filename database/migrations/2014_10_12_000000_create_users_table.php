@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
             $table->string('phone')->nullable();
+            $table->string('location')->nullable();
+            $table->string('lat')->nullable();
+            $table->string('lng')->nullable();
             $table->string('address')->nullable();
             $table->string('address2')->nullable();
             $table->string('business_name')->nullable();

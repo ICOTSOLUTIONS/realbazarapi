@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('seller:statusChange')->everyMinute();
+        // $schedule->command('seller:statusChange')->everyMinute();
         $schedule->command('productnewArrival:statusChange')->everyMinute();
         $schedule->command('demand:delete')->everyMinute();
         $schedule->command('paymentFailed:delete')->everyMinute();
