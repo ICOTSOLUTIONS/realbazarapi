@@ -481,15 +481,15 @@ class ProductController extends Controller
             DB::beginTransaction();
             $user = auth()->user();
             if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
-                $payment = PackagePayment::where('user_id', $user->id)->where('end_date', '<', Carbon::now())->first();
+                // $payment = PackagePayment::where('user_id', $user->id)->where('end_date', '<', Carbon::now())->first();
                 // $payment exist means expired payment;
-                if ($payment) throw new Error("Please buy package!");
+                // if ($payment) throw new Error("Please buy package!");
                 if ($user->is_active == false) throw new Error("You Account status has been deactivated!");
-                $productCount = Product::where('user_id', $user->id)->count();
-                $packageProductCount = PackagePayment::where('user_id', $user->id)->first();
-                if (!$packageProductCount) throw new Error("Please buy package!");
-                $qty = $packageProductCount->updated_product_qty;
-                if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
+                // $productCount = Product::where('user_id', $user->id)->count();
+                // $packageProductCount = PackagePayment::where('user_id', $user->id)->first();
+                // if (!$packageProductCount) throw new Error("Please buy package!");
+                // $qty = $packageProductCount->updated_product_qty;
+                // if ($productCount >= $qty) throw new Error("Your Product limit is full now you buy new package!");
                 $new_product = new Product();
                 $new_product->user_id = $user->id;
                 $new_product->sub_category_id = $request->sub_category_id;

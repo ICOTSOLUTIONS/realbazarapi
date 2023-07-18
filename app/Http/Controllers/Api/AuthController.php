@@ -264,6 +264,7 @@ class AuthController extends Controller
     public function signupValidPage2(Request $request)
     {
         $rules = [
+            'location' => 'required',
             'business_name' => 'required',
             'business_address' => 'required',
             'province' => 'required',
@@ -276,6 +277,7 @@ class AuthController extends Controller
         ];
 
         $attributes = [
+            'location' => 'Location',
             'business_name' => 'Business Name',
             'business_address' => 'Business Address',
             'province' => 'Province',
@@ -340,6 +342,9 @@ class AuthController extends Controller
         if ($request->role == 'retailer' || $request->role == 'wholesaler') {
             $rules['email'] = 'required|email|unique:users,email';
             $rules['phone'] = 'required|digits:11|unique:users,phone';
+            $rules['location'] = 'required';
+            $rules['lat'] = 'required';
+            $rules['lng'] = 'required';
             $rules['business_name'] = 'required';
             $rules['business_address'] = 'required';
             $rules['province'] = 'required';
@@ -352,6 +357,9 @@ class AuthController extends Controller
 
             $attributes['email'] = 'Email';
             $attributes['phone'] = 'Phone';
+            $attributes['location'] = 'Location';
+            $attributes['lat'] = 'Latitude';
+            $attributes['lng'] = 'Longtitude';
             $attributes['business_name'] = 'Business Name';
             $attributes['business_address'] = 'Business Address';
             $attributes['province'] = 'Province';
@@ -387,6 +395,9 @@ class AuthController extends Controller
             if ($request->role == 'retailer' || $request->role == 'wholesaler') {
                 $user->email = $request->email;
                 $user->phone = $request->phone;
+                $user->location = $request->location;
+                $user->lat = $request->lat;
+                $user->lng = $request->lng;
                 $user->business_name = $request->business_name;
                 $user->business_address = $request->business_address;
                 $user->province = $request->province;
@@ -646,6 +657,9 @@ class AuthController extends Controller
             if ($user->role->name == 'retailer' || $user->role->name == 'wholesaler') {
                 $rules['email'] = 'required|email|unique:users,email,' . auth()->user()->id;
                 $rules['phone'] = 'required|digits:11|unique:users,phone,' . auth()->user()->id;
+                $rules['location'] = 'required';
+                $rules['lat'] = 'required';
+                $rules['lng'] = 'required';
                 $rules['business_name'] = 'required';
                 $rules['business_address'] = 'required';
                 $rules['province'] = 'required';
@@ -658,6 +672,9 @@ class AuthController extends Controller
 
                 $attributes['email'] = 'Email';
                 $attributes['phone'] = 'Phone';
+                $attributes['location'] = 'Location';
+                $attributes['lat'] = 'Latitude';
+                $attributes['lng'] = 'Longtitude';
                 $attributes['business_name'] = 'Business Name';
                 $attributes['business_address'] = 'Business Address';
                 $attributes['province'] = 'Province';
@@ -686,6 +703,9 @@ class AuthController extends Controller
                 if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
                     $user->email = $request->email;
                     $user->phone = $request->phone;
+                    $user->location = $request->location;
+                    $user->lat = $request->lat;
+                    $user->lng = $request->lng;
                     $user->business_name = $request->business_name;
                     $user->business_address = $request->business_address;
                     $user->province = $request->province;
