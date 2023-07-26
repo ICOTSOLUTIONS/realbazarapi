@@ -458,14 +458,14 @@ class ProductController extends Controller
 
     public function searchLocation(Request $request)
     {
-        if (isset($request->lat) && isset($request->lng) && isset($request->distance)) return response()->json(['status' => false, 'Message' => 'Location Required', 'Products' => []]);
+        if (!isset($request->lat) || !isset($request->lng) || !isset($request->distance)) return response()->json(['status' => false, 'Message' => 'Location Required', 'Products' => []]);
         $latitude  = $request->lat;
         $langitude  = $request->lng;
         $users = User::all();
         $distance = $request->distance;  //(miles - see note)
         $arr_user = [];
         foreach ($users as $user) {
-            if(!empty($user->lat) && !empty($user->lng)){
+            if(!empty($user->lat) || !empty($user->lng)){
                 $delta_lat = $user->lat - $latitude;
                 $delta_lon = $user->lng - $langitude;
 
