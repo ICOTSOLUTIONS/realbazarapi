@@ -458,7 +458,7 @@ class ProductController extends Controller
 
     public function searchLocation(Request $request)
     {
-        if (empty($request->lat) && empty($request->lng)) return response()->json(['status' => false, 'Message' => 'Location Required', 'Products' => []]);
+        if (isset($request->lat) && isset($request->lng) && isset($request->distance)) return response()->json(['status' => false, 'Message' => 'Location Required', 'Products' => []]);
         $latitude  = $request->lat;
         $langitude  = $request->lng;
         $users = User::all();
