@@ -456,6 +456,49 @@ class ProductController extends Controller
         } else return response()->json(['status' => false, 'Message' => 'Parameter is null']);
     }
 
+    public function searchLocation(Request $request)
+    {
+        if (empty($request->lat) && empty($request->lng)) return response()->json(['status' => false, 'Message' => 'Location Required', 'Products' => []]);
+        $latitude  = $request->lat;
+        $langitude  = $request->lng;
+        $users = User::all();
+        $distance = $request->distance;  //(miles - see note)
+        $arr_user = [];
+        foreach ($users as $user) {
+            if(!empty($user->lat) && !empty($user->lng)){
+                $delta_lat = $user->lat - $latitude;
+                $delta_lon = $user->lng - $langitude;
+
+                $earth_radius = 6372.795477598;
+
+                $alpha    = $delta_lat / 2;
+                $beta     = $delta_lon / 2;
+                $a        = sin(deg2rad($alpha)) * sin(deg2rad($alpha)) + cos(deg2rad($latitude)) * cos(deg2rad($user->lat_from)) * sin(deg2rad($beta)) * sin(deg2rad($beta));
+                $c        = asin(min(1, sqrt($a)));
+                $distance1 = 2 * $earth_radius * $c;
+                $distance1 = $distance1 * 0.621371;
+                if ($distance > $distance1) {
+                    $arr_user[] = $user->id;
+                }
+            }
+        }
+        if (!count($arr_user) > 0) return response()->json(['status' => false, 'Message' => 'Products not found', 'Products' => []]);
+
+        if ($request->role == 'retailer') {
+            $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereIn('user_id',$arr_user)
+            ->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'retailer');
+            })->get();
+        } else if ($request->role == 'wholesaler') {
+            $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereIn('user_id',$arr_user)
+            ->whereHas('user', function ($q) {
+                $q->whereRelation('role', 'name', 'wholesaler');
+            })->get();
+        } else $product = Product::whereIn('user_id',$arr_user)->get();
+        if (count($product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
+        else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $product ?? []]);
+
+    }
     public function add(Request $request)
     {
         $valid = Validator::make($request->all(), [

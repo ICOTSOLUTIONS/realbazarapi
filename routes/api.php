@@ -146,6 +146,7 @@ Route::get('home/{role?}', [Api\ProductController::class, 'home']);
 Route::get('webhome/{role?}', [Api\ProductController::class, 'webhome']);
 Route::get('products/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'show']);
 Route::get('search/{name}/{role?}', [Api\ProductController::class, 'search']);
+Route::post('search', [Api\ProductController::class, 'searchLocation']);
 Route::post('show/product', [Api\ProductController::class, 'showProduct']);
 Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
 Route::get('discount/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'discountProduct']);
