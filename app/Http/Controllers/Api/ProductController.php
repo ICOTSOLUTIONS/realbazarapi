@@ -485,16 +485,27 @@ class ProductController extends Controller
         if (!count($arr_user) > 0) return response()->json(['status' => false, 'Message' => 'Products not found', 'Products' => []]);
 
         if ($request->role == 'retailer') {
-            $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereIn('user_id',$arr_user)
+            $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->query();
+            if(isset($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
+            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('price', [$request->price_from, $request->price_to]);
+            $product = $query->whereIn('user_id',$arr_user)
             ->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
             })->get();
         } else if ($request->role == 'wholesaler') {
-            $product = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->whereIn('user_id',$arr_user)
+            $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->query();
+            if(isset($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
+            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('price', [$request->price_from, $request->price_to]);
+            $product = $query->whereIn('user_id',$arr_user)
             ->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
             })->get();
-        } else $product = Product::whereIn('user_id',$arr_user)->get();
+        } else {
+            $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->query();
+            if(isset($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
+            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('price', [$request->price_from, $request->price_to]);
+            $product = $query->whereIn('user_id',$arr_user)->get();
+        }
         if (count($product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
         else return response()->json(['status' => false, 'Message' => 'Product not found', 'Products' => $product ?? []]);
 
