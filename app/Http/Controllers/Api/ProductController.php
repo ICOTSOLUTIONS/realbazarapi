@@ -487,7 +487,7 @@ class ProductController extends Controller
         if ($request->role == 'retailer') {
             $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users']);
             if(isset($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
-            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('price', [$request->price_from, $request->price_to]);
+            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('variation.price', [$request->price_from, $request->price_to]);
             $product = $query->whereIn('user_id',$arr_user)
             ->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'retailer');
@@ -495,7 +495,7 @@ class ProductController extends Controller
         } else if ($request->role == 'wholesaler') {
             $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users']);
             if(isset($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
-            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('price', [$request->price_from, $request->price_to]);
+            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('variation.price', [$request->price_from, $request->price_to]);
             $product = $query->whereIn('user_id',$arr_user)
             ->whereHas('user', function ($q) {
                 $q->whereRelation('role', 'name', 'wholesaler');
@@ -503,7 +503,7 @@ class ProductController extends Controller
         } else {
             $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users']);
             if(isset($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
-            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('price', [$request->price_from, $request->price_to]);
+            if(isset($request->price_from) && isset($request->price_to)) $query->whereBetween('variation.price', [$request->price_from, $request->price_to]);
             $product = $query->whereIn('user_id',$arr_user)->get();
         }
         if (count($product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
