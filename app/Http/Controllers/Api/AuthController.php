@@ -393,6 +393,7 @@ class AuthController extends Controller
             // $user->address =  $request->address;
             // $user->last_name =  $request->last_name;
             if ($request->role == 'retailer' || $request->role == 'wholesaler') {
+                $user->person_name =  $request->person_name;
                 $user->email = $request->email;
                 $user->phone = $request->phone;
                 $user->location = $request->location;
@@ -404,7 +405,10 @@ class AuthController extends Controller
                 $user->country = $request->country;
                 $user->shop_number = $request->shop_number;
                 $user->market_name = $request->market_name;
+                $user->store_name =  $request->store_name;
                 $user->cnic_number = $request->cnic_number;
+                $user->bio = $request->bio;
+                $user->website = $request->website;
                 $user->price = $request->price;
                 $user->txt_refno = $request->txt_refno;
                 $user->response_code = $request->response_code;
@@ -701,6 +705,7 @@ class AuthController extends Controller
                 DB::beginTransaction();
                 $user->username = $request->username;
                 if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
+                    $user->pwesone_name = $request->pwesone_name;
                     $user->email = $request->email;
                     $user->phone = $request->phone;
                     $user->location = $request->location;
@@ -712,7 +717,10 @@ class AuthController extends Controller
                     $user->country = $request->country;
                     $user->shop_number = $request->shop_number;
                     $user->market_name = $request->market_name;
+                    $user->store_name = $request->store_name;
                     $user->cnic_number = $request->cnic_number;
+                    $user->bio = $request->bio;
+                    $user->website = $request->website;
                     if (!empty($request->hasFile('bill_image'))) {
                         $image = $request->file('bill_image');
                         $filename = "BillImage-" . time() . "-" . rand() . "." . $image->getClientOriginalExtension();
@@ -880,6 +888,7 @@ class AuthController extends Controller
             if ($request->role == 'wholesaler') $user->role_id = 4;
             if ($request->role == 'retailer') $user->role_id = 5;
             $user->username =  $request->name;
+            $user->person_name =  $request->person_name;
             $user->password = Hash::make($request->password);
             $user->email = $request->email;
             $user->phone = $request->phone;
@@ -889,7 +898,10 @@ class AuthController extends Controller
             $user->country = $request->country;
             $user->shop_number = $request->shop_number;
             $user->market_name = $request->market_name;
+            $user->store_name = $request->store_name;
             $user->cnic_number = $request->cnic_number;
+            $user->bio = $request->bio;
+            $user->website = $request->website;
             $user->price = $request->price;
             $user->txt_refno = $request->txt_refno;
             $user->response_code = $request->response_code;

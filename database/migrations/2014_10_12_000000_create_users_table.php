@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('role_id')->nullable();
             $table->string('username')->nullable();
+            $table->string('person_name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('email')->unique()->nullable();
@@ -33,7 +34,10 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->string('shop_number')->nullable();
             $table->string('market_name')->nullable();
+            $table->string('store_name')->nullable();
             $table->string('cnic_number')->nullable();
+            $table->string('bio')->nullable();
+            $table->string('website')->nullable();
             $table->enum('account_type', ['facebook', 'google','apple'])->nullable();
             $table->string('account_id')->nullable();
             $table->string('family_name')->nullable();
