@@ -474,7 +474,7 @@ class ProductController extends Controller
             });
         }
 
-        if (isset($request->lat) && isset($request->lng) && isset($request->distance)){
+        if (!empty($request->lat) && !empty($request->lng) && !empty($request->distance)){
             $latitude  = $request->lat;
             $langitude  = $request->lng;
             $users = User::all();
