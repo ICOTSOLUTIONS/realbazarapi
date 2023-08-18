@@ -705,7 +705,7 @@ class AuthController extends Controller
                 DB::beginTransaction();
                 $user->username = $request->username;
                 if ($user->role->name == 'wholesaler' || $user->role->name == 'retailer') {
-                    $user->pwesone_name = $request->pwesone_name;
+                    $user->person_name = $request->person_name;
                     $user->email = $request->email;
                     $user->phone = $request->phone;
                     $user->location = $request->location;
