@@ -460,15 +460,8 @@ class ProductController extends Controller
     {
         $product = [];
         $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users']);
-        if(isset($request->name) && !empty($request->name)){
-            $names = explode(',', $request->name);
-            foreach ($names as $tag) {
-                $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
-            }
-        }
-
-        if(isset($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
-        if(isset($request->price_from) && isset($request->price_to)){
+        if(isset($request->sub_category) && !empty($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
+        if(isset($request->price_from) && isset($request->price_to) && !empty($request->price_from) && !empty($request->price_to)){
             $query->whereHas('variation', function ($q) use($request) {
                     $q->whereBetween('price', [$request->price_from, $request->price_to]);
             });
@@ -499,7 +492,12 @@ class ProductController extends Controller
                 }
             }
         }
-
+        if(isset($request->name) && !empty($request->name)){
+            $names = explode(',', $request->name);
+            foreach ($names as $tag) {
+                $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
+            }
+        }
         if ($request->role == 'retailer') {
             if (!empty($arr_user) && count($arr_user) > 0) $query->whereIn('user_id',$arr_user);
             $product = $query->whereHas('user', function ($q1) {
