@@ -493,6 +493,7 @@ class ProductController extends Controller
                 }
             }
         }
+        dd($arr_user);
         if(isset($request->name) && !empty($request->name)){
             $names = explode(',', $request->name);
             foreach ($names as $tag) {
