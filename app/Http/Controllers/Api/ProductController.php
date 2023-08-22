@@ -460,7 +460,7 @@ class ProductController extends Controller
     {
         $product = [];
         $query = Product::has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users']);
-        if(isset($request->category) && !empty($request->category)) $query->whereRelation('categories', 'id', $request->category);
+        if(isset($request->category) && !empty($request->category)) $query->whereRelation('subCategories.categories', 'id', $request->category);
         if(isset($request->sub_category) && !empty($request->sub_category)) $query->where('sub_category_id',$request->sub_category);
         if(isset($request->price_from) && isset($request->price_to) && !empty($request->price_from) && !empty($request->price_to)){
             $query->whereHas('variation', function ($q) use($request) {
