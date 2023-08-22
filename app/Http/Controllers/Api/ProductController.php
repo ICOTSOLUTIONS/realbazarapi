@@ -496,7 +496,7 @@ class ProductController extends Controller
         if(isset($request->name) && !empty($request->name)){
             $names = explode(',', $request->name);
             foreach ($names as $tag) {
-                $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
+                $query->where('title', 'LIKE', '%' . $tag . '%');
             }
         }
         if ($request->role == 'retailer') {
