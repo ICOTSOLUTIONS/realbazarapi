@@ -493,11 +493,10 @@ class ProductController extends Controller
                 }
             }
         }
-        dd($arr_user);
         if(isset($request->name) && !empty($request->name)){
             $names = explode(',', $request->name);
             foreach ($names as $tag) {
-                $query->where('title', 'LIKE', '%' . $tag . '%');
+                $query->where('title', 'LIKE', '%' . $tag . '%')->orWhere('tags', 'LIKE', '%' . $tag . '%');
             }
         }
         if ($request->role == 'retailer') {
