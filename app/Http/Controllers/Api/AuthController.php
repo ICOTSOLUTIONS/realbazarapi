@@ -296,8 +296,8 @@ class AuthController extends Controller
     {
         $rules = [
             'password' =>  'required',
-            'cnic_image' =>  'required|array',
-            'bill_image' => 'required|image',
+            'cnic_image' =>  'nullable|array',
+            'bill_image' => 'nullable|image',
         ];
 
         $messages = [
@@ -352,8 +352,8 @@ class AuthController extends Controller
             $rules['shop_number'] = 'nullable';
             $rules['market_name'] = 'nullable';
             $rules['cnic_number'] = 'required|digits:13|unique:users,cnic_number';
-            $rules['cnic_image'] = 'required|array';
-            $rules['bill_image'] = 'required|image';
+            $rules['cnic_image'] = 'nullable|array';
+            $rules['bill_image'] = 'nullable|image';
 
             $attributes['email'] = 'Email';
             $attributes['phone'] = 'Phone';
