@@ -492,6 +492,7 @@ class ProductController extends Controller
                     }
                 }
             }
+            if(empty($arr_user) && count($arr_user) < 0) $arr_user[] = 0;
         }
         if(isset($request->name) && !empty($request->name)){
             $names = explode(',', $request->name);
