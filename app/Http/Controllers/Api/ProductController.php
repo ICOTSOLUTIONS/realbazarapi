@@ -501,18 +501,18 @@ class ProductController extends Controller
             }
         }
         if ($request->role == 'retailer') {
-            if (!empty($arr_user) && count($arr_user) > 0) $query->whereIn('user_id',$arr_user);
+            $query->whereIn('user_id',$arr_user);
             $product = $query->whereHas('user', function ($q1) {
                 $q1->whereRelation('role', 'name', 'retailer');
             })->get();
         } else if ($request->role == 'wholesaler') {
-            if (!empty($arr_user) && count($arr_user) > 0) $query->whereIn('user_id',$arr_user);
+            $query->whereIn('user_id',$arr_user);
             $product = $query->whereHas('user', function ($q1) {
                 $q1->whereRelation('role', 'name', 'wholesaler');
             })->get();
 
         } else {
-            if (!empty($arr_user) && count($arr_user) > 0) $query->whereIn('user_id',$arr_user);
+            $query->whereIn('user_id',$arr_user);
             $product = $query->get();
         }
         if (count($product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => ProductsResource::collection($product)], 200);
