@@ -644,6 +644,7 @@ class ProductController extends Controller
                 $product->discount_price = $request->discount;
                 $product->tags = json_encode($request->tags);
                 $product->desc = $request->product_desc;
+                $product->status = 'pending';
                 $product->is_featured = $request->featured ?? false;
                 if (!$product->save()) throw new Error("Product not Updated!");
                 if (!empty($request->product_image)) {
