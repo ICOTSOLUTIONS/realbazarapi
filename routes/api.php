@@ -63,6 +63,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('status/change/product', [Api\ProductController::class, 'statusChangeProduct']);
     Route::get('status/trending/product/{id}', [Api\ProductController::class, 'productStatusTrending']);
     Route::post('product/status/change', [Api\ProductController::class, 'productStatusChange']);
+    Route::get('show/all/product/id', [Api\ProductController::class, 'showAllProductId']);
 
     //order
     Route::post('order', [Api\OrderController::class, 'order']);
