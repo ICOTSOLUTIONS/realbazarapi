@@ -63,7 +63,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('status/change/product', [Api\ProductController::class, 'statusChangeProduct']);
     Route::get('status/trending/product/{id}', [Api\ProductController::class, 'productStatusTrending']);
     Route::post('product/status/change', [Api\ProductController::class, 'productStatusChange']);
-    Route::get('show/all/product/id', [Api\ProductController::class, 'showAllProductId']);
 
     //order
     Route::post('order', [Api\OrderController::class, 'order']);
@@ -157,6 +156,7 @@ Route::get('topRating/product/{role?}/{skip?}/{take?}', [Api\ProductController::
 Route::get('trending/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'trendingProduct']);
 Route::get('wholesaler/products', [Api\ProductController::class, 'wholesalerProducts']);
 Route::get('app/wholesaler/products', [Api\ProductController::class, 'appWholesalerProducts']);
+Route::get('show/all/product/id', [Api\ProductController::class, 'showAllProductId']);
 
 //category
 Route::get('category', [Api\CategoryController::class, 'show']);
