@@ -29,6 +29,14 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    public function showAllProductId(){
+        $all_product = Product::has('user')->get('id');
+        return response()->json([
+            'status' => true, 'Message' => 'Product found',
+            'all_product' => $all_product ?? [],
+        ], 200);
+    }
+
     public function home($role = null)
     {
         $all_product = [];
