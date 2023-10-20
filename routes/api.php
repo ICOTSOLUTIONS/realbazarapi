@@ -148,7 +148,7 @@ Route::get('products/{role?}/{skip?}/{take?}', [Api\ProductController::class, 's
 Route::get('search/{name}/{role?}', [Api\ProductController::class, 'search']);
 Route::post('search', [Api\ProductController::class, 'searchLocation']);
 Route::post('show/product', [Api\ProductController::class, 'showProduct']);
-Route::post('product/{id?}', [Api\ProductController::class, 'getById']);
+Route::get('product/{id?}', [Api\ProductController::class, 'getById']);
 Route::post('shop/product', [Api\ProductController::class, 'vendorProduct']);
 Route::get('discount/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'discountProduct']);
 Route::get('featured/product/{role?}/{skip?}/{take?}', [Api\ProductController::class, 'featuredProduct']);
