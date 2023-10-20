@@ -423,6 +423,14 @@ class ProductController extends Controller
         return response()->json(['status' => false, 'Message' => 'Product not found']);
     }
 
+    public function getById(Request $request)
+    {
+        $id = $request->id;
+        $all_product = Product::where('id', $id)->has('user')->with(['user', 'images', 'variation', 'subCategories.categories', 'reviews.users'])->first();
+        if (!empty($all_product)) return response()->json(['status' => true, 'Message' => 'Product found', 'Products' => new ProductsResource($all_product)], 200);
+        return response()->json(['status' => false, 'Message' => 'Product not found']);
+    }
+
     public function search($name, $role = null)
     {
         if (!empty($name)) {
